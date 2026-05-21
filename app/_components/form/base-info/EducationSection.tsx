@@ -1,0 +1,401 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { Card, CardBody, CardHead } from "@/app/_components/ui/Card";
+import { Row } from "@/app/_components/ui/Row";
+import { RadioGroup } from "@/app/_components/ui/RadioGroup";
+import { Input } from "@/app/_components/ui/Input";
+import { Button } from "@/app/_components/ui/Button";
+import { InfoBox } from "@/app/_components/ui/InfoBox";
+import { MobileCard, MobileField } from "@/app/_components/ui/MobileCard";
+import { ConfirmModal } from "@/app/_components/modals/ConfirmModal";
+import { Select } from "@/app/_components/ui/Select";
+import { Checkbox } from "@/app/_components/ui/Checkbox";
+import type { ProgressSection } from "./types";
+import { sectionMeta } from "./utils";
+
+type EduRow = { id: number; degree: string; school: string; major: string };
+
+type Props = {
+  onSave: () => void;
+  onProgressChange: (section: ProgressSection) => void;
+};
+
+const DEGREE_ROWS: Record<string, string[]> = {
+  고졸: ["고졸"],
+  전문대: ["전문대"],
+  학사: ["학사"],
+  석사: ["학사", "석사"],
+  박사: ["학사", "석사", "박사"],
+};
+const DEGREE_SEQUENCE = ["고졸", "전문대", "학사", "석사", "박사"];
+const EDUCATION_OPTIONS = ["고졸", "전문대", "학사", "석사", "박사"];
+
+export function EducationSection({ onSave, onProgressChange }: Props) {
+  const [education, setEducation] = useState("");
+  const [eduRows, setEduRows] = useState<EduRow[]>([]);
+  const [pendingEduChange, setPendingEduChange] = useState<{
+    newDegree: string;
+    affected: EduRow[];
+  } | null>(null);
+  const [job, setJob] = useState("");
+  const [jobModalOpen, setJobModalOpen] = useState(false);
+  const [jobQuery, setJobQuery] = useState("");
+  const [workplace, setWorkplace] = useState("");
+  const [workplaceModalOpen, setWorkplaceModalOpen] = useState(false);
+  const [workplaceQuery, setWorkplaceQuery] = useState("");
+  const [salary, setSalary] = useState("");
+  const [salaryHidden, setSalaryHidden] = useState(false);
+  const nextId = useRef(10);
+  const availableEduTags = education
+    ? (DEGREE_ROWS[education] ?? []).filter((tag) => !eduRows.some((row) => row.degree === tag))
+    : [];
+  const hasCompleteSchoolRow = eduRows.length > 0 && eduRows.every((row) => row.school.trim() && row.major.trim());
+  const complete =
+    Number(Boolean(education)) +
+    Number(hasCompleteSchoolRow) +
+    Number(Boolean(job.trim())) +
+    Number(Boolean(workplace.trim() && !workplace.includes("*"))) +
+    Number(Boolean(salary && !salaryHidden));
+
+  useEffect(() => {
+    onProgressChange({ done: complete, total: 5 });
+  }, [complete, onProgressChange]);
+
+  function handleDegreeChange(newDegree: string) {
+    const newTags = DEGREE_ROWS[newDegree] ?? [];
+    const rowsToRemove = eduRows.filter((row) => !newTags.includes(row.degree));
+    const affected = rowsToRemove.filter((row) => row.school || row.major);
+    if (affected.length > 0) {
+      setPendingEduChange({ newDegree, affected });
+    } else {
+      applyDegreeChange(newDegree);
+    }
+    onSave();
+  }
+
+  function applyDegreeChange(newDegree: string) {
+    const newTags = DEGREE_ROWS[newDegree] ?? [];
+    const kept = eduRows.filter((row) => newTags.includes(row.degree));
+    const existing = new Set(kept.map((row) => row.degree));
+    const toAdd = newTags
+      .filter((tag) => !existing.has(tag))
+      .map((tag) => ({ id: ++nextId.current, degree: tag, school: "", major: "" }));
+    setEduRows([...kept, ...toAdd]);
+    setEducation(newDegree);
+    setPendingEduChange(null);
+  }
+
+  function updateEduRow(id: number, field: keyof EduRow, val: string) {
+    setEduRows((rows) => rows.map((row) => (row.id === id ? { ...row, [field]: val } : row)));
+  }
+
+  function removeEduRow(id: number) {
+    setEduRows((rows) => rows.filter((row) => row.id !== id));
+    onSave();
+  }
+
+  function addEduRow() {
+    const currentIndex = education ? DEGREE_SEQUENCE.indexOf(education) : -1;
+    const nextDegree =
+      availableEduTags[0] ?? DEGREE_SEQUENCE[Math.min(currentIndex + 1, DEGREE_SEQUENCE.length - 1)] ?? "고졸";
+    const nextEducation = DEGREE_SEQUENCE.find((degree) => (DEGREE_ROWS[degree] ?? []).includes(nextDegree)) ?? nextDegree;
+
+    setEducation((current) => {
+      if (!current) return nextEducation;
+      return DEGREE_SEQUENCE.indexOf(nextEducation) > DEGREE_SEQUENCE.indexOf(current) ? nextEducation : current;
+    });
+    setEduRows((rows) => {
+      if (rows.some((row) => row.degree === nextDegree)) return rows;
+      return [...rows, { id: ++nextId.current, degree: nextDegree, school: "", major: "" }];
+    });
+    onSave();
+  }
+
+  function applyWorkplace() {
+    if (workplaceQuery.trim()) {
+      setWorkplace(workplaceQuery.trim());
+      onSave();
+    }
+    setWorkplaceModalOpen(false);
+    setWorkplaceQuery("");
+  }
+
+  function applyJob() {
+    if (jobQuery.trim()) {
+      setJob(jobQuery.trim());
+      onSave();
+    }
+    setJobModalOpen(false);
+    setJobQuery("");
+  }
+
+  const eduStack = (
+    <div className="flex flex-col gap-2">
+      {eduRows.map((row) => (
+        <div key={row.id} className="flex items-center gap-2.5">
+          <span className="shrink-0 bg-surface border border-border rounded-[6px] px-2 py-1 text-[11px] font-bold tracking-[0.04em]">
+            {row.degree}
+          </span>
+          <Input
+            placeholder="학교명을 검색해 주세요"
+            value={row.school}
+            onChange={(e) => updateEduRow(row.id, "school", e.target.value)}
+            onBlur={onSave}
+            layout="fill"
+            size="sm"
+            aria-label={`${row.degree} 학교명`}
+          />
+          <Button variant="secondary" size="sm" type="button">
+            검색
+          </Button>
+          <Input
+            placeholder="전공"
+            value={row.major}
+            onChange={(e) => updateEduRow(row.id, "major", e.target.value)}
+            onBlur={onSave}
+            fieldWidth="major"
+            size="sm"
+            aria-label={`${row.degree} 전공`}
+          />
+          {eduRows.length > 1 ? (
+            <button
+              type="button"
+              onClick={() => removeEduRow(row.id)}
+              aria-label={`${row.degree} 학력 삭제`}
+              className="w-9 h-9 border border-border rounded-[6px] bg-surface flex items-center justify-center hover:bg-subtle shrink-0 transition-colors duration-fast ease-standard"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-4 h-4 text-danger"
+                aria-hidden="true"
+              >
+                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              </svg>
+            </button>
+          ) : (
+            <div className="w-9 h-9 shrink-0" />
+          )}
+        </div>
+      ))}
+      <div>
+        <Button variant="secondary" size="sm" type="button" onClick={addEduRow}>
+          ＋ 학력 추가
+        </Button>
+      </div>
+    </div>
+  );
+
+  const mobileEduStack = (
+    <div className="flex flex-col gap-2">
+      {eduRows.map((row) => (
+        <div key={row.id} className="bg-subtle rounded-md px-3 py-2.5 flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <span className="bg-surface border border-border rounded-[6px] px-2 py-1 text-[11px] font-bold tracking-[0.04em]">
+              {row.degree}
+            </span>
+            <span className="flex-1" />
+            {eduRows.length > 1 && (
+              <button
+                type="button"
+                onClick={() => removeEduRow(row.id)}
+                aria-label={`${row.degree} 학력 삭제`}
+                className="w-9 h-9 border border-border rounded-[6px] bg-surface flex items-center justify-center shrink-0"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-danger" aria-hidden="true">
+                  <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+              </button>
+            )}
+          </div>
+          <Input placeholder="학교명을 검색해 주세요" value={row.school} onChange={(e) => updateEduRow(row.id, "school", e.target.value)} onBlur={onSave} size="sm" aria-label={`${row.degree} 학교명`} />
+          <Button variant="secondary" size="sm" type="button">검색</Button>
+          <Input placeholder="전공" value={row.major} onChange={(e) => updateEduRow(row.id, "major", e.target.value)} onBlur={onSave} size="sm" aria-label={`${row.degree} 전공`} />
+        </div>
+      ))}
+      <Button variant="secondary" size="sm" type="button" onClick={addEduRow} className="self-start">
+        ＋ 학력 추가
+      </Button>
+    </div>
+  );
+
+  const desktopContent = (
+    <Card>
+      <CardHead tag="SECTION 3" title="학력 &amp; 직장" meta={sectionMeta({ done: complete, total: 5 })} />
+      <CardBody>
+        <Row label="최종 학력" required helper="선택 시 학교/전공 행이 자동으로 늘어납니다.">
+          <RadioGroup
+            name="education"
+            options={EDUCATION_OPTIONS}
+            value={education}
+            onChange={handleDegreeChange}
+            aria-required
+          />
+          <InfoBox>학사 → 석사로 변경 시 기존 학사 행은 보존됩니다.</InfoBox>
+        </Row>
+        <Row label="학교명 / 전공" required helper="검색 또는 직접 입력 모두 가능. 우측 휴지통으로 삭제.">
+          {eduStack}
+        </Row>
+        <Row label="직업 / 직무" required helper="현재 종사하는 분야를 선택해 주세요.">
+          <div className="flex gap-2">
+            <Input
+              value={job}
+              onChange={(e) => setJob(e.target.value)}
+              onBlur={onSave}
+              aria-label="직업 / 직무"
+              layout="fill"
+            />
+            <Button variant="secondary" size="md" type="button" onClick={() => setJobModalOpen(true)}>
+              직업검색
+            </Button>
+          </div>
+        </Row>
+        <Row label="직장명" required helper="직장명은 앞 2글자만 공개되며, 나머지는 블라인드 처리됩니다.">
+          <div className="flex gap-2">
+            <Input
+              value={workplace}
+              onChange={(e) => setWorkplace(e.target.value)}
+              onBlur={onSave}
+              aria-label="직장명"
+              layout="fill"
+              placeholder="직장명을 검색해 주세요"
+            />
+            <Button variant="secondary" size="md" type="button" onClick={() => setWorkplaceModalOpen(true)}>
+              직장 검색
+            </Button>
+          </div>
+        </Row>
+        <Row label="연봉" required helper="민감 정보이므로 비공개 옵션을 제공합니다.">
+          <div className="flex items-center gap-4 flex-wrap">
+            <Select value={salary} onChange={(e) => { setSalary(e.target.value); onSave(); }} fieldWidth="salary">
+              <option value="">연봉 구간 선택</option>
+              <option>3,000만원 미만</option><option>3,000 ~ 4,000만원</option>
+              <option>4,000 ~ 5,000만원</option><option>5,000 ~ 6,000만원</option>
+              <option>6,000 ~ 8,000만원</option><option>8,000만원 ~ 1억</option><option>1억 이상</option>
+            </Select>
+            <Checkbox label="연봉 비공개" checked={salaryHidden} onChange={(e) => { setSalaryHidden(e.target.checked); onSave(); }} />
+          </div>
+          <InfoBox>비공개 시 다른 회원에게 노출되지 않으며, 매니저 매칭에만 활용됩니다.</InfoBox>
+        </Row>
+      </CardBody>
+    </Card>
+  );
+
+  const mobileContent = (
+    <MobileCard num={3} title="학력 &amp; 직장" sub={sectionMeta({ done: complete, total: 5 })}>
+      <MobileField label="최종 학력" required>
+        <RadioGroup name="m-education" options={EDUCATION_OPTIONS} value={education} onChange={handleDegreeChange} aria-required />
+        <InfoBox>학력 선택 시 학교/전공 행이 자동으로 늘어납니다.</InfoBox>
+      </MobileField>
+      <MobileField label="학교 / 전공" required>
+        {mobileEduStack}
+      </MobileField>
+      <MobileField label="직업 / 직무" required>
+        <Input value={job} onChange={(e) => setJob(e.target.value)} onBlur={onSave} aria-label="직업 / 직무" />
+        <Button variant="secondary" size="md" type="button" layout="full" onClick={() => setJobModalOpen(true)}>
+          직업검색
+        </Button>
+      </MobileField>
+      <MobileField label="직장명" required>
+        <Input value={workplace} onChange={(e) => setWorkplace(e.target.value)} onBlur={onSave} aria-label="직장명" placeholder="직장명을 검색해 주세요" />
+        <Button variant="secondary" size="md" type="button" layout="full" onClick={() => setWorkplaceModalOpen(true)}>
+          직장 검색
+        </Button>
+      </MobileField>
+      <MobileField label="연봉" required>
+        <Select value={salary} onChange={(e) => { setSalary(e.target.value); onSave(); }}>
+          <option value="">연봉 구간 선택</option>
+          <option>3,000만원 미만</option><option>3,000 ~ 4,000만원</option>
+          <option>4,000 ~ 5,000만원</option><option>5,000 ~ 6,000만원</option>
+          <option>6,000 ~ 8,000만원</option><option>8,000만원 ~ 1억</option><option>1억 이상</option>
+        </Select>
+        <Checkbox label="연봉 비공개" checked={salaryHidden} onChange={(e) => { setSalaryHidden(e.target.checked); onSave(); }} />
+        <InfoBox>비공개 시 다른 회원에게 노출되지 않으며, 매니저 매칭에만 활용됩니다.</InfoBox>
+      </MobileField>
+    </MobileCard>
+  );
+
+  return (
+    <>
+      <div className="hidden xl:block">{desktopContent}</div>
+      <div className="xl:hidden">{mobileContent}</div>
+
+      <ConfirmModal
+        open={!!pendingEduChange}
+        onClose={() => setPendingEduChange(null)}
+        title="학력 정보가 삭제됩니다"
+        confirmLabel="계속 진행"
+        cancelLabel="취소"
+        onConfirm={() => pendingEduChange && applyDegreeChange(pendingEduChange.newDegree)}
+        variant="danger"
+      >
+        <div className="flex items-start gap-3 bg-warning-light rounded-md p-4">
+          <span className="text-warning text-lg font-bold shrink-0">⚠</span>
+          <div>
+            <div className="text-sm font-semibold text-text">
+              {education} → {pendingEduChange?.newDegree}으로 변경
+            </div>
+            <div className="text-[13px] text-text-secondary mt-1">
+              입력하신 학력 정보가 모두 삭제됩니다. 계속하시겠어요?
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          {pendingEduChange?.affected.map((row) => (
+            <div key={row.id} className="flex items-center gap-2 text-[13px]">
+              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-danger shrink-0" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              </svg>
+              <span className="bg-subtle border border-border rounded-[4px] px-1.5 py-0.5 text-[11px] font-bold shrink-0">
+                {row.degree}
+              </span>
+              <span className="line-through text-text-secondary">
+                {[row.school, row.major].filter(Boolean).join(" · ")}
+              </span>
+            </div>
+          ))}
+        </div>
+      </ConfirmModal>
+
+      <ConfirmModal
+        open={jobModalOpen}
+        onClose={() => { setJobModalOpen(false); setJobQuery(""); }}
+        title="직업 검색"
+        confirmLabel="확인"
+        onConfirm={applyJob}
+        width="sm"
+      >
+        <Input
+          value={jobQuery}
+          onChange={(e) => setJobQuery(e.target.value)}
+          autoFocus
+          aria-label="직업 검색"
+          onKeyDown={(e) => e.key === "Enter" && applyJob()}
+        />
+      </ConfirmModal>
+
+      <ConfirmModal
+        open={workplaceModalOpen}
+        onClose={() => { setWorkplaceModalOpen(false); setWorkplaceQuery(""); }}
+        title="직장 검색"
+        confirmLabel="확인"
+        onConfirm={applyWorkplace}
+        width="sm"
+      >
+        <Input
+          value={workplaceQuery}
+          onChange={(e) => setWorkplaceQuery(e.target.value)}
+          placeholder="직장명을 입력해 주세요"
+          autoFocus
+          aria-label="직장 검색"
+          onKeyDown={(e) => e.key === "Enter" && applyWorkplace()}
+        />
+      </ConfirmModal>
+    </>
+  );
+}
