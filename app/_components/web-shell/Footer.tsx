@@ -1,19 +1,7 @@
+import { CmLogo } from "@/app/_components/web-shell/CmLogo";
+
 const FOOTER_LINKS = ["크리스천메이트", "이용약관", "개인정보처리방침", "손해배상청구절차", "아동 안전 표준 정책"];
 const MOBILE_LINKS = ["이용약관", "개인정보처리방침", "손해배상청구절차", "아동 안전 표준 정책", "로그아웃"];
-
-function LogoMark() {
-  return (
-    <div className="inline-flex items-center gap-2.5 text-text-brand font-extrabold tracking-tight leading-[0.9]">
-      <span
-        className="w-7 h-7 shrink-0 border-[3px] border-primary border-r-text-brand border-b-text-brand rounded-[9px_9px_12px_9px] rotate-[-45deg]"
-        aria-hidden="true"
-      />
-      <span className="text-[15px] leading-tight">
-        CHRISTIAN<br />MATE
-      </span>
-    </div>
-  );
-}
 
 export function Footer() {
   return (
@@ -28,7 +16,7 @@ export function Footer() {
               </a>
             ))}
           </div>
-          <LogoMark />
+          <CmLogo />
           <div className="mt-[18px] text-text-brand-muted text-[11px] leading-relaxed">
             (주)크리스천메이트 · 대표 임승리 · 주소 서울 금천구 가산디지털1로 181 W센터 3층 119호<br />
             사업자등록번호 247-86-02178 · 통신판매업 신고번호 제2023-서울금천-02585호<br />
@@ -61,7 +49,7 @@ export function Footer() {
       </footer>
 
       {/* Mobile footer (< xl) */}
-      <footer className="xl:hidden bg-surface border-t border-border px-5 pt-7 pb-8">
+      <footer className="xl:hidden bg-surface border-t border-border px-5 pt-mobile-site-footer-top pb-mobile-action-footer-scroll">
         <div className="flex items-baseline gap-1 mb-1.5 text-text-brand">
           <span className="text-lg font-bold">상담 문의</span>
           <strong className="text-[21px] font-extrabold tracking-tight">02)862-3920</strong>

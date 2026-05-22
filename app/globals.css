@@ -101,12 +101,29 @@
   --spacing-form-shell-offset: 22.5rem;
   --spacing-form-footer-width: min(calc(100% - var(--spacing-form-shell-offset)), var(--spacing-form-content-width));
   /* 모바일 앱 헤더: topbar(h-14) + step 칩 영역 */
+  --spacing-mobile-topbar-height: 3.5rem;
   --spacing-mobile-shell-header: 7rem;
   --spacing-mobile-progress-chrome: 3.5rem;
+  --spacing-mobile-fab-bottom: 6.5rem;
+  --spacing-mobile-fab-size: 2.875rem;
+  --spacing-mobile-fab-menu-gap: 0.75rem;
+  --spacing-touch-min: 2.75rem;
   --spacing-form-field-scroll-margin: calc(
     var(--spacing-mobile-shell-header) + var(--spacing-mobile-progress-chrome) - 3.5rem
   );
   --spacing-form-field-scroll-margin-desktop: 3.5rem;
+  /* 모바일 저장하기·다음 고정 푸터 높이 (pt-3 + btn-md + safe-area) */
+  --spacing-mobile-action-footer-height: calc(
+    var(--spacing-3) + var(--spacing-10) + max(var(--spacing-6), env(safe-area-inset-bottom, 0px))
+  );
+  /* 사이트 푸터가 고정 버튼에 가리지 않도록 하는 스크롤 여백 */
+  --spacing-mobile-action-footer-scroll: calc(
+    var(--spacing-mobile-action-footer-height) + var(--spacing-3)
+  );
+  /* 포토북 카드 ↔ 사이트 푸터 사이 간격 (기본 1.25rem × 2.5) */
+  --spacing-mobile-photo-footer-gap: 3.125rem;
+  --spacing-mobile-photo-card-bottom: 3.75rem;
+  --spacing-mobile-site-footer-top: 2.5rem;
 
   /* Shadow */
   --shadow-footer: 0 -8px 24px rgba(15, 23, 42, 0.06);
@@ -116,6 +133,7 @@
   --shadow-modal: 0 20px 48px rgba(0, 0, 0, 0.20);
   --shadow-mega: 0 18px 40px rgba(15, 23, 42, 0.08);
   --shadow-rail: 0 3px 10px rgba(15, 23, 42, 0.08);
+  --shadow-fab: 0 6px 16px rgba(255, 107, 126, 0.4);
   --shadow-drawer: -12px 0 30px rgba(15, 23, 42, 0.16);
 
   /* Motion */

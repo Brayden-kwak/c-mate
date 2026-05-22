@@ -917,7 +917,7 @@ const PhotoSection = ({
 
   const mobileContent = (
     <SectionAnchor id={SECTION_PHOTO}>
-    <MobileCard num={6} title="프로필 사진" progress={photoSectionProgress}>
+    <MobileCard num={6} title="프로필 사진" progress={photoSectionProgress} bodyClassName="pb-mobile-photo-card-bottom">
         <MobileField label="프로필 사진" required>
           {mobilePhotoGuide}
           {mobilePhotoCarousel}
@@ -1067,26 +1067,10 @@ const DFooter = ({ autoSave }: { autoSave: AutoSaveState }) => {
 const ProgressHero = ({ progress }: { progress: ProgressSection }) => {
   return (
     <>
-      <div className="bg-page px-8 pt-14 pb-8 hidden xl:block">
-        <div className="max-w-form-content-width mx-auto flex flex-col gap-3">
-          <div className="flex items-center gap-2 text-[11px] font-bold tracking-[0.16em]">
-            <span className="text-primary">STEP 1 / 5</span>
-            <span className="text-text-tertiary">·</span>
-            <span className="text-text-secondary font-medium tracking-[0.08em]">기본정보 작성</span>
-          </div>
-          <h1 className="text-[32px] font-bold leading-snug m-0">기본정보</h1>
-        </div>
-      </div>
-
-      <div className="sticky top-0 z-(--z-sticky) hidden border-b border-border-subtle bg-page px-8 py-3 xl:block">
+      <div className="sticky top-0 z-(--z-sticky) mt-6 hidden bg-page px-8 py-3 xl:block">
         <div className="max-w-form-content-width mx-auto">
           <FormProgressBar progress={progress} />
         </div>
-      </div>
-
-      <div className="bg-page px-4 pt-4 pb-2 xl:hidden">
-        <p className="text-xs font-bold tracking-[0.16em] text-primary mb-1">STEP 1 / 5</p>
-        <h1 className="text-2xl font-bold text-text m-0 mb-1">기본정보</h1>
       </div>
 
       <div className="sticky top-mobile-shell-header z-(--z-sticky) border-b border-border-subtle bg-page px-4 py-4 xl:hidden">
@@ -1174,7 +1158,11 @@ export const BaseInfoForm = () => {
 
   return (
     <>
-      <form noValidate onSubmit={handleSubmit} className="relative flex flex-col xl:gap-5 gap-3 pb-32 xl:pb-44">
+      <form
+        noValidate
+        onSubmit={handleSubmit}
+        className="relative flex flex-col xl:gap-5 gap-3 pb-mobile-photo-footer-gap xl:pb-44"
+      >
         <ProgressHero progress={progress} />
         <FamilySection
           onSave={triggerAutoSave}
