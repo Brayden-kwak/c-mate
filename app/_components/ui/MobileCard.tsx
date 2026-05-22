@@ -10,9 +10,18 @@ type CardProps = {
   progress?: SectionProgressBadge;
   children: ReactNode;
   defaultOpen?: boolean;
+  bodyClassName?: string;
 };
 
-export function MobileCard({ num, title, sub, progress, children, defaultOpen = true }: CardProps) {
+export function MobileCard({
+  num,
+  title,
+  sub,
+  progress,
+  children,
+  defaultOpen = true,
+  bodyClassName,
+}: CardProps) {
   const [open, setOpen] = useState(defaultOpen);
   const isComplete = progress
     ? (progress.statusComplete ?? progress.done >= progress.total)
@@ -58,7 +67,14 @@ export function MobileCard({ num, title, sub, progress, children, defaultOpen = 
         </svg>
       </button>
       {open && (
-        <div className="flex flex-col gap-5 border-t border-border-subtle px-4 pt-6 pb-8">
+        <div
+          className={[
+            "flex flex-col gap-5 border-t border-border-subtle px-4 pt-6 pb-8",
+            bodyClassName,
+          ]
+            .filter(Boolean)
+            .join(" ")}
+        >
           {children}
         </div>
       )}

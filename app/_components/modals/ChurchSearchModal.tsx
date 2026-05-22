@@ -81,12 +81,6 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
             autoFocus
           />
 
-          {hasQuery && (
-            <InfoBox>
-              &lsquo;{query}&rsquo; → 정규화 매칭 (띄어쓰기·특수문자 무시)
-            </InfoBox>
-          )}
-
           {/* Empty state */}
           {hasQuery && (
             <div className="bg-subtle rounded-lg py-7 px-5 flex flex-col items-center gap-2 text-center">
@@ -97,7 +91,7 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
               <p className="text-[13px] text-text-secondary leading-relaxed m-0">
                 등록되지 않은 교회/교단이라면 신청해 주세요.
                 <br />
-                관리자 승인 후 마스터 DB에 등록됩니다.
+                또는 담당 매니저에게 문의해주시거나 대표번호로 연락 부탁드립니다.
               </p>
               <Button
                 variant="primary"
@@ -130,7 +124,7 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
                 <Input size="sm" value={regAddr} onChange={(e) => setRegAddr(e.target.value)} aria-label="신규 신청 교회 주소" />
               </RegField>
               <RegField label="연락처">
-                <Input size="sm" value={regContact} onChange={(e) => setRegContact(e.target.value)} placeholder="010-0000-0000" aria-label="신규 신청 연락처" />
+                <Input size="sm" value={regContact} onChange={(e) => setRegContact(e.target.value)} aria-label="신규 신청 연락처" />
               </RegField>
               <RegField label="신청 사유" required>
                 <div className="border border-border rounded-md px-3 py-2.5 focus-within:border-primary focus-within:shadow-[0_0_0_3px_var(--color-primary-50)] transition-all duration-fast ease-standard bg-surface">

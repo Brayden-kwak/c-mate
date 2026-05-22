@@ -3,7 +3,7 @@ import { Stepper } from "@/app/_components/web-shell/Stepper";
 import { BaseInfoForm } from "@/app/_components/form/BaseInfoForm";
 
 export const metadata: Metadata = {
-  title: "기본정보 | cmate",
+  title: "크리스천메이트",
 };
 
 export default function BaseInfoPage() {
