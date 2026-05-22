@@ -1,7 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import { useState, useRef, useCallback, useEffect, type CSSProperties } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo, type CSSProperties } from "react";
 import { Card, CardHead, CardBody } from "@/app/_components/ui/Card";
 import { Row } from "@/app/_components/ui/Row";
 import { RadioGroup } from "@/app/_components/ui/RadioGroup";
@@ -17,7 +16,24 @@ import { MobileCard, MobileField } from "@/app/_components/ui/MobileCard";
 import { ConfirmModal } from "@/app/_components/modals/ConfirmModal";
 import { ChurchSearchModal } from "@/app/_components/modals/ChurchSearchModal";
 import { EducationSection } from "@/app/_components/form/base-info/EducationSection";
-import type { AutoSaveState, ProgressMap, ProgressSection } from "@/app/_components/form/base-info/types";
+import { ProfilePhotoGuide } from "@/app/_components/form/base-info/ProfilePhotoGuide";
+import { SectionAnchor } from "@/app/_components/form/base-info/SectionAnchor";
+import { scrollToFieldAnchor } from "@/app/_components/form/base-info/scrollToFieldAnchor";
+import {
+  BASE_INFO_SECTION_ANCHOR_ID,
+  BASE_INFO_SECTION_ORDER,
+  type AutoSaveState,
+  type BaseInfoSectionKey,
+  type MissingRequiredField,
+  type ProgressMap,
+  type ProgressSection,
+} from "@/app/_components/form/base-info/types";
+
+const SECTION_FAMILY = BASE_INFO_SECTION_ANCHOR_ID.family;
+const SECTION_FAITH = BASE_INFO_SECTION_ANCHOR_ID.faith;
+const SECTION_APPEARANCE = BASE_INFO_SECTION_ANCHOR_ID.appearance;
+const SECTION_LIFESTYLE = BASE_INFO_SECTION_ANCHOR_ID.lifestyle;
+const SECTION_PHOTO = BASE_INFO_SECTION_ANCHOR_ID.photo;
 type PhotoItem = { filled: boolean; previewUrl?: string; description?: string };
 const REQUIRED_PROFILE_PHOTOS = 2;
 const PHOTO_SECTION_PROGRESS_TOTAL = 2;
@@ -27,13 +43,13 @@ const MAX_PHOTOBOOK_SLOTS = 8;
 const STYLE_SELECTION_MAX = 5;
 
 const STYLE_GROUPS: StyleGroup[] = [
-  { label: "외모", options: ["귀여운", "청순한", "세련된", "지적인", "훈훈한"] },
-  { label: "성격", options: ["다정한", "유머있는", "차분한", "활발한", "리더십"] },
-  { label: "성품", options: ["성실", "책임감", "배려", "온화", "정직"] },
+  { label: "외모 스타일", options: ["귀여운", "청순한", "세련된", "지적인", "훈훈한", "터프한", "패션에 민감한", "스포티한"] },
+  { label: "성격/기질", options: ["다정한", "유머있는", "차분한", "활발한", "리더십", "듬직한", "도도한", "대범한", "신중한", "열정적인", "낙천적인"] },
+  { label: "성품", options: ["성실한", "책임감", "정직한", "지적인", "상냥한", "섬세한", "창의적인", "끈기있는"] },
 ];
 
 /* ===== Auto-save chip ===== */
-function AutoSaveChip({ state }: { state: AutoSaveState }) {
+const AutoSaveChip = ({ state }: { state: AutoSaveState }) => {
   if (state === "saved") {
     return (
       <span className="inline-flex items-center gap-1.5 bg-success-light text-success px-3 py-1.5 rounded-pill text-[13px] font-medium before:content-[''] before:w-[7px] before:h-[7px] before:rounded-full before:bg-success shrink-0">
@@ -59,7 +75,7 @@ function AutoSaveChip({ state }: { state: AutoSaveState }) {
 }
 
 /* ===== Delete preview tile (for photo delete modal) ===== */
-function PhotoTile({ badge, faded }: { badge?: string; faded?: boolean }) {
+const PhotoTile = ({ badge, faded }: { badge?: string; faded?: boolean }) => {
   return (
     <div
       className={`w-[72px] h-[88px] rounded-md bg-photo-gradient flex items-end justify-center p-2 ${faded ? "opacity-40" : ""}`}
@@ -74,13 +90,15 @@ function PhotoTile({ badge, faded }: { badge?: string; faded?: boolean }) {
 }
 
 /* ===== Section 1 ===== */
-function FamilySection({
+const FamilySection = ({
   onSave,
   onProgressChange,
+  onMissingFieldsChange,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
-}) {
+  onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
+}) => {
   const [marriageExp, setMarriageExp] = useState("");
   const [region, setRegion] = useState("");
   const [address, setAddress] = useState("");
@@ -93,7 +111,14 @@ function FamilySection({
     onProgressChange({ done: complete, total: 2 });
   }, [complete, onProgressChange]);
 
-  function applyAddress() {
+  useEffect(() => {
+    const missing: MissingRequiredField[] = [];
+    if (!marriageExp) missing.push({ id: SECTION_FAMILY, label: "결혼 경험" });
+    if (!address.trim()) missing.push({ id: SECTION_FAMILY, label: "주소" });
+    onMissingFieldsChange(missing);
+  }, [marriageExp, address, onMissingFieldsChange]);
+
+  const applyAddress = () => {
     if (addrQuery.trim()) {
       setAddress(addrQuery.trim());
       onSave();
@@ -103,18 +128,19 @@ function FamilySection({
   }
 
   const desktopContent = (
-    <Card>
+    <SectionAnchor id={SECTION_FAMILY}>
+      <Card>
       <CardHead tag="SECTION 1" title="가족 &amp; 거주" progress={{ done: complete, total: 2 }} />
       <CardBody>
-        <Row label="결혼 경험" required helper="사실대로 선택해 주세요. 허위 기재 시 민/형사 책임을 묻습니다.">
-          <RadioGroup
-            name="marriageExperience"
-            options={["초혼", "재혼", "사실혼인"]}
-            value={marriageExp}
-            onChange={(v) => { setMarriageExp(v); onSave(); }}
-            aria-required
-          />
-        </Row>
+          <Row label="결혼 경험" required helper="사실대로 선택해 주세요. 허위 기재 시 민/형사 책임을 묻습니다.">
+            <RadioGroup
+              name="marriageExperience"
+              options={["초혼", "재혼", "사실혼인"]}
+              value={marriageExp}
+              onChange={(v) => { setMarriageExp(v); onSave(); }}
+              aria-required
+            />
+          </Row>
         <Row label="주소" required helper="매니저 검수 및 거주지 기반 매칭에 사용됩니다.">
           <RadioGroup
             name="region"
@@ -150,20 +176,22 @@ function FamilySection({
           </HighlightBox>
         </Row>
       </CardBody>
-    </Card>
+      </Card>
+    </SectionAnchor>
   );
 
   const mobileContent = (
+    <SectionAnchor id={SECTION_FAMILY}>
     <MobileCard num={1} title="가족 & 거주" progress={{ done: complete, total: 2 }}>
-      <MobileField label="결혼 경험" required>
-        <RadioGroup
-          name="m-marriageExperience"
-          options={["초혼", "재혼", "사실혼인"]}
-          value={marriageExp}
-          onChange={(v) => { setMarriageExp(v); onSave(); }}
-          aria-required
-        />
-      </MobileField>
+        <MobileField label="결혼 경험" required>
+          <RadioGroup
+            name="m-marriageExperience"
+            options={["초혼", "재혼", "사실혼인"]}
+            value={marriageExp}
+            onChange={(v) => { setMarriageExp(v); onSave(); }}
+            aria-required
+          />
+        </MobileField>
       <MobileField label="주소" required>
         <RadioGroup
           name="m-region"
@@ -197,6 +225,7 @@ function FamilySection({
         </div>
       </MobileField>
     </MobileCard>
+    </SectionAnchor>
   );
 
   return (
@@ -230,13 +259,15 @@ function FamilySection({
 }
 
 /* ===== Section 2 ===== */
-function FaithSection({
+const FaithSection = ({
   onSave,
   onProgressChange,
+  onMissingFieldsChange,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
-}) {
+  onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
+}) => {
   const [church, setChurch] = useState("");
   const [pastor, setPastor] = useState("");
   const [churchAddr, setChurchAddr] = useState("");
@@ -254,7 +285,16 @@ function FaithSection({
     onProgressChange({ done: complete, total: 4 });
   }, [complete, onProgressChange]);
 
-  function applyChurchAddr() {
+  useEffect(() => {
+    const missing: MissingRequiredField[] = [];
+    if (!church.trim()) missing.push({ id: SECTION_FAITH, label: "출석 교회명 / 교단" });
+    if (!pastor.trim()) missing.push({ id: SECTION_FAITH, label: "담임목사님 성함" });
+    if (!churchAddr.trim()) missing.push({ id: SECTION_FAITH, label: "교회 주소" });
+    if (!nativeFaith) missing.push({ id: SECTION_FAITH, label: "모태신앙 여부" });
+    onMissingFieldsChange(missing);
+  }, [church, pastor, churchAddr, nativeFaith, onMissingFieldsChange]);
+
+  const applyChurchAddr = () => {
     if (churchAddrQuery.trim()) {
       setChurchAddr(churchAddrQuery.trim());
       onSave();
@@ -264,104 +304,108 @@ function FaithSection({
   }
 
   const desktopContent = (
-    <Card>
+    <SectionAnchor id={SECTION_FAITH}>
+      <Card>
       <CardHead tag="SECTION 2" title="신앙" progress={{ done: complete, total: 4 }} />
       <CardBody>
-        <Row label="출석 교회명 / 교단" required>
-          <div className="flex gap-2">
+          <Row label="출석 교회명 / 교단" required>
+            <div className="flex gap-2">
+              <Input
+                value={church}
+                onChange={(e) => setChurch(e.target.value)}
+                onBlur={onSave}
+                aria-label="출석 교회명 및 교단"
+                layout="fill"
+                placeholder="교회명을 검색해 주세요"
+              />
+              <Button variant="secondary" size="md" type="button" onClick={() => setChurchSearchOpen(true)}>
+                교회 검색
+              </Button>
+            </div>
+          </Row>
+          <Row label="담임목사님 성함" required>
             <Input
-              value={church}
-              onChange={(e) => setChurch(e.target.value)}
+              value={pastor}
+              onChange={(e) => setPastor(e.target.value)}
               onBlur={onSave}
-              aria-label="출석 교회명 및 교단"
-              layout="fill"
-              placeholder="교회명을 검색해 주세요"
+              aria-label="담임목사님 성함"
+              placeholder="담임목사님 성함을 입력해 주세요"
             />
-            <Button variant="secondary" size="md" type="button" onClick={() => setChurchSearchOpen(true)}>
-              교회 검색
-            </Button>
-          </div>
-        </Row>
-        <Row label="담임목사님 성함" required>
+          </Row>
+          <Row label="교회 주소" required>
+            <div className="flex gap-2">
+              <Input
+                value={churchAddr}
+                onChange={(e) => setChurchAddr(e.target.value)}
+                onBlur={onSave}
+                aria-label="교회 주소"
+                layout="fill"
+                placeholder="교회 주소를 검색해 주세요"
+              />
+              <Button variant="secondary" size="md" type="button" onClick={() => setAddrModalOpen(true)}>
+                주소 찾기
+              </Button>
+            </div>
+          </Row>
+          <Row label="모태신앙 여부" required>
+            <RadioGroup
+              name="nativeFaith"
+              options={["그렇다", "그렇지 않다", "모태신앙은 아니지만 현재 믿고 있다"]}
+              value={nativeFaith}
+              onChange={(v) => { setNativeFaith(v); onSave(); }}
+              aria-required
+            />
+          </Row>
+      </CardBody>
+      </Card>
+    </SectionAnchor>
+  );
+
+  const mobileContent = (
+    <SectionAnchor id={SECTION_FAITH}>
+    <MobileCard num={2} title="신앙" progress={{ done: complete, total: 4 }}>
+        <MobileField label="출석 교회명 / 교단" required>
+          <Input
+            value={church}
+            onChange={(e) => setChurch(e.target.value)}
+            onBlur={onSave}
+            aria-label="출석 교회명 및 교단"
+            placeholder="교회명을 검색해 주세요"
+          />
+          <Button variant="secondary" size="md" type="button" layout="full" onClick={() => setChurchSearchOpen(true)}>
+            교회 검색
+          </Button>
+        </MobileField>
+        <MobileField label="담임목사님 성함" required>
           <Input
             value={pastor}
             onChange={(e) => setPastor(e.target.value)}
             onBlur={onSave}
             aria-label="담임목사님 성함"
-            placeholder="담임목사님 성함을 입력해 주세요"
           />
-        </Row>
-        <Row label="교회 주소" required>
-          <div className="flex gap-2">
-            <Input
-              value={churchAddr}
-              onChange={(e) => setChurchAddr(e.target.value)}
-              onBlur={onSave}
-              aria-label="교회 주소"
-              layout="fill"
-              placeholder="교회 주소를 검색해 주세요"
-            />
-            <Button variant="secondary" size="md" type="button" onClick={() => setAddrModalOpen(true)}>
-              주소 찾기
-            </Button>
-          </div>
-        </Row>
-        <Row label="모태신앙 여부" required>
+        </MobileField>
+        <MobileField label="교회 주소" required>
+          <Input
+            value={churchAddr}
+            onChange={(e) => setChurchAddr(e.target.value)}
+            onBlur={onSave}
+            aria-label="교회 주소"
+          />
+          <Button variant="secondary" size="md" type="button" layout="full" onClick={() => setAddrModalOpen(true)}>
+            주소 찾기
+          </Button>
+        </MobileField>
+        <MobileField label="모태신앙 여부" required>
           <RadioGroup
-            name="nativeFaith"
+            name="m-nativeFaith"
             options={["그렇다", "그렇지 않다", "모태신앙은 아니지만 현재 믿고 있다"]}
             value={nativeFaith}
             onChange={(v) => { setNativeFaith(v); onSave(); }}
             aria-required
           />
-        </Row>
-      </CardBody>
-    </Card>
-  );
-
-  const mobileContent = (
-    <MobileCard num={2} title="신앙" progress={{ done: complete, total: 4 }}>
-      <MobileField label="출석 교회명 / 교단" required>
-        <Input
-          value={church}
-          onChange={(e) => setChurch(e.target.value)}
-          onBlur={onSave}
-          aria-label="출석 교회명 및 교단"
-          placeholder="교회명을 검색해 주세요"
-        />
-        <Button variant="secondary" size="md" type="button" layout="full" onClick={() => setChurchSearchOpen(true)}>
-          교회 검색
-        </Button>
-      </MobileField>
-      <MobileField label="담임목사님 성함" required>
-        <Input
-          value={pastor}
-          onChange={(e) => setPastor(e.target.value)}
-          onBlur={onSave}
-          aria-label="담임목사님 성함"
-        />
-      </MobileField>
-      <MobileField label="교회 주소" required>
-        <Input
-          value={churchAddr}
-          onChange={(e) => setChurchAddr(e.target.value)}
-          onBlur={onSave}
-          aria-label="교회 주소"
-        />
-        <Button variant="secondary" size="md" type="button" layout="full" onClick={() => setAddrModalOpen(true)}>
-          주소 찾기
-        </Button>
-      </MobileField>
-      <MobileField label="모태신앙 여부" required>
-        <RadioGroup
-          name="m-nativeFaith"
-          options={["그렇다", "그렇지 않다", "모태신앙은 아니지만 현재 믿고 있다"]}
-          value={nativeFaith}
-          onChange={(v) => { setNativeFaith(v); onSave(); }}
-          aria-required
-        />
-      </MobileField>
+        </MobileField>
     </MobileCard>
+    </SectionAnchor>
   );
 
   return (
@@ -397,19 +441,21 @@ function FaithSection({
 }
 
 /* ===== Section 4 ===== */
-function AppearanceSection({
+const AppearanceSection = ({
   onSave,
   onProgressChange,
+  onMissingFieldsChange,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
-}) {
+  onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
+}) => {
   const [height, setHeight] = useState("");
   const [bloodType, setBloodType] = useState("");
   const [bodyType, setBodyType] = useState("");
   const [styleValue, setStyleValue] = useState<Record<string, string[]>>({
-    외모: [],
-    성격: [],
+    "외모 스타일": [],
+    "성격/기질": [],
     성품: [],
   });
   const selectedStyles = Object.values(styleValue).reduce((sum, values) => sum + values.length, 0);
@@ -423,83 +469,96 @@ function AppearanceSection({
     onProgressChange({ done: complete, total: 4 });
   }, [complete, onProgressChange]);
 
+  useEffect(() => {
+    const missing: MissingRequiredField[] = [];
+    if (!height.trim()) missing.push({ id: SECTION_APPEARANCE, label: "신장" });
+    if (!bloodType) missing.push({ id: SECTION_APPEARANCE, label: "혈액형" });
+    if (!bodyType) missing.push({ id: SECTION_APPEARANCE, label: "체형" });
+    if (selectedStyles === 0) missing.push({ id: SECTION_APPEARANCE, label: "스타일" });
+    onMissingFieldsChange(missing);
+  }, [height, bloodType, bodyType, selectedStyles, onMissingFieldsChange]);
+
   const styleCountBadge = (
     <CountPill done={selectedStyles} total={STYLE_SELECTION_MAX} />
   );
 
   const desktopContent = (
-    <Card>
+    <SectionAnchor id={SECTION_APPEARANCE}>
+      <Card>
       <CardHead tag="SECTION 4" title="신체 &amp; 스타일" progress={{ done: complete, total: 4 }} />
       <CardBody>
-        <Row label="신장" required>
-          <Input
-            type="number"
-            value={height}
-            onChange={(e) => setHeight(e.target.value)}
-            onBlur={onSave}
-            suffix="cm"
-            fieldWidth="height"
-            min={140}
-            max={220}
-            aria-required
-            aria-label="신장"
-          />
-        </Row>
-        <Row label="혈액형" required>
-          <RadioGroup
-            name="bloodType"
-            options={["A형", "B형", "AB형", "O형", "모름"]}
-            value={bloodType}
-            onChange={(v) => { setBloodType(v); onSave(); }}
-            aria-required
-          />
-        </Row>
-        <Row label="체형" required>
-          <RadioGroup
-            name="bodyType"
-            options={["슬림", "슬림탄탄", "보통", "근육질", "통통", "글래머"]}
-            value={bodyType}
-            onChange={(v) => { setBodyType(v); onSave(); }}
-            aria-required
-          />
-        </Row>
-        <Row label="스타일" required labelAlign="start" labelBadge={styleCountBadge}>
+          <Row label="신장" required>
+            <Input
+              type="number"
+              value={height}
+              onChange={(e) => setHeight(e.target.value)}
+              onBlur={onSave}
+              suffix="cm"
+              fieldWidth="height"
+              min={140}
+              max={220}
+              aria-required
+              aria-label="신장"
+            />
+          </Row>
+          <Row label="혈액형" required>
+            <RadioGroup
+              name="bloodType"
+              options={["A형", "B형", "AB형", "O형"]}
+              value={bloodType}
+              onChange={(v) => { setBloodType(v); onSave(); }}
+              aria-required
+            />
+          </Row>
+          <Row label="체형" required>
+            <RadioGroup
+              name="bodyType"
+              options={["슬림", "슬림탄탄", "보통", "통통", "근육질", "글래머"]}
+              value={bodyType}
+              onChange={(v) => { setBodyType(v); onSave(); }}
+              aria-required
+            />
+          </Row>
+          <Row label="스타일" required labelAlign="start" labelBadge={styleCountBadge}>
+            <StyleChipGroup
+              groups={STYLE_GROUPS}
+              maxTotal={STYLE_SELECTION_MAX}
+              value={styleValue}
+              onChange={(v) => { setStyleValue(v); onSave(); }}
+            />
+          </Row>
+      </CardBody>
+      </Card>
+    </SectionAnchor>
+  );
+
+  const mobileContent = (
+    <SectionAnchor id={SECTION_APPEARANCE}>
+    <MobileCard num={4} title="신체 &amp; 스타일" progress={{ done: complete, total: 4 }}>
+        <MobileField label="신장" required>
+          <Input type="number" value={height} onChange={(e) => setHeight(e.target.value)} onBlur={onSave} suffix="cm" fieldWidth="heightCompact" min={140} max={220} aria-label="신장" />
+        </MobileField>
+        <MobileField label="혈액형" required>
+          <RadioGroup name="m-bloodType" options={["A형", "B형", "AB형", "O형", "모름"]} value={bloodType} onChange={(v) => { setBloodType(v); onSave(); }} aria-required />
+        </MobileField>
+        <MobileField label="체형" required>
+          <RadioGroup name="m-bodyType" options={["슬림", "슬림탄탄", "보통", "근육질", "통통", "글래머"]} value={bodyType} onChange={(v) => { setBodyType(v); onSave(); }} aria-required />
+        </MobileField>
+        <MobileField
+          label="스타일"
+          required
+          desc="외모 스타일·성격/기질·성품 각 그룹에서 자유롭게 선택 (합계 최대 5개)."
+          labelBadge={<CountPill done={selectedStyles} total={STYLE_SELECTION_MAX} size="sm" />}
+        >
           <StyleChipGroup
             groups={STYLE_GROUPS}
             maxTotal={STYLE_SELECTION_MAX}
             value={styleValue}
             onChange={(v) => { setStyleValue(v); onSave(); }}
           />
-        </Row>
-      </CardBody>
-    </Card>
-  );
-
-  const mobileContent = (
-    <MobileCard num={4} title="신체 &amp; 스타일" progress={{ done: complete, total: 4 }}>
-      <MobileField label="신장" required>
-        <Input type="number" value={height} onChange={(e) => setHeight(e.target.value)} onBlur={onSave} suffix="cm" fieldWidth="heightCompact" min={140} max={220} aria-label="신장" />
-      </MobileField>
-      <MobileField label="혈액형" required>
-        <RadioGroup name="m-bloodType" options={["A형", "B형", "AB형", "O형", "모름"]} value={bloodType} onChange={(v) => { setBloodType(v); onSave(); }} aria-required />
-      </MobileField>
-      <MobileField label="체형" required>
-        <RadioGroup name="m-bodyType" options={["슬림", "슬림탄탄", "보통", "근육질", "통통", "글래머"]} value={bodyType} onChange={(v) => { setBodyType(v); onSave(); }} aria-required />
-      </MobileField>
-      <MobileField
-        label="스타일"
-        required
-        desc="외모·성격·성품 각 그룹에서 자유롭게 선택 (합계 최대 5개)."
-        labelBadge={<CountPill done={selectedStyles} total={STYLE_SELECTION_MAX} size="sm" />}
-      >
-        <StyleChipGroup
-          groups={STYLE_GROUPS}
-          maxTotal={STYLE_SELECTION_MAX}
-          value={styleValue}
-          onChange={(v) => { setStyleValue(v); onSave(); }}
-        />
-      </MobileField>
+        </MobileField>
     </MobileCard>
+    </SectionAnchor>
   );
 
   return (
@@ -511,13 +570,15 @@ function AppearanceSection({
 }
 
 /* ===== Section 5 ===== */
-function LifestyleSection({
+const LifestyleSection = ({
   onSave,
   onProgressChange,
+  onMissingFieldsChange,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
-}) {
+  onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
+}) => {
   const [drinking, setDrinking] = useState("");
   const [smoking, setSmoking] = useState("");
   const [childrenPlan, setChildrenPlan] = useState("");
@@ -527,8 +588,17 @@ function LifestyleSection({
     onProgressChange({ done: complete, total: 3 });
   }, [complete, onProgressChange]);
 
+  useEffect(() => {
+    const missing: MissingRequiredField[] = [];
+    if (!drinking) missing.push({ id: SECTION_LIFESTYLE, label: "음주 여부" });
+    if (!smoking) missing.push({ id: SECTION_LIFESTYLE, label: "흡연 여부" });
+    if (!childrenPlan) missing.push({ id: SECTION_LIFESTYLE, label: "자녀 계획" });
+    onMissingFieldsChange(missing);
+  }, [drinking, smoking, childrenPlan, onMissingFieldsChange]);
+
   const desktopContent = (
-    <Card>
+    <SectionAnchor id={SECTION_LIFESTYLE}>
+      <Card>
       <CardHead tag="SECTION 5" title="생활 습관 &amp; 가치관" progress={{ done: complete, total: 3 }} />
       <CardBody>
         <Row label="음주 여부" required>
@@ -559,21 +629,24 @@ function LifestyleSection({
           />
         </Row>
       </CardBody>
-    </Card>
+      </Card>
+    </SectionAnchor>
   );
 
   const mobileContent = (
+    <SectionAnchor id={SECTION_LIFESTYLE}>
     <MobileCard num={5} title="생활 습관 &amp; 가치관" progress={{ done: complete, total: 3 }}>
-      <MobileField label="음주 여부" required>
-        <RadioGroup name="m-drinking" options={["즐겨합니다", "보통", "어쩔 수 없을 때", "전혀 하지 않습니다"]} value={drinking} onChange={(v) => { setDrinking(v); onSave(); }} aria-required />
-      </MobileField>
-      <MobileField label="흡연 여부" required>
-        <RadioGroup name="m-smoking" options={["전혀 안 함", "가끔", "자주"]} value={smoking} onChange={(v) => { setSmoking(v); onSave(); }} aria-required />
-      </MobileField>
-      <MobileField label="자녀 계획" required>
-        <RadioGroup name="m-childrenPlan" options={["자녀를 갖기 희망", "자녀 계획 없음", "상호 논의 후 결정", "고민중임"]} value={childrenPlan} onChange={(v) => { setChildrenPlan(v); onSave(); }} aria-required />
-      </MobileField>
+        <MobileField label="음주 여부" required>
+          <RadioGroup name="m-drinking" options={["즐겨합니다", "보통", "어쩔 수 없을 때", "전혀 하지 않습니다"]} value={drinking} onChange={(v) => { setDrinking(v); onSave(); }} aria-required />
+        </MobileField>
+        <MobileField label="흡연 여부" required>
+          <RadioGroup name="m-smoking" options={["전혀 안 함", "가끔", "자주"]} value={smoking} onChange={(v) => { setSmoking(v); onSave(); }} aria-required />
+        </MobileField>
+        <MobileField label="자녀 계획" required>
+          <RadioGroup name="m-childrenPlan" options={["자녀를 갖기 희망", "자녀 계획 없음", "상호 논의 후 결정", "고민중임"]} value={childrenPlan} onChange={(v) => { setChildrenPlan(v); onSave(); }} aria-required />
+        </MobileField>
     </MobileCard>
+    </SectionAnchor>
   );
 
   return (
@@ -585,13 +658,15 @@ function LifestyleSection({
 }
 
 /* ===== Section 6 ===== */
-function PhotoSection({
+const PhotoSection = ({
   onSave,
   onProgressChange,
+  onMissingFieldsChange,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
-}) {
+  onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
+}) => {
   const [photos, setPhotos] = useState<PhotoItem[]>([{ filled: false }, { filled: false }, { filled: false }, { filled: false }]);
   const [pbPhotos, setPbPhotos] = useState<PhotoItem[]>([{ filled: false }]);
   const [deleteModal, setDeleteModal] = useState<{ index: number } | null>(null);
@@ -612,11 +687,19 @@ function PhotoSection({
     onProgressChange({ done: photoSectionDone, total: PHOTO_SECTION_PROGRESS_TOTAL });
   }, [photoSectionDone, onProgressChange]);
 
-  function requestDelete(index: number) {
+  useEffect(() => {
+    const missing: MissingRequiredField[] = [];
+    if (filledCount < REQUIRED_PROFILE_PHOTOS) {
+      missing.push({ id: SECTION_PHOTO, label: "프로필 사진" });
+    }
+    onMissingFieldsChange(missing);
+  }, [filledCount, onMissingFieldsChange]);
+
+  const requestDelete = (index: number) => {
     setDeleteModal({ index });
   }
 
-  function confirmDelete() {
+  const confirmDelete = () => {
     if (!deleteModal) return;
     setPhotos((prev) => {
       const next = prev.map((photo, i) => (i === deleteModal.index ? { filled: false } : photo));
@@ -628,34 +711,34 @@ function PhotoSection({
     onSave();
   }
 
-  function requestPbDelete(index: number) {
+  const requestPbDelete = (index: number) => {
     setPbDeleteModal({ index });
   }
 
-  function confirmPbDelete() {
+  const confirmPbDelete = () => {
     if (!pbDeleteModal) return;
     setPbPhotos((prev) => prev.map((photo, i) => (i === pbDeleteModal.index ? { filled: false } : photo)));
     setPbDeleteModal(null);
     onSave();
   }
 
-  function handleUpload(index: number, file: File) {
+  const handleUpload = (index: number, file: File) => {
     const previewUrl = URL.createObjectURL(file);
     setPhotos((prev) => prev.map((photo, i) => (i === index ? { ...photo, filled: true, previewUrl } : photo)));
     onSave();
   }
 
-  function handlePbUpload(index: number, file: File) {
+  const handlePbUpload = (index: number, file: File) => {
     const previewUrl = URL.createObjectURL(file);
     setPbPhotos((prev) => prev.map((photo, i) => (i === index ? { ...photo, filled: true, previewUrl } : photo)));
     onSave();
   }
 
-  function updatePbDescription(index: number, description: string) {
+  const updatePbDescription = (index: number, description: string) => {
     setPbPhotos((prev) => prev.map((photo, i) => (i === index ? { ...photo, description } : photo)));
   }
 
-  function addPhotobookSlot() {
+  const addPhotobookSlot = () => {
     setPbPhotos((prev) => {
       if (prev.length >= MAX_PHOTOBOOK_SLOTS) return prev;
       return [...prev, { filled: false }];
@@ -663,7 +746,7 @@ function PhotoSection({
     onSave();
   }
 
-  function removePhotobookSlot(index: number) {
+  const removePhotobookSlot = (index: number) => {
     setPbPhotos((prev) => {
       if (prev.length <= 1 || prev[index]?.filled) return prev;
       return prev.filter((_, i) => i !== index);
@@ -671,7 +754,7 @@ function PhotoSection({
     onSave();
   }
 
-  function setRepresentative(index: number) {
+  const setRepresentative = (index: number) => {
     setPhotos((prev) => {
       const next = [...prev];
       const [chosen] = next.splice(index, 1);
@@ -700,27 +783,7 @@ function PhotoSection({
     </div>
   );
 
-  const photoGuideImage = (
-    <div className="hidden h-photo-guide-height flex-none self-start xl:block">
-      <Image
-        src="/images/base-info/picture-info.png"
-        alt="사진 등록 TIP: 얼굴이 잘 보이는 좋은 사진과 피해야 할 사진 예시"
-        width={545}
-        height={900}
-        className="block h-full w-auto rounded-lg object-contain"
-      />
-    </div>
-  );
-
-  const mobilePhotoGuideImage = (
-    <Image
-      src="/images/base-info/picture-info.png"
-      alt="사진 등록 TIP: 얼굴이 잘 보이는 좋은 사진과 피해야 할 사진 예시"
-      width={545}
-      height={900}
-      className="block h-auto w-photo-guide-mobile-width rounded-lg object-contain"
-    />
-  );
+  const mobilePhotoGuide = <ProfilePhotoGuide className="mb-3 xl:hidden" />;
 
   const mobilePhotoCarousel = (
     <div className="flex w-full snap-x snap-mandatory gap-2.5 overflow-x-auto overscroll-x-contain pb-1">
@@ -814,7 +877,8 @@ function PhotoSection({
   );
 
   const desktopContent = (
-    <Card>
+    <SectionAnchor id={SECTION_PHOTO}>
+      <Card>
       <CardHead tag="SECTION 6" title="프로필 사진" progress={photoSectionProgress} />
       <CardBody>
         <Row
@@ -828,9 +892,9 @@ function PhotoSection({
             </>
           }
         >
-          <div className="flex items-start gap-4">
-            <div className="flex-none">{photoGrid}</div>
-            {photoGuideImage}
+          <div className="flex w-full min-w-0 flex-col gap-4 photo-guide-wide:flex-row photo-guide-wide:items-start">
+            <ProfilePhotoGuide className="order-1 photo-guide-wide:order-2 photo-guide-wide:h-[var(--spacing-photo-guide-height)] photo-guide-wide:w-[var(--spacing-photo-guide-width)] photo-guide-wide:shrink-0 photo-guide-wide:self-start" />
+            <div className="order-2 flex-none photo-guide-wide:order-1">{photoGrid}</div>
           </div>
           <InfoBox>이미지 파일 크기는 10MB 이하로 업로드해주세요</InfoBox>
         </Row>
@@ -840,23 +904,25 @@ function PhotoSection({
             <>
               <span className="font-semibold text-primary">최대 8장</span>
               <br />
-              나의 일상, 취미, 운동, 여행 등의 모습을 자유롭게 보여주는 공간입니다. 사진 추가 버튼을 눌러 추가해주세요.
+              나의 일상, 취미, 운동, 여행 등의 모습을 자유롭게 보여주는 공간입니다.
             </>
           }
         >
           {pbGrid}
         </Row>
       </CardBody>
-    </Card>
+      </Card>
+    </SectionAnchor>
   );
 
   const mobileContent = (
+    <SectionAnchor id={SECTION_PHOTO}>
     <MobileCard num={6} title="프로필 사진" progress={photoSectionProgress}>
-      <MobileField label="프로필 사진" required>
-        {mobilePhotoGuideImage}
-        {mobilePhotoCarousel}
-        <InfoBox>길게 누르면 위치 변경 모드. 좌/우 화살표 또는 drag로 이동.</InfoBox>
-      </MobileField>
+        <MobileField label="프로필 사진" required>
+          {mobilePhotoGuide}
+          {mobilePhotoCarousel}
+          <InfoBox>길게 누르면 위치 변경 모드. 좌/우 화살표 또는 drag로 이동.</InfoBox>
+        </MobileField>
       <MobileField
         label="포토북"
         desc={
@@ -869,6 +935,7 @@ function PhotoSection({
         {mobilePbCarousel}
       </MobileField>
     </MobileCard>
+    </SectionAnchor>
   );
 
   return (
@@ -923,12 +990,12 @@ function PhotoSection({
 }
 
 /* ===== d-footer ===== */
-function DFooter({ autoSave }: { autoSave: AutoSaveState }) {
+const DFooter = ({ autoSave }: { autoSave: AutoSaveState }) => {
   const [desktopStyle, setDesktopStyle] = useState<CSSProperties>({});
   const [synced, setSynced] = useState(false);
 
   useEffect(() => {
-    function syncFooter() {
+    const syncFooter = () => {
       const frame = document.querySelector<HTMLElement>("[data-cmate-frame]");
       if (!frame || window.innerWidth < 1280) return;
 
@@ -997,7 +1064,7 @@ function DFooter({ autoSave }: { autoSave: AutoSaveState }) {
   );
 }
 
-function ProgressHero({ progress }: { progress: ProgressSection }) {
+const ProgressHero = ({ progress }: { progress: ProgressSection }) => {
   return (
     <>
       <div className="bg-page px-8 pt-14 pb-8 hidden xl:block">
@@ -1030,8 +1097,12 @@ function ProgressHero({ progress }: { progress: ProgressSection }) {
 }
 
 /* ===== Root ===== */
-export function BaseInfoForm() {
+export const BaseInfoForm = () => {
   const [autoSave, setAutoSave] = useState<AutoSaveState>("idle");
+  const [validationModalOpen, setValidationModalOpen] = useState(false);
+  const [missingBySection, setMissingBySection] = useState<
+    Partial<Record<BaseInfoSectionKey, MissingRequiredField[]>>
+  >({});
   const [progressMap, setProgressMap] = useState<ProgressMap>({
     family: { done: 0, total: 2 },
     faith: { done: 0, total: 4 },
@@ -1054,6 +1125,25 @@ export function BaseInfoForm() {
     });
   }, []);
 
+  const registerMissingFields = useCallback((section: BaseInfoSectionKey, missing: MissingRequiredField[]) => {
+    setMissingBySection((current) => {
+      const prev = current[section];
+      if (
+        prev &&
+        prev.length === missing.length &&
+        prev.every((field, index) => field.id === missing[index]?.id && field.label === missing[index]?.label)
+      ) {
+        return current;
+      }
+      return { ...current, [section]: missing };
+    });
+  }, []);
+
+  const allMissingFields = useMemo(
+    () => BASE_INFO_SECTION_ORDER.flatMap((section) => missingBySection[section] ?? []),
+    [missingBySection]
+  );
+
   const triggerAutoSave = useCallback(() => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     setAutoSave("idle");
@@ -1065,21 +1155,76 @@ export function BaseInfoForm() {
     }, 500);
   }, []);
 
-  function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Validation + next step would go here
+    if (allMissingFields.length === 0) {
+      return;
+    }
+    setValidationModalOpen(true);
+  }
+
+  const handleValidationConfirm = () => {
+    const targetId = allMissingFields[0]?.id;
+    setValidationModalOpen(false);
+    if (!targetId) return;
+    window.setTimeout(() => {
+      scrollToFieldAnchor(targetId);
+    }, 0);
   }
 
   return (
-    <form noValidate onSubmit={handleSubmit} className="relative flex flex-col xl:gap-5 gap-3 pb-32 xl:pb-44">
-      <ProgressHero progress={progress} />
-      <FamilySection onSave={triggerAutoSave} onProgressChange={(section) => updateProgress("family", section)} />
-      <FaithSection onSave={triggerAutoSave} onProgressChange={(section) => updateProgress("faith", section)} />
-      <EducationSection onSave={triggerAutoSave} onProgressChange={(section) => updateProgress("education", section)} />
-      <AppearanceSection onSave={triggerAutoSave} onProgressChange={(section) => updateProgress("appearance", section)} />
-      <LifestyleSection onSave={triggerAutoSave} onProgressChange={(section) => updateProgress("lifestyle", section)} />
-      <PhotoSection onSave={triggerAutoSave} onProgressChange={(section) => updateProgress("photo", section)} />
-      <DFooter autoSave={autoSave} />
-    </form>
+    <>
+      <form noValidate onSubmit={handleSubmit} className="relative flex flex-col xl:gap-5 gap-3 pb-32 xl:pb-44">
+        <ProgressHero progress={progress} />
+        <FamilySection
+          onSave={triggerAutoSave}
+          onProgressChange={(section) => updateProgress("family", section)}
+          onMissingFieldsChange={(missing) => registerMissingFields("family", missing)}
+        />
+        <FaithSection
+          onSave={triggerAutoSave}
+          onProgressChange={(section) => updateProgress("faith", section)}
+          onMissingFieldsChange={(missing) => registerMissingFields("faith", missing)}
+        />
+        <EducationSection
+          onSave={triggerAutoSave}
+          onProgressChange={(section) => updateProgress("education", section)}
+          onMissingFieldsChange={(missing) => registerMissingFields("education", missing)}
+        />
+        <AppearanceSection
+          onSave={triggerAutoSave}
+          onProgressChange={(section) => updateProgress("appearance", section)}
+          onMissingFieldsChange={(missing) => registerMissingFields("appearance", missing)}
+        />
+        <LifestyleSection
+          onSave={triggerAutoSave}
+          onProgressChange={(section) => updateProgress("lifestyle", section)}
+          onMissingFieldsChange={(missing) => registerMissingFields("lifestyle", missing)}
+        />
+        <PhotoSection
+          onSave={triggerAutoSave}
+          onProgressChange={(section) => updateProgress("photo", section)}
+          onMissingFieldsChange={(missing) => registerMissingFields("photo", missing)}
+        />
+        <DFooter autoSave={autoSave} />
+      </form>
+
+      <ConfirmModal
+        open={validationModalOpen}
+        onClose={() => setValidationModalOpen(false)}
+        title="입력하지 않은 항목이 있습니다"
+        confirmLabel="확인"
+        cancelLabel={false}
+        onConfirm={handleValidationConfirm}
+        width="sm"
+      >
+        <p className="text-sm text-text-secondary m-0">다음 항목을 입력해 주세요.</p>
+        <ul className="m-0 pl-5 flex flex-col gap-1.5 text-sm text-text list-disc">
+          {allMissingFields.map((field) => (
+            <li key={`${field.id}-${field.label}`}>{field.label}</li>
+          ))}
+        </ul>
+      </ConfirmModal>
+    </>
   );
 }

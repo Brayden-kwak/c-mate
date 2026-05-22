@@ -14,7 +14,10 @@ const STEPS: Step[] = [
 
 export function Stepper() {
   return (
-    <div className="bg-surface border-b border-border px-8 flex rounded-t-lg">
+    <div
+      data-desktop-stepper
+      className="sticky top-0 z-(--z-sticky) flex rounded-t-lg border-b border-border bg-surface px-8"
+    >
       {STEPS.map((step) => {
         const isCurrent = step.state === "current";
         const isDone = step.state === "done";

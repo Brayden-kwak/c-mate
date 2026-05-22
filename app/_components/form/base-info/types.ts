@@ -14,3 +14,28 @@ export type ProgressMap = Record<
   "family" | "faith" | "education" | "appearance" | "lifestyle" | "photo",
   ProgressSection
 >;
+
+export type MissingRequiredField = {
+  id: string;
+  label: string;
+};
+
+export type BaseInfoSectionKey = keyof ProgressMap;
+
+export const BASE_INFO_SECTION_ORDER: BaseInfoSectionKey[] = [
+  "family",
+  "faith",
+  "education",
+  "appearance",
+  "lifestyle",
+  "photo",
+];
+
+export const BASE_INFO_SECTION_ANCHOR_ID: Record<BaseInfoSectionKey, string> = {
+  family: "section-family",
+  faith: "section-faith",
+  education: "section-education",
+  appearance: "section-appearance",
+  lifestyle: "section-lifestyle",
+  photo: "section-photo",
+};

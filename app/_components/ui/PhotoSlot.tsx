@@ -98,7 +98,7 @@ export function PhotoSlot({ variant, filled, previewUrl, onDelete, onSetRepresen
       <span className="text-[32px] text-text-tertiary font-light leading-none">＋</span>
       {isRepresentative && (
         <span className="mt-2 max-w-full text-[11px] font-medium leading-snug text-text-secondary">
-          정면 얼굴이 잘 나온 사진 (타인에게 먼저 노출됩니다.)
+          정면 얼굴이 잘 나온 사진 <br/> (타인에게 먼저 노출됩니다.)
         </span>
       )}
       {isRepresentative && <RepresentativeBadge />}
