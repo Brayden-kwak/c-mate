@@ -44,7 +44,7 @@ export function StyleChipGroup({ groups, maxTotal = 5, value = {}, onChange }: P
         const groupSelected = selected[group.label] ?? [];
         return (
           <div key={group.label} className="flex flex-col gap-2">
-            <span className="text-xs font-semibold text-text-secondary">{group.label}</span>
+            <span className="text-xs font-semibold text-primary">{group.label}</span>
             <div className="flex flex-wrap gap-1.5">
               {group.options.map((opt) => {
                 const isSelected = groupSelected.includes(opt);

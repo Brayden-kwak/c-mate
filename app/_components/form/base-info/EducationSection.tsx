@@ -11,13 +11,17 @@ import { MobileCard, MobileField } from "@/app/_components/ui/MobileCard";
 import { ConfirmModal } from "@/app/_components/modals/ConfirmModal";
 import { Select } from "@/app/_components/ui/Select";
 import { Checkbox } from "@/app/_components/ui/Checkbox";
-import type { ProgressSection } from "./types";
+import { SectionAnchor } from "./SectionAnchor";
+import { BASE_INFO_SECTION_ANCHOR_ID, type MissingRequiredField, type ProgressSection } from "./types";
+
+const SECTION_EDUCATION = BASE_INFO_SECTION_ANCHOR_ID.education;
 
 type EduRow = { id: number; degree: string; school: string; major: string };
 
 type Props = {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
+  onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
 };
 
 const DEGREE_ROWS: Record<string, string[]> = {
@@ -29,7 +33,7 @@ const DEGREE_ROWS: Record<string, string[]> = {
 };
 const EDUCATION_OPTIONS = ["고졸", "전문대", "학사", "석사", "박사"];
 
-export function EducationSection({ onSave, onProgressChange }: Props) {
+export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChange }: Props) => {
   const [education, setEducation] = useState("");
   const [eduRows, setEduRows] = useState<EduRow[]>([]);
   const [pendingEduChange, setPendingEduChange] = useState<{
@@ -57,19 +61,34 @@ export function EducationSection({ onSave, onProgressChange }: Props) {
     onProgressChange({ done: complete, total: 5 });
   }, [complete, onProgressChange]);
 
-  function handleDegreeChange(newDegree: string) {
-    const newTags = DEGREE_ROWS[newDegree] ?? [];
-    const rowsToRemove = eduRows.filter((row) => !newTags.includes(row.degree));
-    const affected = rowsToRemove.filter((row) => row.school || row.major);
-    if (affected.length > 0) {
-      setPendingEduChange({ newDegree, affected });
-    } else {
-      applyDegreeChange(newDegree);
+  useEffect(() => {
+    const missing: MissingRequiredField[] = [];
+    if (!education) {
+      missing.push({ id: SECTION_EDUCATION, label: "최종 학력" });
+    } else if (!hasCompleteSchoolRow) {
+      missing.push({ id: SECTION_EDUCATION, label: "학교명 / 전공" });
     }
-    onSave();
-  }
+    if (!job.trim()) {
+      missing.push({ id: SECTION_EDUCATION, label: "직업 / 직무" });
+    }
+    if (!workplace.trim() || workplace.includes("*")) {
+      missing.push({ id: SECTION_EDUCATION, label: "직장명" });
+    }
+    if (!salary && !salaryHidden) {
+      missing.push({ id: SECTION_EDUCATION, label: "연봉" });
+    }
+    onMissingFieldsChange(missing);
+  }, [
+    education,
+    hasCompleteSchoolRow,
+    job,
+    workplace,
+    salary,
+    salaryHidden,
+    onMissingFieldsChange,
+  ]);
 
-  function applyDegreeChange(newDegree: string) {
+  const applyDegreeChange = (newDegree: string) => {
     const newTags = DEGREE_ROWS[newDegree] ?? [];
     const kept = eduRows.filter((row) => newTags.includes(row.degree));
     const existing = new Set(kept.map((row) => row.degree));
@@ -79,34 +98,46 @@ export function EducationSection({ onSave, onProgressChange }: Props) {
     setEduRows([...kept, ...toAdd]);
     setEducation(newDegree);
     setPendingEduChange(null);
-  }
+  };
 
-  function updateEduRow(id: number, field: keyof EduRow, val: string) {
+  const handleDegreeChange = (newDegree: string) => {
+    const newTags = DEGREE_ROWS[newDegree] ?? [];
+    const rowsToRemove = eduRows.filter((row) => !newTags.includes(row.degree));
+    const affected = rowsToRemove.filter((row) => row.school || row.major);
+    if (affected.length > 0) {
+      setPendingEduChange({ newDegree, affected });
+    } else {
+      applyDegreeChange(newDegree);
+    }
+    onSave();
+  };
+
+  const updateEduRow = (id: number, field: keyof EduRow, val: string) => {
     setEduRows((rows) => rows.map((row) => (row.id === id ? { ...row, [field]: val } : row)));
-  }
+  };
 
-  function removeEduRow(id: number) {
+  const removeEduRow = (id: number) => {
     setEduRows((rows) => rows.filter((row) => row.id !== id));
     onSave();
-  }
+  };
 
-  function applyWorkplace() {
+  const applyWorkplace = () => {
     if (workplaceQuery.trim()) {
       setWorkplace(workplaceQuery.trim());
       onSave();
     }
     setWorkplaceModalOpen(false);
     setWorkplaceQuery("");
-  }
+  };
 
-  function applyJob() {
+  const applyJob = () => {
     if (jobQuery.trim()) {
       setJob(jobQuery.trim());
       onSave();
     }
     setJobModalOpen(false);
     setJobQuery("");
-  }
+  };
 
   const schoolMajorPlaceholder = (
     <p className="text-[13px] text-text-secondary m-0">최종 학력을 선택해주세요.</p>
@@ -203,26 +234,26 @@ export function EducationSection({ onSave, onProgressChange }: Props) {
   );
 
   const desktopContent = (
-    <Card>
+    <SectionAnchor id={SECTION_EDUCATION}>
+      <Card>
       <CardHead tag="SECTION 3" title="학력 &amp; 직장" progress={{ done: complete, total: 5 }} />
       <CardBody>
-        <Row label="최종 학력" required>
-          <RadioGroup
-            name="education"
-            options={EDUCATION_OPTIONS}
-            value={education}
-            onChange={handleDegreeChange}
-            aria-required
-          />
-          <InfoBox>학사 → 석사로 변경 시 기존 학사 행은 보존됩니다.</InfoBox>
-        </Row>
-        <Row
-          label="학교명 / 전공"
-          required
-          labelAlign={education ? "start" : "center"}
-        >
-          {eduStack}
-        </Row>
+          <Row label="최종 학력" required>
+            <RadioGroup
+              name="education"
+              options={EDUCATION_OPTIONS}
+              value={education}
+              onChange={handleDegreeChange}
+              aria-required
+            />
+          </Row>
+          <Row
+            label="학교명 / 전공"
+            required
+            labelAlign={education ? "start" : "center"}
+          >
+            {eduStack}
+          </Row>
         <Row label="직업 / 직무" required>
           <div className="flex gap-2">
             <Input
@@ -265,17 +296,19 @@ export function EducationSection({ onSave, onProgressChange }: Props) {
           <InfoBox>비공개 시 다른 회원에게 노출되지 않으며, 매니저 매칭에만 활용됩니다.</InfoBox>
         </Row>
       </CardBody>
-    </Card>
+      </Card>
+    </SectionAnchor>
   );
 
   const mobileContent = (
+    <SectionAnchor id={SECTION_EDUCATION}>
     <MobileCard num={3} title="학력 &amp; 직장" progress={{ done: complete, total: 5 }}>
-      <MobileField label="최종 학력" required>
-        <RadioGroup name="m-education" options={EDUCATION_OPTIONS} value={education} onChange={handleDegreeChange} aria-required />
-      </MobileField>
-      <MobileField label="학교 / 전공" required>
-        {mobileEduStack}
-      </MobileField>
+        <MobileField label="최종 학력" required>
+          <RadioGroup name="m-education" options={EDUCATION_OPTIONS} value={education} onChange={handleDegreeChange} aria-required />
+        </MobileField>
+        <MobileField label="학교 / 전공" required>
+          {mobileEduStack}
+        </MobileField>
       <MobileField label="직업 / 직무" required>
         <Input value={job} onChange={(e) => setJob(e.target.value)} onBlur={onSave} aria-label="직업 / 직무" />
         <Button variant="secondary" size="md" type="button" layout="full" onClick={() => setJobModalOpen(true)}>
@@ -299,6 +332,7 @@ export function EducationSection({ onSave, onProgressChange }: Props) {
         <InfoBox>비공개 시 다른 회원에게 노출되지 않으며, 매니저 매칭에만 활용됩니다.</InfoBox>
       </MobileField>
     </MobileCard>
+    </SectionAnchor>
   );
 
   return (

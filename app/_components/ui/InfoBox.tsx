@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { InfoBoxIcon } from "@/app/_components/ui/InfoBoxIcon";
 
 type Variant = "info" | "warning" | "success" | "danger";
 
@@ -14,8 +15,7 @@ const variantClass: Record<Variant, string> = {
   danger: "bg-danger-light text-danger",
 };
 
-const icon: Record<Variant, string> = {
-  info: "ⓘ",
+const icon: Record<Exclude<Variant, "info">, string> = {
   warning: "⚠",
   success: "✓",
   danger: "!",
@@ -26,7 +26,13 @@ export function InfoBox({ variant = "info", children }: Props) {
     <div
       className={`flex items-start gap-2.5 px-3.5 py-2.5 rounded-md text-[13px] leading-relaxed ${variantClass[variant]}`}
     >
-      <span className="shrink-0 font-bold mt-px">{icon[variant]}</span>
+      {variant === "info" ? (
+        <InfoBoxIcon />
+      ) : (
+        <span className="inline-flex size-4 shrink-0 items-center justify-center font-bold leading-none mt-px">
+          {icon[variant]}
+        </span>
+      )}
       <span>{children}</span>
     </div>
   );

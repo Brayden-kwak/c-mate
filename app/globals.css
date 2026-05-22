@@ -82,7 +82,19 @@
   --spacing-photo-grid-gap: 0.875rem;
   --spacing-photo-grid-gap-mobile: 0.625rem;
   --spacing-photo-guide-height: calc((var(--spacing-photo-slot-height) * 2) + var(--spacing-photo-grid-gap));
+  --spacing-photo-guide-width: calc(var(--spacing-photo-guide-height) * 545 / 900);
   --spacing-photo-guide-mobile-width: calc((var(--spacing-photo-slot-width) * 2) + var(--spacing-photo-grid-gap-mobile));
+  --spacing-photo-guide-thumb-width: calc(
+    (var(--spacing-photo-guide-width) - var(--spacing-6) - var(--spacing-3)) / 2
+  );
+  --spacing-photo-guide-thumb-height: calc(var(--spacing-photo-guide-thumb-width) * 307 / 517);
+  /* 769~1429px: 프로필 슬롯 2열 너비에 맞춘 컴팩트 예시 썸네일 */
+  --spacing-photo-guide-thumb-width-compact: calc(
+    (var(--spacing-photo-guide-mobile-width) - var(--spacing-7) - var(--spacing-3)) / 2
+  );
+  --spacing-photo-guide-thumb-height-compact: calc(
+    var(--spacing-photo-guide-thumb-width-compact) * 307 / 517
+  );
   --spacing-photobook-slot-width: 20.75rem;
   --spacing-photobook-slot-height: 15.5625rem;
   --spacing-form-content-width: 70rem;
@@ -90,6 +102,11 @@
   --spacing-form-footer-width: min(calc(100% - var(--spacing-form-shell-offset)), var(--spacing-form-content-width));
   /* 모바일 앱 헤더: topbar(h-14) + step 칩 영역 */
   --spacing-mobile-shell-header: 7rem;
+  --spacing-mobile-progress-chrome: 3.5rem;
+  --spacing-form-field-scroll-margin: calc(
+    var(--spacing-mobile-shell-header) + var(--spacing-mobile-progress-chrome) - 3.5rem
+  );
+  --spacing-form-field-scroll-margin-desktop: 3.5rem;
 
   /* Shadow */
   --shadow-footer: 0 -8px 24px rgba(15, 23, 42, 0.06);
@@ -127,6 +144,9 @@
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --font-weight-extrabold: 800;
+
+  /* 프로필 사진 TIP: 1280~1429px 슬롯 상단, 1430px+ 슬롯 옆 */
+  --breakpoint-photo-guide-wide: 89.375rem;
 }
 
 body {
