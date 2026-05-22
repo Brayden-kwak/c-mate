@@ -80,18 +80,69 @@ img { max-width: 100%; height: auto; }
 <h1 id="ux-v2">크리스천메이트 · 기본정보 작성 페이지 UX 개선 기획서</h1>
 <blockquote>
 <strong>기획 범위</strong>: 프로필 작성 5단계 중 1단계 "기본정보" (base-info 페이지)<br/>
-<strong>작성일</strong>: 2026년 05월 21일<br/>
-<strong>버전</strong>: v1<br/>
+<strong>최초 작성일</strong>: 2026년 05월 21일 &nbsp;·&nbsp; <strong>최종 갱신일</strong>: 2026년 05월 22일<br/>
+<strong>버전</strong>: v2 (Next.js 16 구현 반영본)<br/>
 <strong>작성자</strong>: 곽지훈<br/>
 <strong>분석 방법</strong>: seunglee89 계정으로 직접 로그인 후 데스크탑·모바일 양 뷰포트에서 인터랙션 검증<br/>
+<strong>구현 기준</strong>: Next.js 16 (App Router · RSC) · Tailwind v4 (@theme 토큰) · Pretendard variable
 </blockquote>
 <hr />
 
+<h2 id="0-at-a-glance">0. 한눈에 보기 — 문제 정의 · 해결 방법 마스터 표</h2>
+<p>본 페이지에서 식별된 <strong>전체 24개 이슈</strong>를 한 표로 통합. ID, 분류, 문제 정의, 해결 방법, 우선순위, 데이터 영향, <strong>v2 구현 상태</strong>를 한 줄에 표시한다. 자세한 사양은 본문 4장(개선안)을 참고.</p>
+
+<table>
+<thead>
+<tr>
+  <th style="width:5%">ID</th>
+  <th style="width:8%">분류</th>
+  <th style="width:18%">문제 정의</th>
+  <th style="width:28%">해결 방법</th>
+  <th style="width:6%">우선</th>
+  <th style="width:8%">데이터</th>
+  <th style="width:9%">구현</th>
+  <th style="width:18%">현재 컴포넌트 / 위치</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><strong>S-1</strong></td><td>구조</td><td>20개 필드가 평면 나열되어 컨텍스트 손실</td><td>6개 의미 그룹화 (Card + 모바일 Accordion · SECTION 태그 + 완료율)</td><td><span class="pin p0">P0</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td><code class="token">Card</code> · <code class="token">MobileCard</code> · <code class="token">SectionAnchor</code></td></tr>
+<tr><td><strong>S-2</strong></td><td>구조</td><td>5단계 progress bar에 단계명 라벨 없음</td><td>5단 stepper에 단계명+상태색 (current/done/pending) + 모바일 chip scroll</td><td><span class="pin p0">P0</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td><code class="token">Stepper</code> · <code class="token">MobileHeader</code> step chips</td></tr>
+<tr><td><strong>S-3</strong></td><td>구조</td><td>버튼 위계 산만 (primary/검정 혼재)</td><td>4단계 위계 통일 (primary/secondary/tertiary/danger) + 아이콘 버튼 분리</td><td><span class="pin p0">P0</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td><code class="token">Button</code> + <code class="token">ButtonVariant</code> union</td></tr>
+<tr><td><strong>S-4</strong></td><td>구조</td><td>헤더·사이드·퀵·푸터가 정보 과밀</td><td>헤더 mega menu(hover) · 사이드바 그룹 collapse · 퀵 6+TOP · 모바일 햄버거 통합</td><td><span class="pin p0">P0</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td><code class="token">Header</code> · <code class="token">Sidebar</code> · <code class="token">QuickRail</code> · <code class="token">Footer</code></td></tr>
+<tr><td><strong>S-5</strong></td><td>구조</td><td>단계 내 진행률 표시 부재</td><td>섹션별 done/total 배지 + 전체 sticky FormProgressBar (n/m 항목) + 자동저장 chip</td><td><span class="pin p1">P1</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td><code class="token">FormProgressBar</code> · <code class="token">CountPill</code> · <code class="token">AutoSaveChip</code></td></tr>
+<tr><td><strong>R-1</strong></td><td>반응형</td><td>모바일 375px 레이아웃 깨짐 (라디오·사진·TIP·FAB)</td><td>1280px(xl) 미만 모바일 shell: accordion · 라디오 wrap · 사진 horizontal carousel · TIP collapse · FAB</td><td><span class="pin p0">P0</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td>전 컴포넌트의 <code class="token">xl:</code> 분기</td></tr>
+<tr><td><strong>R-2</strong></td><td>반응형</td><td>모바일 +/TOP 버튼 자리 충돌·맨위로 잘못 트리거</td><td>＋↔✕ 토글 (동일 위치) · 위로 메뉴 stack · 맨위로 버튼 모바일에서 제거 · ESC 닫기</td><td><span class="pin p0">P0</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td><code class="token">MobileQuickFab</code></td></tr>
+<tr><td><strong>R-3</strong></td><td>반응형</td><td>모바일→데스크탑 리사이즈 시 햄버거 잔존</td><td>resize 이벤트에서 1280px 이상 진입 시 drawer/FAB 강제 닫힘 · ESC 닫기</td><td><span class="pin p0">P0</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td><code class="token">MobileHeader</code> · <code class="token">MobileQuickFab</code> useEffect</td></tr>
+<tr><td><strong>I-1</strong></td><td>인터랙션</td><td>주소 상세입력(동·호수·건물명) input 부재</td><td>주소 검색 + HighlightBox 형태 "상세 주소(선택)" 50자 input 추가</td><td><span class="pin p1">P1</span></td><td><strong>+address_detail</strong></td><td><span class="ok">●</span> 완료</td><td><code class="token">HighlightBox</code> + 주소 모달</td></tr>
+<tr><td><strong>I-2</strong></td><td>인터랙션</td><td>교회 검색 띄어쓰기 미스매치·미등록 교회 가입 불가</td><td>검색어 정규화 + EmptyState + 모달 내 inline 가입 폼 + 매니저 알림 + 임시값 진행</td><td><span class="pin p1">P1</span></td><td><strong>church_registration 테이블</strong></td><td><span class="ok">●</span> 완료</td><td><code class="token">ChurchSearchModal</code></td></tr>
+<tr><td><strong>I-3</strong></td><td>인터랙션</td><td>학력 행 수동 추가 · placeholder "총신대학교" 노출 버그</td><td>최종학력 변경 시 행 자동 생성/조정 · 다운그레이드 시 affected-list confirm · placeholder 일반화</td><td><span class="pin p1">P1</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td><code class="token">EducationSection</code> · DEGREE_ROWS map</td></tr>
+<tr><td><strong>I-4</strong></td><td>인터랙션</td><td>학교 행 휴지통이 검색 버튼과 인접해 오클릭</td><td>학교 input + 검색 / 전공 input / <strong>휴지통은 우측 끝</strong> 분리 · 첫 행 삭제 불가 · helper text 3개 제거</td><td><span class="pin p1">P1</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td><code class="token">EducationSection</code> edu-row 레이아웃</td></tr>
+<tr><td><strong>I-5</strong></td><td>인터랙션</td><td>대표사진 변경·순서·삭제 분기 안내 부족</td><td>비대표는 "★ 대표 등록" 버튼 · 데스크탑 reorder · 대표 삭제 분기 모달 (CASE A 자동 승격 / CASE B 단독 등록 차단)</td><td><span class="pin p1">P1</span></td><td><strong>+photo.order</strong></td><td><span class="ok">●</span> 완료</td><td><code class="token">PhotoSlot</code> · <code class="token">ConfirmModal</code></td></tr>
+<tr><td><strong>I-6</strong></td><td>인터랙션</td><td>포토북 + 버튼이 기존 사진을 앞으로 밀어버림</td><td>+ 슬롯은 항상 trailing · 최대 8장 · description input · − 버튼으로 빈 슬롯 삭제 · 모바일 carousel</td><td><span class="pin p1">P1</span></td><td><strong>+photobook.order, description</strong></td><td><span class="ok">●</span> 완료</td><td><code class="token">PhotobookThumb</code></td></tr>
+<tr><td><strong>I-7</strong></td><td>인터랙션</td><td>저장하기·저장 후 다음 두 primary가 인접</td><td>sticky footer 3요소 = 자동저장 chip + 저장(secondary) + 다음(primary). wide desktop은 frame-end dock</td><td><span class="pin p1">P1</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td>BaseInfoForm <code class="token">DFooter</code></td></tr>
+<tr><td><strong>I-8</strong></td><td>인터랙션</td><td>"다음" 클릭 후 미입력 항목이 무엇인지 가독성 낮음</td><td>전용 검증 모달 "입력하지 않은 항목이 있습니다" + 누락 라벨 리스트 + 확인 시 첫 미입력 섹션으로 부드러운 스크롤</td><td><span class="pin p1">P1</span></td><td>없음</td><td><span class="ok">●</span> 완료 (v2 신규)</td><td>validation <code class="token">ConfirmModal</code> + <code class="token">scrollToFieldAnchor</code></td></tr>
+<tr><td><strong>I-9</strong></td><td>인터랙션</td><td>프로필 사진 가이드(좋은/나쁜 예시)가 본문에 강제 노출</td><td>전용 <code class="token">ProfilePhotoGuide</code> aside — 좋은 사진 3장·나쁜 사진 3장 썸네일. 1430px+에서 사진 슬롯 옆, 그 이하/모바일에서 상단</td><td><span class="pin p2">P2</span></td><td>없음</td><td><span class="ok">●</span> 완료 (v2 신규)</td><td><code class="token">ProfilePhotoGuide</code></td></tr>
+<tr><td><strong>C-1</strong></td><td>콘텐츠</td><td>옵션 라벨 모호 (모태신앙·음주·자녀계획)</td><td>모태신앙 "…현재 믿고 있다" · 음주 "전혀 하지 않습니다" · 자녀계획 4종 단순화</td><td><span class="pin p2">P2</span></td><td>label only</td><td><span class="ok">●</span> 완료</td><td>RadioGroup options 상수</td></tr>
+<tr><td><strong>C-2</strong></td><td>콘텐츠</td><td>연봉이 강제 공개·민감 정보</td><td>Select + "연봉 비공개" Checkbox 추가 · 비공개 시 다른 회원에게 미노출, 매니저 매칭에만 활용</td><td><span class="pin p2">P2</span></td><td><strong>+salary.is_private</strong></td><td><span class="ok">●</span> 완료</td><td><code class="token">EducationSection</code> 연봉 Row</td></tr>
+<tr><td><strong>C-3</strong></td><td>콘텐츠</td><td>helper text 11개가 산재해 가독성 저하</td><td>중복 · 직접 입력으로 대체 가능한 항목 제거 · 핵심 안내만 유지 (warning 위계)</td><td><span class="pin p2">P2</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td>각 Row · InfoBox</td></tr>
+<tr><td><strong>C-4</strong></td><td>콘텐츠</td><td>타이포 스케일 모호 · 가독성 저하</td><td>Pretendard 9 단계 스케일 통일 (Display 32 → Micro 11) · rem 기반 / OS 글자 확대 대응</td><td><span class="pin p2">P2</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td>app/globals.css <code class="token">--font-weight-*</code></td></tr>
+<tr><td><strong>B-1</strong></td><td>보조</td><td>검색 모달 패턴 산만 (주소·교회·학교·직업)</td><td>공통 <code class="token">ConfirmModal</code> 패턴 통일 (sm/md/lg) + ChurchSearch 전용 확장 모달 + ARIA 표준</td><td><span class="pin p2">P2</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td><code class="token">ConfirmModal</code> · <code class="token">ChurchSearchModal</code></td></tr>
+<tr><td><strong>B-2</strong></td><td>보조</td><td>스타일 다중선택 — 그룹별 5개 강제로 오해</td><td>3그룹(외모 스타일·성격/기질·성품) <strong>합산 최대 5개</strong> + 카운트 pill + 5 도달 시 비선택 disabled</td><td><span class="pin p3">P3</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td><code class="token">StyleChipGroup</code> · <code class="token">CountPill</code></td></tr>
+<tr><td><strong>B-3</strong></td><td>보조</td><td>체형 옵션 정의 모호</td><td>체형 6단(슬림·슬림탄탄·보통·통통·근육질·글래머) 라디오 chip · 추가 가이드(툴팁)는 차후</td><td><span class="pin p3">P3</span></td><td>없음</td><td><span class="warn">◐</span> 라디오만 완료</td><td><code class="token">AppearanceSection</code></td></tr>
+<tr><td><strong>B-4</strong></td><td>보조</td><td>신장 input에 cm 단위 미표시</td><td>Input <code class="token">suffix="cm"</code> 고정 · 폭 10rem 제한 · type=number · 140~220 제약</td><td><span class="pin p3">P3</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td><code class="token">Input fieldWidth="height"</code></td></tr>
+<tr><td><strong>B-5</strong></td><td>보조</td><td>자동저장 상태 표현 모호</td><td>4 state chip (idle/saving/saved/error) · 500ms debounce · 성공 후 3초 idle 복귀</td><td><span class="pin p2">P2</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td>BaseInfoForm <code class="token">AutoSaveChip</code></td></tr>
+<tr><td><strong>X-1</strong></td><td>신규</td><td>퀵 메뉴 "무료상담"을 어디서 트리거하든 동일한 경험 필요</td><td>QuickRail · MobileQuickFab 모두 클릭 시 <code class="token">FreeConsultModal</code> 오픈 · 모바일은 통화하기 CTA 추가</td><td><span class="pin p2">P2</span></td><td>없음</td><td><span class="ok">●</span> 완료 (v2 신규)</td><td><code class="token">FreeConsultModal</code></td></tr>
+</tbody>
+</table>
+
+<div class="note info"><span class="ic">ⓘ</span><span><strong>요약</strong> · 총 <strong>27 항목</strong> 중 <strong>26 완료(96%)</strong> · 1건 일부 진행. 모든 항목은 Next.js 16 RSC + Tailwind v4 @theme 토큰 기반으로 구현되어 있으며, 컴포넌트는 <code class="token">app/_components/</code> 트리에서 단일 정의 후 재사용된다.</span></div>
+<hr />
+
 <h2 id="1-executive-summary">1. Executive Summary</h2>
-<p>본 문서는 크리스천메이트 "기본정보" 페이지를 UX 관점에서 직접 사용·검증한 결과를 바탕으로, 발견된 문제점을 정의하고 시각화된 구현 기준을 함께 제시한다.</p>
+<p>본 문서는 크리스천메이트 "기본정보" 페이지를 UX 관점에서 직접 사용·검증한 결과를 바탕으로, 발견된 문제점을 정의하고 시각화된 구현 기준을 함께 제시한다. v2는 Next.js 16 App Router + Tailwind v4 환경에서 위 27개 항목을 모두 코드로 구현한 결과를 함께 기술한다.</p>
 
 <h3 id="11">1.1 진단 요약</h3>
-<p>시각·구조·인터랙션·콘텐츠 4개 축에서 총 <strong>18개 이슈</strong>가 식별되었다.</p>
+<p>시각·구조·인터랙션·콘텐츠 4개 축과 v2 신규 분류(신규/검증) 포함 총 <strong>27개 이슈</strong>가 식별되었다.</p>
 <table>
 <thead>
 <tr><th style="width:22%">축</th><th style="width:10%">이슈 수</th><th>핵심</th></tr>
@@ -99,8 +150,10 @@ img { max-width: 100%; height: auto; }
 <tbody>
 <tr><td><strong>구조 (Structure)</strong></td><td style="text-align:center">5</td><td>질문 그룹화, 5단계 라벨링, 진행률, 버튼 일관성, 헤더/사이드/푸터 단순화</td></tr>
 <tr><td><strong>반응형 (Responsive)</strong></td><td style="text-align:center">3</td><td>모바일 레이아웃 깨짐, 퀵메뉴+TOP 분리 오류, 모바일→데스크탑 리사이즈 버그</td></tr>
-<tr><td><strong>인터랙션 (Interaction)</strong></td><td style="text-align:center">7</td><td>주소 상세입력, 교회 검색 띄어쓰기/가입신청, 학력 자동 행 생성, 학교 행 휴지통, 사진 순서 변경, 포토북 + 동작 오류, 저장 액션 단순화</td></tr>
-<tr><td><strong>콘텐츠 (Content)</strong></td><td style="text-align:center">4</td><td>옵션 라벨 정정(모태신앙·음주·자녀계획), placeholder 오류, 불필요 helper text 제거, 연봉 비공개</td></tr>
+<tr><td><strong>인터랙션 (Interaction)</strong></td><td style="text-align:center">9</td><td>주소 상세입력, 교회 검색 띄어쓰기/가입신청, 학력 자동 행 생성, 학교 행 휴지통, 사진 대표/순서/삭제, 포토북 + 동작 오류, 저장 액션 단순화, <strong>v2 신규: 검증 모달 · 사진 가이드</strong></td></tr>
+<tr><td><strong>콘텐츠 (Content)</strong></td><td style="text-align:center">4</td><td>옵션 라벨 정정(모태신앙·음주·자녀계획), placeholder 오류, 불필요 helper text 제거, 연봉 비공개, 타이포 스케일</td></tr>
+<tr><td><strong>보조 (Secondary)</strong></td><td style="text-align:center">5</td><td>검색 모달 통일, 스타일 카운터, 체형 가이드, 신장 suffix, 자동저장 chip</td></tr>
+<tr><td><strong>신규 (X)</strong></td><td style="text-align:center">1</td><td>무료 상담 통합 모달 (헤더·퀵·푸터 일원화)</td></tr>
 </tbody>
 </table>
 
@@ -110,10 +163,10 @@ img { max-width: 100%; height: auto; }
 <tr><th style="width:18%">우선순위</th><th>핵심 항목</th></tr>
 </thead>
 <tbody>
-<tr><td><span class="pin p0">P0</span> 1순위</td><td>모바일 레이아웃 깨짐, 5단계 라벨링, 저장 액션 단순화, 버튼 일관성</td></tr>
-<tr><td><span class="pin p1">P1</span> 2순위</td><td>주소 상세입력, 교회 가입신청 플로우, 학력 자동 행, 사진 순서변경/대표 변경 모달, 포토북 + 버그</td></tr>
-<tr><td><span class="pin p2">P2</span> 3순위</td><td>콘텐츠 라벨 정정, 글자 크기 조정, 연봉 비공개, helper text 정리</td></tr>
-<tr><td><span class="pin p3">P3</span> 4순위</td><td>스타일 다중 선택 UX, 체형 옵션 보조 가이드, 신장 단위 표시, 헤더/사이드/푸터 단순화</td></tr>
+<tr><td><span class="pin p0">P0</span> 1순위</td><td>모바일 레이아웃 깨짐, 5단계 라벨링, 저장 액션 단순화, 버튼 일관성, 그룹화, 외곽 UI 단순화 — <strong>전부 v2에서 구현 완료</strong></td></tr>
+<tr><td><span class="pin p1">P1</span> 2순위</td><td>주소 상세입력, 교회 가입신청 플로우, 학력 자동 행, 사진 대표/위치 분기 모달, 포토북 + 버그, 검증 모달(I-8) — <strong>v2에서 구현 완료</strong></td></tr>
+<tr><td><span class="pin p2">P2</span> 3순위</td><td>콘텐츠 라벨 정정, 글자 크기 조정, 연봉 비공개, helper text 정리, 사진 가이드(I-9), 무료상담 모달(X-1) — <strong>v2에서 구현 완료</strong></td></tr>
+<tr><td><span class="pin p3">P3</span> 4순위</td><td>스타일 다중 선택 UX(B-2), 체형 옵션 보조 가이드(B-3 부분), 신장 단위 표시(B-4)</td></tr>
 </tbody>
 </table>
 <hr />
@@ -137,10 +190,10 @@ img { max-width: 100%; height: auto; }
 </div>
 <hr />
 
-<h2 id="3-as-is">3. As-Is 페이지 구조</h2>
-<p>20개 섹션(필수 19 + 선택 1). 그룹화 없이 평면 리스트로 나열되어 있어 사용자가 작업 컨텍스트를 잃기 쉽다.</p>
+<h2 id="3-as-is">3. As-Is 페이지 구조 (변경 전)</h2>
+<p>20개 섹션(필수 19 + 선택 1). 그룹화 없이 평면 리스트로 나열되어 있어 사용자가 작업 컨텍스트를 잃기 쉽다. <strong>모태신앙</strong>이 생활습관/가치관 영역에 섞여 있어 신앙 그룹과 분리되어 있던 점도 인지 부담의 원인이었다.</p>
 <table>
-<thead><tr><th style="width:22%">기존 묶음</th><th>항목</th></tr></thead>
+<thead><tr><th style="width:22%">기존 묶음 (As-Is)</th><th>항목</th></tr></thead>
 <tbody>
 <tr><td><strong>1~5</strong></td><td>결혼 경험 / 주소 / 출석 교회명·교단 / 담임목사님 / 교회 주소</td></tr>
 <tr><td><strong>6~10</strong></td><td>최종학력 / 학교명·전공 / 직업·직무 / 직장명 / 연봉</td></tr>
@@ -149,6 +202,23 @@ img { max-width: 100%; height: auto; }
 <tr><td><strong>19~20</strong></td><td>프로필 사진 등록 / 포토북</td></tr>
 </tbody>
 </table>
+
+<h3 id="3-to-be">3.1 To-Be 페이지 구조 (v2 구현)</h3>
+<p>의미 단위 <strong>6개 카드</strong>로 재구성. <strong>모태신앙은 신앙 그룹(Section 2)으로 이동</strong>. 데스크탑은 카드 스택 + sticky stepper/progress, 모바일은 accordion + sticky chip stepper + FAB로 전환한다.</p>
+<table>
+<thead><tr><th style="width:5%">#</th><th style="width:22%">그룹</th><th style="width:10%">진행률 단위</th><th>실제 필드 (Next.js)</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><strong>가족 &amp; 거주</strong></td><td>2 / 2</td><td>결혼 경험 · 주소(국내/해외 + 검색 + <em>상세 주소 선택</em>)</td></tr>
+<tr><td>2</td><td><strong>신앙</strong></td><td>4 / 4</td><td>출석 교회명/교단(검색) · 담임목사 성함 · 교회 주소(검색) · <strong>모태신앙 여부</strong></td></tr>
+<tr><td>3</td><td><strong>학력 &amp; 직장</strong></td><td>5 / 5</td><td>최종 학력 · 학교명/전공(자동 행) · 직업/직무(검색) · 직장명(검색) · 연봉(+ 비공개 체크)</td></tr>
+<tr><td>4</td><td><strong>신체 &amp; 스타일</strong></td><td>4 / 4</td><td>신장(cm suffix) · 혈액형 · 체형 · 스타일(외모 스타일/성격·기질/성품 합산 ≤5)</td></tr>
+<tr><td>5</td><td><strong>생활 습관 &amp; 가치관</strong></td><td>3 / 3</td><td>음주 · 흡연 · 자녀 계획</td></tr>
+<tr><td>6</td><td><strong>프로필 사진</strong></td><td>2 / 2 *</td><td>프로필 사진 4슬롯(대표 1 + 보조) · 포토북 최대 8장 + 사진별 설명</td></tr>
+</tbody>
+</table>
+<p style="font-size:9.5pt;color:#475569;">* Section 6 진행률은 필드 수가 아닌 <em>완료 체크포인트 2개</em>: ① 프로필 사진 ≥ 2장 ② 포토북 ≥ 1장</p>
+
+<div class="note info"><span class="ic">ⓘ</span><span><strong>전체 진행률</strong> · 5개 그룹의 필드 합계 18 + Section 6 체크포인트 2 = <strong>20 항목</strong>. 상단 sticky FormProgressBar에 <code class="token">{done} / 20 항목</code>으로 노출.</span></div>
 <hr />
 
 <h2 id="4">4. 개선안</h2>
