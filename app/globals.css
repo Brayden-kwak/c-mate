@@ -37,6 +37,7 @@
   --color-danger-hover: #b91c1c;
   --color-warning-light: #fffbeb;
   --color-success-light: #ecfdf5;
+  --color-toast-success: #10b981;
   --color-info-light: #eff6ff;
 
   /* Extended primary */
@@ -98,6 +99,11 @@
   --spacing-photobook-slot-width: 20.75rem;
   --spacing-photobook-slot-height: 15.5625rem;
   --spacing-form-content-width: 70rem;
+  --spacing-layout-max: 90rem;
+  /* pad + sidebar col + gap (1.75 + 10.75 + 1.75) — viewport left → main 시작 */
+  --spacing-sidebar-gutter-to-main: 14.25rem;
+  /* (gutter-to-main / 2) − pad — ml 보정으로 메뉴를 해당 구간 중앙에 */
+  --spacing-sidebar-nav-center-offset: 5.375rem;
   --spacing-form-shell-offset: 22.5rem;
   --spacing-form-footer-width: min(calc(100% - var(--spacing-form-shell-offset)), var(--spacing-form-content-width));
   /* 모바일 앱 헤더: topbar(h-14) + step 칩 영역 */
@@ -124,6 +130,7 @@
   --spacing-mobile-photo-footer-gap: 3.125rem;
   --spacing-mobile-photo-card-bottom: 3.75rem;
   --spacing-mobile-site-footer-top: 2.5rem;
+  --spacing-edu-card-y: 0.875rem;
 
   /* Shadow */
   --shadow-footer: 0 -8px 24px rgba(15, 23, 42, 0.06);
@@ -165,12 +172,65 @@
 
   /* 프로필 사진 TIP: 1280~1429px 슬롯 상단, 1430px+ 슬롯 옆 */
   --breakpoint-photo-guide-wide: 89.375rem;
+  /* 앱 뷰 (≤420px) 전용 UI 분기 */
+  --breakpoint-narrow: 26.25rem;
 }
 
 body {
   background: var(--color-page);
   color: var(--color-text);
   font-family: var(--font-sans);
+}
+
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--spacing-8)));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--spacing-8)));
+  }
+}
+
+/* Desktop sidebar: center nav between viewport left and main column */
+@utility ml-sidebar-nav-center {
+  margin-left: calc(
+    var(--spacing-sidebar-nav-center-offset) -
+      (100vw - min(100vw, var(--spacing-layout-max))) / 4
+  );
+}
+
+@utility animate-toast-enter {
+  animation: toast-enter var(--duration-slow) var(--ease-emphasized) forwards;
+}
+
+@utility animate-toast-visible {
+  animation: none;
+}
+
+@utility animate-toast-exit {
+  animation: toast-exit var(--duration-slow) var(--ease-emphasized) forwards;
+}
+
+/* iOS Safari: font-size < 16px triggers auto-zoom on input focus.
+   Force 1rem minimum on iOS WebKit only to prevent this without
+   affecting other platforms. */
+@supports (-webkit-touch-callout: none) {
+  input, textarea, select {
+    font-size: max(1rem, 1em);
+  }
 }
 
 .bg-photo-gradient {

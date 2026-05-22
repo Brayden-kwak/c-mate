@@ -12,6 +12,7 @@ import { FormProgressBar } from "@/app/_components/ui/FormProgressBar";
 import { StyleChipGroup, type StyleGroup } from "@/app/_components/ui/StyleChipGroup";
 import { PhotoSlot, PhotobookThumb } from "@/app/_components/ui/PhotoSlot";
 import { Button } from "@/app/_components/ui/Button";
+import { ToastProvider, useToast } from "@/app/_components/ui/Toast";
 import { MobileCard, MobileField } from "@/app/_components/ui/MobileCard";
 import { ConfirmModal } from "@/app/_components/modals/ConfirmModal";
 import { ChurchSearchModal } from "@/app/_components/modals/ChurchSearchModal";
@@ -151,8 +152,7 @@ const FamilySection = ({
           <div className="flex gap-2">
             <Input
               value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              onBlur={onSave}
+              disabled
               aria-label="주소"
               layout="fill"
               placeholder="주소를 검색해 주세요"
@@ -201,8 +201,7 @@ const FamilySection = ({
         />
         <Input
           value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          onBlur={onSave}
+          disabled
           aria-label="주소"
           placeholder="주소를 검색해 주세요"
         />
@@ -258,6 +257,9 @@ const FamilySection = ({
   );
 }
 
+const CHURCH_SEARCH_HELPER =
+  "교회 검색 후 교회명·교단·담임목사·주소가 자동으로 채워집니다.";
+
 /* ===== Section 2 ===== */
 const FaithSection = ({
   onSave,
@@ -269,14 +271,13 @@ const FaithSection = ({
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
 }) => {
   const [church, setChurch] = useState("");
+  const [denom, setDenom] = useState("");
   const [pastor, setPastor] = useState("");
   const [churchAddr, setChurchAddr] = useState("");
-  const [churchAddrQuery, setChurchAddrQuery] = useState("");
   const [nativeFaith, setNativeFaith] = useState("");
   const [churchSearchOpen, setChurchSearchOpen] = useState(false);
-  const [addrModalOpen, setAddrModalOpen] = useState(false);
   const complete =
-    Number(Boolean(church.trim())) +
+    Number(Boolean(church.trim() && denom.trim())) +
     Number(Boolean(pastor.trim())) +
     Number(Boolean(churchAddr.trim())) +
     Number(Boolean(nativeFaith));
@@ -287,36 +288,31 @@ const FaithSection = ({
 
   useEffect(() => {
     const missing: MissingRequiredField[] = [];
-    if (!church.trim()) missing.push({ id: SECTION_FAITH, label: "출석 교회명 / 교단" });
+    if (!church.trim() || !denom.trim()) missing.push({ id: SECTION_FAITH, label: "출석 교회명 / 교단" });
     if (!pastor.trim()) missing.push({ id: SECTION_FAITH, label: "담임목사님 성함" });
     if (!churchAddr.trim()) missing.push({ id: SECTION_FAITH, label: "교회 주소" });
     if (!nativeFaith) missing.push({ id: SECTION_FAITH, label: "모태신앙 여부" });
     onMissingFieldsChange(missing);
-  }, [church, pastor, churchAddr, nativeFaith, onMissingFieldsChange]);
-
-  const applyChurchAddr = () => {
-    if (churchAddrQuery.trim()) {
-      setChurchAddr(churchAddrQuery.trim());
-      onSave();
-    }
-    setAddrModalOpen(false);
-    setChurchAddrQuery("");
-  }
+  }, [church, denom, pastor, churchAddr, nativeFaith, onMissingFieldsChange]);
 
   const desktopContent = (
     <SectionAnchor id={SECTION_FAITH}>
       <Card>
       <CardHead tag="SECTION 2" title="신앙" progress={{ done: complete, total: 4 }} />
       <CardBody>
-          <Row label="출석 교회명 / 교단" required>
+          <Row label="출석 교회명 / 교단" required helper={CHURCH_SEARCH_HELPER}>
             <div className="flex gap-2">
               <Input
                 value={church}
-                onChange={(e) => setChurch(e.target.value)}
-                onBlur={onSave}
-                aria-label="출석 교회명 및 교단"
+                disabled
+                aria-label="출석 교회명"
                 layout="fill"
-                placeholder="교회명을 검색해 주세요"
+              />
+              <Input
+                value={denom}
+                disabled
+                aria-label="교단"
+                layout="fill"
               />
               <Button variant="secondary" size="md" type="button" onClick={() => setChurchSearchOpen(true)}>
                 교회 검색
@@ -326,26 +322,16 @@ const FaithSection = ({
           <Row label="담임목사님 성함" required>
             <Input
               value={pastor}
-              onChange={(e) => setPastor(e.target.value)}
-              onBlur={onSave}
+              disabled
               aria-label="담임목사님 성함"
-              placeholder="담임목사님 성함을 입력해 주세요"
             />
           </Row>
           <Row label="교회 주소" required>
-            <div className="flex gap-2">
-              <Input
-                value={churchAddr}
-                onChange={(e) => setChurchAddr(e.target.value)}
-                onBlur={onSave}
-                aria-label="교회 주소"
-                layout="fill"
-                placeholder="교회 주소를 검색해 주세요"
-              />
-              <Button variant="secondary" size="md" type="button" onClick={() => setAddrModalOpen(true)}>
-                주소 찾기
-              </Button>
-            </div>
+            <Input
+              value={churchAddr}
+              disabled
+              aria-label="교회 주소"
+            />
           </Row>
           <Row label="모태신앙 여부" required>
             <RadioGroup
@@ -364,14 +350,21 @@ const FaithSection = ({
   const mobileContent = (
     <SectionAnchor id={SECTION_FAITH}>
     <MobileCard num={2} title="신앙" progress={{ done: complete, total: 4 }}>
-        <MobileField label="출석 교회명 / 교단" required>
-          <Input
-            value={church}
-            onChange={(e) => setChurch(e.target.value)}
-            onBlur={onSave}
-            aria-label="출석 교회명 및 교단"
-            placeholder="교회명을 검색해 주세요"
-          />
+        <MobileField label="출석 교회명 / 교단" required desc={CHURCH_SEARCH_HELPER}>
+          <div className="flex gap-2">
+            <Input
+              value={church}
+              disabled
+              aria-label="출석 교회명"
+              layout="fill"
+            />
+            <Input
+              value={denom}
+              disabled
+              aria-label="교단"
+              layout="fill"
+            />
+          </div>
           <Button variant="secondary" size="md" type="button" layout="full" onClick={() => setChurchSearchOpen(true)}>
             교회 검색
           </Button>
@@ -379,21 +372,16 @@ const FaithSection = ({
         <MobileField label="담임목사님 성함" required>
           <Input
             value={pastor}
-            onChange={(e) => setPastor(e.target.value)}
-            onBlur={onSave}
+            disabled
             aria-label="담임목사님 성함"
           />
         </MobileField>
         <MobileField label="교회 주소" required>
           <Input
             value={churchAddr}
-            onChange={(e) => setChurchAddr(e.target.value)}
-            onBlur={onSave}
+            disabled
             aria-label="교회 주소"
           />
-          <Button variant="secondary" size="md" type="button" layout="full" onClick={() => setAddrModalOpen(true)}>
-            주소 찾기
-          </Button>
         </MobileField>
         <MobileField label="모태신앙 여부" required>
           <RadioGroup
@@ -416,26 +404,14 @@ const FaithSection = ({
       <ChurchSearchModal
         open={churchSearchOpen}
         onClose={() => setChurchSearchOpen(false)}
-        onSelect={(v) => { setChurch(v); onSave(); }}
+        onSelect={(result) => {
+          setChurch(result.church);
+          setDenom(result.denom);
+          setPastor(result.pastor);
+          setChurchAddr(result.addr);
+          onSave();
+        }}
       />
-
-      <ConfirmModal
-        open={addrModalOpen}
-        onClose={() => { setAddrModalOpen(false); setChurchAddrQuery(""); }}
-        title="교회 주소 찾기"
-        confirmLabel="확인"
-        onConfirm={applyChurchAddr}
-        width="sm"
-      >
-        <Input
-          value={churchAddrQuery}
-          onChange={(e) => setChurchAddrQuery(e.target.value)}
-          placeholder="도로명 또는 지번 주소 입력"
-          autoFocus
-          aria-label="교회 주소 검색"
-          onKeyDown={(e) => e.key === "Enter" && applyChurchAddr()}
-        />
-      </ConfirmModal>
     </>
   );
 }
@@ -671,6 +647,8 @@ const PhotoSection = ({
   const [pbPhotos, setPbPhotos] = useState<PhotoItem[]>([{ filled: false }]);
   const [deleteModal, setDeleteModal] = useState<{ index: number } | null>(null);
   const [pbDeleteModal, setPbDeleteModal] = useState<{ index: number } | null>(null);
+  const pbCarouselRef = useRef<HTMLDivElement>(null);
+  const prevPbLengthRef = useRef(1);
 
   const filledCount = photos.filter((photo) => photo.filled).length;
   const pbFilledCount = pbPhotos.filter((photo) => photo.filled).length;
@@ -694,6 +672,14 @@ const PhotoSection = ({
     }
     onMissingFieldsChange(missing);
   }, [filledCount, onMissingFieldsChange]);
+
+  useEffect(() => {
+    if (pbPhotos.length > prevPbLengthRef.current) {
+      const el = pbCarouselRef.current;
+      if (el) el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
+    }
+    prevPbLengthRef.current = pbPhotos.length;
+  }, [pbPhotos.length]);
 
   const requestDelete = (index: number) => {
     setDeleteModal({ index });
@@ -754,6 +740,28 @@ const PhotoSection = ({
     onSave();
   }
 
+  const movePhoto = (index: number, direction: "left" | "right") => {
+    setPhotos((prev) => {
+      const target = direction === "left" ? index - 1 : index + 1;
+      if (target < 1 || target >= prev.length) return prev;
+      const next = [...prev];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+    onSave();
+  };
+
+  const movePbPhoto = (index: number, direction: "left" | "right") => {
+    setPbPhotos((prev) => {
+      const target = direction === "left" ? index - 1 : index + 1;
+      if (target < 0 || target >= prev.length) return prev;
+      const next = [...prev];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+    onSave();
+  };
+
   const setRepresentative = (index: number) => {
     setPhotos((prev) => {
       const next = [...prev];
@@ -777,6 +785,8 @@ const PhotoSection = ({
           previewUrl={photo.previewUrl}
           onDelete={photo.filled ? () => requestDelete(i) : undefined}
           onSetRepresentative={photo.filled && i !== 0 ? () => setRepresentative(i) : undefined}
+          onMoveLeft={photo.filled && i > 1 && photos[i - 1]?.filled ? () => movePhoto(i, "left") : undefined}
+          onMoveRight={photo.filled && i !== 0 && i < photos.length - 1 && photos[i + 1]?.filled ? () => movePhoto(i, "right") : undefined}
           onUpload={!photo.filled ? (file) => handleUpload(i, file) : undefined}
         />
       ))}
@@ -795,6 +805,8 @@ const PhotoSection = ({
             previewUrl={photo.previewUrl}
             onDelete={photo.filled ? () => requestDelete(i) : undefined}
             onSetRepresentative={photo.filled && i !== 0 ? () => setRepresentative(i) : undefined}
+            onMoveLeft={photo.filled && i > 1 && photos[i - 1]?.filled ? () => movePhoto(i, "left") : undefined}
+            onMoveRight={photo.filled && i !== 0 && i < photos.length - 1 && photos[i + 1]?.filled ? () => movePhoto(i, "right") : undefined}
             onUpload={!photo.filled ? (file) => handleUpload(i, file) : undefined}
           />
         </div>
@@ -812,6 +824,8 @@ const PhotoSection = ({
             onDelete={photo.filled ? () => requestPbDelete(i) : undefined}
             onRemoveEmpty={!photo.filled && i > 0 ? () => removePhotobookSlot(i) : undefined}
             onUpload={!photo.filled ? (file) => handlePbUpload(i, file) : undefined}
+            onMoveLeft={photo.filled && i > 0 && pbPhotos[i - 1]?.filled ? () => movePbPhoto(i, "left") : undefined}
+            onMoveRight={photo.filled && i < pbPhotos.length - 1 && pbPhotos[i + 1]?.filled ? () => movePbPhoto(i, "right") : undefined}
           />
           {photo.filled && (
             <Input
@@ -840,7 +854,7 @@ const PhotoSection = ({
   );
 
   const mobilePbCarousel = (
-    <div className="flex w-full snap-x snap-mandatory gap-2.5 overflow-x-auto overscroll-x-contain pb-1">
+    <div ref={pbCarouselRef} className="flex w-full snap-x snap-mandatory gap-2.5 overflow-x-auto overscroll-x-contain pb-1">
       {pbPhotos.map((photo, i) => (
         <div key={i} className="flex w-photobook-slot-width max-w-full flex-none snap-start flex-col gap-2">
           <PhotobookThumb
@@ -849,6 +863,8 @@ const PhotoSection = ({
             onDelete={photo.filled ? () => requestPbDelete(i) : undefined}
             onRemoveEmpty={!photo.filled && i > 0 ? () => removePhotobookSlot(i) : undefined}
             onUpload={!photo.filled ? (file) => handlePbUpload(i, file) : undefined}
+            onMoveLeft={photo.filled && i > 0 && pbPhotos[i - 1]?.filled ? () => movePbPhoto(i, "left") : undefined}
+            onMoveRight={photo.filled && i < pbPhotos.length - 1 && pbPhotos[i + 1]?.filled ? () => movePbPhoto(i, "right") : undefined}
           />
           {photo.filled && (
             <Input
@@ -868,7 +884,7 @@ const PhotoSection = ({
           type="button"
           onClick={addPhotobookSlot}
           aria-label="포토북 슬롯 추가"
-          className="aspect-4/3 w-photobook-slot-width max-w-full flex-none snap-start rounded-lg border border-dashed border-border-strong bg-surface text-text-tertiary flex items-center justify-center hover:border-primary hover:text-primary hover:bg-primary-bg transition-colors duration-fast ease-standard"
+          className="aspect-4/3 w-photobook-slot-width max-w-full flex-none snap-start rounded-lg border border-dashed border-border-strong bg-surface text-text-tertiary hidden narrow:flex items-center justify-center hover:border-primary hover:text-primary hover:bg-primary-bg transition-colors duration-fast ease-standard"
         >
           <span className="text-[32px] font-light leading-none" aria-hidden="true">＋</span>
         </button>
@@ -921,7 +937,6 @@ const PhotoSection = ({
         <MobileField label="프로필 사진" required>
           {mobilePhotoGuide}
           {mobilePhotoCarousel}
-          <InfoBox>길게 누르면 위치 변경 모드. 좌/우 화살표 또는 drag로 이동.</InfoBox>
         </MobileField>
       <MobileField
         label="포토북"
@@ -930,6 +945,20 @@ const PhotoSection = ({
             <span className="font-semibold text-primary">최대 8장</span>
             까지 슬롯을 추가할 수 있습니다.
           </>
+        }
+        labelBadge={
+          pbPhotos.length < MAX_PHOTOBOOK_SLOTS ? (
+            <Button
+              variant="secondary"
+              size="sm"
+              type="button"
+              onClick={addPhotobookSlot}
+              className="narrow:hidden"
+              aria-label="포토북 슬롯 추가"
+            >
+              + 추가
+            </Button>
+          ) : undefined
         }
       >
         {mobilePbCarousel}
@@ -991,8 +1020,13 @@ const PhotoSection = ({
 
 /* ===== d-footer ===== */
 const DFooter = ({ autoSave }: { autoSave: AutoSaveState }) => {
+  const { showToast } = useToast();
   const [desktopStyle, setDesktopStyle] = useState<CSSProperties>({});
   const [synced, setSynced] = useState(false);
+
+  const handleManualSave = () => {
+    showToast("저장되었습니다.");
+  };
 
   useEffect(() => {
     const syncFooter = () => {
@@ -1041,7 +1075,7 @@ const DFooter = ({ autoSave }: { autoSave: AutoSaveState }) => {
         <div className="max-w-form-content-width mx-auto px-8 py-4 flex items-center gap-3">
           <AutoSaveChip state={autoSave} />
           <span className="flex-1" />
-          <Button variant="secondary" size="lg" type="button">
+          <Button variant="secondary" size="lg" type="button" onClick={handleManualSave}>
             저장하기
           </Button>
           <Button variant="primary" size="lg" type="submit">
@@ -1052,7 +1086,7 @@ const DFooter = ({ autoSave }: { autoSave: AutoSaveState }) => {
       {/* Mobile sticky footer */}
       <div className="xl:hidden fixed inset-x-0 bottom-0 z-(--z-footer) border-t border-border bg-surface shadow-footer">
         <div className="mx-auto flex w-full max-w-[430px] gap-2 px-4 pt-3 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-          <Button variant="secondary" size="md" type="button" className="w-[110px] shrink-0">
+          <Button variant="secondary" size="md" type="button" className="w-[110px] shrink-0" onClick={handleManualSave}>
             저장하기
           </Button>
           <Button variant="primary" size="md" type="submit" layout="fill">
@@ -1157,7 +1191,7 @@ export const BaseInfoForm = () => {
   }
 
   return (
-    <>
+    <ToastProvider>
       <form
         noValidate
         onSubmit={handleSubmit}
@@ -1213,6 +1247,6 @@ export const BaseInfoForm = () => {
           ))}
         </ul>
       </ConfirmModal>
-    </>
+    </ToastProvider>
   );
 }

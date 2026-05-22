@@ -46,6 +46,8 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
   const [workplace, setWorkplace] = useState("");
   const [workplaceModalOpen, setWorkplaceModalOpen] = useState(false);
   const [workplaceQuery, setWorkplaceQuery] = useState("");
+  const [schoolModalRowId, setSchoolModalRowId] = useState<number | null>(null);
+  const [schoolQuery, setSchoolQuery] = useState("");
   const [salary, setSalary] = useState("");
   const [salaryHidden, setSalaryHidden] = useState(false);
   const nextId = useRef(10);
@@ -55,7 +57,7 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
     Number(hasCompleteSchoolRow) +
     Number(Boolean(job.trim())) +
     Number(Boolean(workplace.trim() && !workplace.includes("*"))) +
-    Number(Boolean(salary && !salaryHidden));
+    Number(Boolean(salary));
 
   useEffect(() => {
     onProgressChange({ done: complete, total: 5 });
@@ -139,8 +141,22 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
     setJobQuery("");
   };
 
+  const openSchoolSearch = (rowId: number, currentSchool: string) => {
+    setSchoolModalRowId(rowId);
+    setSchoolQuery(currentSchool);
+  };
+
+  const applySchool = () => {
+    if (schoolModalRowId !== null && schoolQuery.trim()) {
+      updateEduRow(schoolModalRowId, "school", schoolQuery.trim());
+      onSave();
+    }
+    setSchoolModalRowId(null);
+    setSchoolQuery("");
+  };
+
   const schoolMajorPlaceholder = (
-    <p className="text-[13px] text-text-secondary m-0">최종 학력을 선택해주세요.</p>
+    <InfoBox>최종 학력을 선택해주세요.</InfoBox>
   );
 
   const eduStack = education ? (
@@ -156,10 +172,9 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
             onChange={(e) => updateEduRow(row.id, "school", e.target.value)}
             onBlur={onSave}
             layout="fill"
-            size="sm"
             aria-label={`${row.degree} 학교명`}
           />
-          <Button variant="secondary" size="sm" type="button">
+          <Button variant="secondary" size="md" type="button" onClick={() => openSchoolSearch(row.id, row.school)}>
             검색
           </Button>
           <Input
@@ -168,7 +183,6 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
             onChange={(e) => updateEduRow(row.id, "major", e.target.value)}
             onBlur={onSave}
             fieldWidth="major"
-            size="sm"
             aria-label={`${row.degree} 전공`}
           />
           {eduRows.length > 1 ? (
@@ -204,7 +218,7 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
   const mobileEduStack = education ? (
     <div className="flex flex-col gap-2">
       {eduRows.map((row) => (
-        <div key={row.id} className="bg-subtle rounded-md px-3 py-2.5 flex flex-col gap-2">
+        <div key={row.id} className="bg-subtle rounded-md px-3 py-edu-card-y flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <span className="bg-surface border border-border rounded-[6px] px-2 py-1 text-[11px] font-bold tracking-[0.04em]">
               {row.degree}
@@ -223,9 +237,11 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
               </button>
             )}
           </div>
-          <Input placeholder="학교명을 검색해 주세요" value={row.school} onChange={(e) => updateEduRow(row.id, "school", e.target.value)} onBlur={onSave} size="sm" aria-label={`${row.degree} 학교명`} />
-          <Button variant="secondary" size="sm" type="button">검색</Button>
-          <Input placeholder="전공" value={row.major} onChange={(e) => updateEduRow(row.id, "major", e.target.value)} onBlur={onSave} size="sm" aria-label={`${row.degree} 전공`} />
+          <Input placeholder="학교명을 검색해 주세요" value={row.school} onChange={(e) => updateEduRow(row.id, "school", e.target.value)} onBlur={onSave} aria-label={`${row.degree} 학교명`} />
+          <Button variant="secondary" size="md" type="button" layout="full" onClick={() => openSchoolSearch(row.id, row.school)}>
+            검색
+          </Button>
+          <Input placeholder="전공" value={row.major} onChange={(e) => updateEduRow(row.id, "major", e.target.value)} onBlur={onSave} aria-label={`${row.degree} 전공`} />
         </div>
       ))}
     </div>
@@ -409,6 +425,24 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
           autoFocus
           aria-label="직장 검색"
           onKeyDown={(e) => e.key === "Enter" && applyWorkplace()}
+        />
+      </ConfirmModal>
+
+      <ConfirmModal
+        open={schoolModalRowId !== null}
+        onClose={() => { setSchoolModalRowId(null); setSchoolQuery(""); }}
+        title="학교 검색"
+        confirmLabel="확인"
+        onConfirm={applySchool}
+        width="sm"
+      >
+        <Input
+          value={schoolQuery}
+          onChange={(e) => setSchoolQuery(e.target.value)}
+          placeholder="학교명을 입력해 주세요"
+          autoFocus
+          aria-label="학교 검색"
+          onKeyDown={(e) => e.key === "Enter" && applySchool()}
         />
       </ConfirmModal>
     </>

@@ -10,26 +10,34 @@ import {
 type Variant = "drawer" | "sidebar";
 
 function NavChevron({ open, variant }: { open: boolean; variant: Variant }) {
-  if (variant === "sidebar") {
-    return <span className="text-xs" aria-hidden="true">{open ? "⌃" : "⌄"}</span>;
-  }
+  const toneClass =
+    variant === "sidebar" ? "text-current" : "text-text-tertiary";
 
   return (
-    <svg
+    <span
       className={[
-        "w-4 h-4 shrink-0 text-text-tertiary transition-transform duration-fast ease-standard",
-        open ? "rotate-180" : "",
+        "inline-flex shrink-0 items-center justify-center self-center",
+        variant === "sidebar" ? "w-5 h-5" : "w-4 h-4",
       ].join(" ")}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
       aria-hidden="true"
     >
-      <polyline points="6 9 12 15 18 9" />
-    </svg>
+      <svg
+        className={[
+          "w-4 h-4",
+          toneClass,
+          "transition-transform duration-fast ease-standard",
+          open ? "rotate-180" : "",
+        ].join(" ")}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </span>
   );
 }
 
@@ -41,7 +49,7 @@ export function MyPageNavList({ variant }: { variant: Variant }) {
   };
 
   return (
-    <div className={variant === "drawer" ? "flex flex-col gap-2.5" : "flex flex-col gap-0.5"}>
+    <div className={variant === "drawer" ? "flex flex-col" : "flex flex-col gap-0.5"}>
       {MY_PAGE_NAV.map((entry) => {
         if (isMyPageNavGroup(entry)) {
           const open = expandedSections[entry.id];
@@ -54,11 +62,11 @@ export function MyPageNavList({ variant }: { variant: Variant }) {
                   aria-expanded={open}
                   onClick={() => toggleSection(entry.id)}
                   className={[
-                    "flex w-full items-center justify-between min-h-[31px] px-2 py-1.5 rounded-[6px] font-semibold text-left",
+                    "flex w-full items-center justify-between gap-2 min-h-9 px-2 py-1.5 rounded-[6px] text-sm font-semibold text-left",
                     open ? "text-primary bg-primary-bg" : "text-text-brand-muted",
                   ].join(" ")}
                 >
-                  <span>{entry.label}</span>
+                  <span className="min-w-0">{entry.label}</span>
                   <NavChevron open={open} variant={variant} />
                 </button>
                 {open && (
@@ -68,7 +76,7 @@ export function MyPageNavList({ variant }: { variant: Variant }) {
                         key={item.label}
                         href={item.href}
                         className={[
-                          "block px-[7px] py-[5px] text-xs font-medium no-underline",
+                          "block px-[7px] py-[5px] text-[13px] font-medium no-underline",
                           item.active ? "text-primary font-bold" : "text-text-brand-muted",
                         ].join(" ")}
                       >
@@ -88,7 +96,7 @@ export function MyPageNavList({ variant }: { variant: Variant }) {
                 aria-expanded={open}
                 onClick={() => toggleSection(entry.id)}
                 className={[
-                  "flex w-full items-center justify-between gap-2 text-left text-[13px] font-bold",
+                  "flex w-full items-center justify-between gap-2 text-left text-[15px] font-bold min-h-12 border-b border-border-subtle",
                   open ? "text-primary" : "text-text",
                 ].join(" ")}
               >
@@ -96,13 +104,13 @@ export function MyPageNavList({ variant }: { variant: Variant }) {
                 <NavChevron open={open} variant={variant} />
               </button>
               {open && (
-                <div className="mt-2 ml-3 flex flex-col gap-2">
+                <div className="ml-3 flex flex-col border-b border-border-subtle pb-1">
                   {entry.items.map((item) => (
                     <a
                       key={item.label}
                       href={item.href}
                       className={[
-                        "text-[13px] font-bold no-underline",
+                        "flex items-center min-h-11 text-sm font-bold no-underline",
                         item.active
                           ? "text-primary"
                           : "text-text hover:text-primary transition-colors duration-fast ease-standard",
@@ -122,7 +130,7 @@ export function MyPageNavList({ variant }: { variant: Variant }) {
             <a
               key={entry.label}
               href={entry.href}
-              className="flex min-h-[31px] items-center px-2 py-1.5 rounded-[6px] text-[13px] font-semibold text-text-brand-muted no-underline hover:text-primary transition-colors duration-fast ease-standard"
+              className="flex min-h-9 items-center px-2 py-1.5 rounded-[6px] text-sm font-semibold text-text-brand-muted no-underline hover:text-primary transition-colors duration-fast ease-standard"
             >
               {entry.label}
             </a>
@@ -133,7 +141,7 @@ export function MyPageNavList({ variant }: { variant: Variant }) {
           <a
             key={entry.label}
             href={entry.href}
-            className="text-[13px] font-bold text-text no-underline hover:text-primary transition-colors duration-fast ease-standard"
+            className="flex items-center min-h-12 text-[15px] font-bold text-text no-underline hover:text-primary transition-colors duration-fast ease-standard border-b border-border-subtle"
           >
             {entry.label}
           </a>

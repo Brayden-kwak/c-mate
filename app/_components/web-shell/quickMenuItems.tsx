@@ -1,4 +1,28 @@
+import Image from "next/image";
 import type { ReactNode } from "react";
+
+const QUICK_ICON_SM = "w-4 h-4 shrink-0 object-contain";
+const QUICK_ICON_LG = "w-5 h-5 shrink-0 object-contain";
+
+function QuickMenuImage({
+  src,
+  size,
+}: {
+  src: string;
+  size: "sm" | "lg";
+}) {
+  const dim = size === "lg" ? 20 : 16;
+  return (
+    <Image
+      src={src}
+      alt=""
+      width={dim}
+      height={dim}
+      className={size === "lg" ? QUICK_ICON_LG : QUICK_ICON_SM}
+      aria-hidden
+    />
+  );
+}
 
 export type QuickMenuItem = {
   label: string;
@@ -27,13 +51,7 @@ export const QUICK_MENU_ITEMS: QuickMenuItem[] = [
   },
   {
     label: "자녀결혼",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden="true">
-        <path d="M19 14c1.5-1.4 2-3.5 1.2-5.3A5 5 0 0 0 13 6.7L12 8l-1-1.3A5 5 0 0 0 3.8 8.7c-.8 1.8-.3 3.9 1.2 5.3l7 6 7-6Z" />
-        <path d="M12 8v4" />
-        <path d="M10 10h4" />
-      </svg>
-    ),
+    icon: <QuickMenuImage src="/images/quick-children.png" size="lg" />,
   },
   {
     label: "업그레이드",
@@ -65,13 +83,6 @@ export const QUICK_MENU_ITEMS: QuickMenuItem[] = [
   },
   {
     label: "33법칙",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden="true">
-        <path d="M21 12a9 9 0 1 1-3-6.7" />
-        <path d="M21 3v6h-6" />
-        <path d="M9 11h2v4H9z" />
-        <path d="M14 9h2v6h-2z" />
-      </svg>
-    ),
+    icon: <QuickMenuImage src="/images/quick-33.png" size="sm" />,
   },
 ];

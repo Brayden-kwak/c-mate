@@ -24,16 +24,19 @@ const icon: Record<Exclude<Variant, "info">, string> = {
 export function InfoBox({ variant = "info", children }: Props) {
   return (
     <div
-      className={`flex items-start gap-2.5 px-3.5 py-2.5 rounded-md text-[13px] leading-relaxed ${variantClass[variant]}`}
+      className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-md text-[13px] leading-[1.5] ${variantClass[variant]}`}
     >
       {variant === "info" ? (
         <InfoBoxIcon />
       ) : (
-        <span className="inline-flex size-4 shrink-0 items-center justify-center font-bold leading-none mt-px">
+        <span
+          className="inline-flex size-4 shrink-0 items-center justify-center font-bold leading-none"
+          aria-hidden="true"
+        >
           {icon[variant]}
         </span>
       )}
-      <span>{children}</span>
+      <span className="min-w-0 flex-1">{children}</span>
     </div>
   );
 }

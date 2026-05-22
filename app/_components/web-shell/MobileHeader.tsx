@@ -118,33 +118,36 @@ export function MobileHeader() {
             className="w-[292px] h-full bg-surface flex flex-col shadow-drawer"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex-1 overflow-y-auto p-[18px]">
-              <div className="mb-[18px]">
-                <CmLogo />
-              </div>
+            {/* 로고 — 스크롤 영역 밖 고정 */}
+            <div className="shrink-0 px-5 pt-5 pb-4 border-b border-border-subtle">
+              <CmLogo />
+            </div>
 
-              <div className="py-3.5 border-t border-border-subtle">
-                <h4 className="m-0 mb-2.5 text-xs text-text-tertiary tracking-[0.08em]">MAIN MENU</h4>
-                <div className="grid grid-cols-2 gap-2">
+            {/* 스크롤 가능한 메뉴 영역 */}
+            <div className="flex-1 overflow-y-auto overscroll-contain">
+              <div className="px-5 pb-2 border-b border-border-subtle">
+                <h4 className="m-0 pt-4 pb-2 text-xs font-semibold text-text-tertiary tracking-[0.08em]">MAIN MENU</h4>
+                <nav className="flex flex-col">
                   {MAIN_MENU.map((item) => (
                     <a
                       key={item}
                       href="#"
-                      className="text-text text-[13px] font-bold no-underline hover:text-primary transition-colors duration-fast ease-standard"
+                      className="flex items-center min-h-12 text-[15px] font-bold text-text no-underline hover:text-primary transition-colors duration-fast ease-standard"
                     >
                       {item}
                     </a>
                   ))}
-                </div>
+                </nav>
               </div>
 
-              <div className="py-3.5 border-t border-border-subtle">
-                <h4 className="m-0 mb-2.5 text-xs text-text-tertiary tracking-[0.08em]">MY PAGE</h4>
+              <div className="px-5 pb-4">
+                <h4 className="m-0 pt-4 pb-2 text-xs font-semibold text-text-tertiary tracking-[0.08em]">MY PAGE</h4>
                 <MyPageNavList variant="drawer" />
               </div>
             </div>
 
-            <div className="shrink-0 border-t border-border-subtle p-[18px]">
+            {/* 업그레이드 버튼 — 스크롤 영역 밖 고정 */}
+            <div className="shrink-0 border-t border-border-subtle px-5 py-4">
               <Button variant="primary" size="md" layout="full" type="button">
                 업그레이드
               </Button>

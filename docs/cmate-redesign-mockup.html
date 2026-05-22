@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C-Mate · 기본정보 페이지 재설계 (Linear/Notion 스타일)</title>
+<title>C-Mate · 기본정보 페이지 재설계 v4 (Next.js 16 구현 반영)</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
   :root {
@@ -2173,7 +2173,7 @@
 <nav class="viewer-nav">
   <span class="brand">CHRISTIAN MATE</span>
   <span class="vsep"></span>
-  <span style="font-size:13px;color:rgba(255,255,255,0.8);font-weight:500;">기본정보 페이지 재설계 v3</span>
+  <span style="font-size:13px;color:rgba(255,255,255,0.8);font-weight:500;">기본정보 페이지 재설계 v4 — Next.js 16 구현 반영</span>
   <span class="vsep"></span>
   <div class="tabs">
     <button class="tab active" data-view="desktop">Desktop 1440</button>
@@ -2185,7 +2185,21 @@
 
 <!-- =================== DESKTOP =================== -->
 <section class="view active" id="view-desktop">
-  <div class="view-label">02 · Desktop 1440 — 모던 미니멀 (Linear/Notion 패턴)</div>
+  <div class="view-label">02 · Desktop 1440 — 모던 미니멀 (Next.js 16 RSC · Tailwind v4 @theme)</div>
+  <div style="max-width:1440px;margin:0 auto 20px;padding:14px 18px;background:var(--success-light);border:1px solid #BBF7D0;border-radius:var(--radius-lg);display:flex;gap:12px;align-items:flex-start;font-size:13px;color:#064E3B;">
+    <span style="font-weight:700;">v4 변경 요약</span>
+    <span>1) 헤더 site-actions 단순화 — 프로필 + 로그아웃만 (무료상담 인라인 제거)</span>
+    <span>·</span>
+    <span>2) Section 6 사진 영역에 <strong>ProfilePhotoGuide aside</strong> 신규 (I-9)</span>
+    <span>·</span>
+    <span>3) 포토북 — 사진별 description input + − 빈 슬롯 삭제 버튼</span>
+    <span>·</span>
+    <span>4) QuickRail에 <strong>무료상담</strong> 추가 (총 6 + 맨위로)</span>
+    <span>·</span>
+    <span>5) Modals에 <strong>검증 모달 (I-8)</strong> · <strong>FreeConsultModal (X-1)</strong> 추가</span>
+    <span>·</span>
+    <span>6) StyleChipGroup 그룹명 "외모 스타일 / 성격·기질 / 성품" · 옵션 확장</span>
+  </div>
   <div class="cm-web-shell">
     <div class="site-header-area">
       <header class="site-header">
@@ -2202,13 +2216,14 @@
           <a href="#">문의하기</a>
         </nav>
         <div class="site-actions">
-          <div class="site-call">
-            <small>무료 상담 받기</small>
-            <strong>02)862-3920</strong>
-          </div>
+          <!-- v2 변경: 무료 상담 받기 인라인 노출 제거 → QuickRail/MobileFab "무료상담" 클릭 시 FreeConsultModal로 통합 -->
           <div class="site-profile"><span class="avatar">C</span><span>임승리</span></div>
           <button class="logout-btn" type="button" aria-label="로그아웃">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M21 19V5a2 2 0 0 0-2-2h-5"></path></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <path d="M16 17l5-5-5-5"/>
+              <path d="M21 12H9"/>
+            </svg>
             <span>로그아웃</span>
           </button>
         </div>
@@ -2281,14 +2296,20 @@
           <div class="m-menu-section">
             <h4>MY PAGE</h4>
             <div class="m-side-list">
-              <span class="active">내 정보 · 프로필</span>
-              <span>정보 수정</span>
-              <span>비밀번호 수정</span>
-              <span>가입정보</span>
-              <span>온라인 계약</span>
-              <span>서류제출</span>
-              <span>매칭 라운지</span>
+              <!-- 그룹 1: 내 정보 (defaultOpen) -->
+              <span style="font-weight:700;">내 정보 ⌃</span>
+              <span style="margin-left:12px;">정보 수정</span>
+              <span style="margin-left:12px;">비밀번호 수정</span>
+              <span class="active" style="margin-left:12px;">프로필</span>
+              <span style="margin-left:12px;">가입정보</span>
+              <span style="margin-left:12px;">온라인 계약</span>
+              <span style="margin-left:12px;">서류제출</span>
+              <span style="margin-left:12px;">회원 탈퇴</span>
+              <!-- 그룹 2: 매칭 라운지 (collapsed) -->
+              <span style="font-weight:700;">매칭 라운지 ⌄</span>
+              <!-- 단일 -->
               <span>만남 캘린더</span>
+              <span>문의하기</span>
             </div>
           </div>
         </div>
@@ -2626,7 +2647,7 @@
                 <div class="style-group">
                   <div class="style-sub">
                     <div class="style-sub-head">
-                      <span class="style-sub-title">외모</span>
+                      <span class="style-sub-title">외모 스타일</span>
                       <span class="style-sub-count">2개</span>
                     </div>
                     <div class="style-chips">
@@ -2635,11 +2656,14 @@
                       <div class="radio">세련된</div>
                       <div class="radio">지적인</div>
                       <div class="radio">훈훈한</div>
+                      <div class="radio">터프한</div>
+                      <div class="radio">패션에 민감한</div>
+                      <div class="radio">스포티한</div>
                     </div>
                   </div>
                   <div class="style-sub">
                     <div class="style-sub-head">
-                      <span class="style-sub-title">성격</span>
+                      <span class="style-sub-title">성격/기질</span>
                       <span class="style-sub-count">1개</span>
                     </div>
                     <div class="style-chips">
@@ -2648,6 +2672,12 @@
                       <div class="radio">차분한</div>
                       <div class="radio">활발한</div>
                       <div class="radio">리더십</div>
+                      <div class="radio">듬직한</div>
+                      <div class="radio">도도한</div>
+                      <div class="radio">대범한</div>
+                      <div class="radio">신중한</div>
+                      <div class="radio">열정적인</div>
+                      <div class="radio">낙천적인</div>
                     </div>
                   </div>
                   <div class="style-sub">
@@ -2656,11 +2686,14 @@
                       <span class="style-sub-count">1개</span>
                     </div>
                     <div class="style-chips">
-                      <div class="radio selected">성실</div>
+                      <div class="radio selected">성실한</div>
                       <div class="radio">책임감</div>
-                      <div class="radio">배려</div>
-                      <div class="radio">온화</div>
-                      <div class="radio">정직</div>
+                      <div class="radio">정직한</div>
+                      <div class="radio">지적인</div>
+                      <div class="radio">상냥한</div>
+                      <div class="radio">섬세한</div>
+                      <div class="radio">창의적인</div>
+                      <div class="radio">끈기있는</div>
                     </div>
                   </div>
                   <div class="style-total">
@@ -2739,41 +2772,84 @@
             <div class="row">
               <div class="lcol">
                 <div class="l-title">프로필 사진 <span class="req">*</span></div>
-                <div class="l-desc">drag로 순서를 변경할 수 있어요. 비대표 사진의 '★ 대표 등록' 버튼으로 승격.</div>
-                <div class="l-pins"><span class="pin p1">P1 · I-5</span></div>
+                <div class="l-desc"><strong style="color:var(--primary);">2장 필수 등록</strong>. 비대표 사진의 '★ 대표 등록' 버튼으로 승격.</div>
+                <div class="l-pins"><span class="pin p1">P1 · I-5</span><span class="pin p2">P2 · I-9</span></div>
               </div>
               <div class="fcol">
-                <div class="photo-grid">
-                  <div class="photo-slot rep filled">
-                    <div class="actions"><button class="icon-btn" type="button" aria-label="대표 사진 삭제" title="삭제"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-                    <div class="badge">★ 대표</div>
+                <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
+                  <div class="photo-grid" style="flex:0 0 auto;">
+                    <div class="photo-slot rep filled">
+                      <div class="actions"><button class="icon-btn" type="button" aria-label="대표 사진 삭제" title="삭제"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+                      <div class="badge">★ 대표</div>
+                    </div>
+                    <div class="photo-slot normal filled">
+                      <div class="actions"><button class="icon-btn" type="button" aria-label="두 번째 사진 삭제" title="삭제"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+                      <button class="cta" type="button">★ 대표 등록</button>
+                    </div>
+                    <div class="photo-slot normal filled">
+                      <div class="actions"><button class="icon-btn" type="button" aria-label="세 번째 사진 삭제" title="삭제"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+                      <button class="cta" type="button">★ 대표 등록</button>
+                    </div>
+                    <div class="photo-slot normal empty">
+                      <div class="plus">＋</div>
+                      <div class="label">추가</div>
+                    </div>
                   </div>
-                  <div class="photo-slot normal filled">
-                    <div class="actions"><button class="icon-btn" type="button" aria-label="두 번째 사진 삭제" title="삭제"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-                    <button class="cta" type="button">★ 대표 등록</button>
-                  </div>
-                  <div class="photo-slot normal filled">
-                    <div class="actions"><button class="icon-btn" type="button" aria-label="세 번째 사진 삭제" title="삭제"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-                    <button class="cta" type="button">★ 대표 등록</button>
-                  </div>
-                  <div class="photo-slot normal empty">
-                    <div class="plus">＋</div>
-                    <div class="label">추가</div>
-                  </div>
+                  <!-- I-9 (v2 신규) — ProfilePhotoGuide aside : 1430px+ 사진 슬롯 옆, 그 이하 상단 -->
+                  <aside class="photo-guide-aside" aria-label="사진 등록 TIP" style="flex:1 1 240px;min-width:220px;max-width:340px;background:var(--info-light);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:14px;display:flex;flex-direction:column;gap:10px;">
+                    <div style="display:flex;align-items:center;gap:6px;">
+                      <span style="display:inline-flex;width:16px;height:16px;align-items:center;justify-content:center;font-weight:700;color:var(--info);">ⓘ</span>
+                      <h3 style="margin:0;font-size:14px;font-weight:700;color:var(--info);">사진 등록 TIP</h3>
+                    </div>
+                    <ul style="margin:0;padding-left:16px;list-style:disc;font-size:12px;line-height:1.45;color:var(--text-sec);">
+                      <li>얼굴이 잘 보이는 선명한 사진이 좋아요.</li>
+                      <li>마스크, 선글라스 등으로 가린 사진은 대표 사진으로 사용할 수 없어요.</li>
+                      <li>AI 프로필 사진은 등록이 불가해요.</li>
+                      <li>여러명이 함께 나오거나, 흐릿하거나 어두운 사진은 피해주세요.</li>
+                    </ul>
+                    <hr style="border:0;border-top:1px solid var(--border-subtle);margin:0;" />
+                    <div style="display:flex;gap:12px;">
+                      <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                        <p style="margin:0;font-size:13px;font-weight:700;color:var(--text);">좋은 사진</p>
+                        <div style="display:flex;flex-direction:column;gap:4px;">
+                          <div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-md);"></div>
+                          <div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-md);"></div>
+                          <div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-md);"></div>
+                        </div>
+                      </div>
+                      <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                        <p style="margin:0;font-size:13px;font-weight:700;color:var(--text);">나쁜 사진</p>
+                        <div style="display:flex;flex-direction:column;gap:4px;">
+                          <div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-md);"></div>
+                          <div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-md);"></div>
+                          <div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-md);"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </aside>
                 </div>
-                <div class="infobox info"><span class="ic">ⓘ</span><span>이미지 파일 크기 10MB 이하, JPG/PNG 지원.</span></div>
+                <div class="infobox info"><span class="ic">ⓘ</span><span>이미지 파일 크기는 10MB 이하로 업로드해주세요.</span></div>
               </div>
             </div>
             <div class="row">
               <div class="lcol">
                 <div class="l-title">포토북</div>
-                <div class="l-desc">최대 8장. 추가 슬롯은 항상 끝에 위치 (기존 사진 밀림 버그 수정).</div>
+                <div class="l-desc"><strong style="color:var(--primary);">최대 8장</strong>. 나의 일상, 취미, 운동, 여행 등의 모습을 자유롭게 보여주는 공간입니다. 추가 슬롯은 항상 끝에 위치.</div>
                 <div class="l-pins"><span class="pin p1">P1 · I-6</span></div>
               </div>
               <div class="fcol">
-                <div class="photobook-grid">
-                  <div class="pb-thumb filled"></div>
-                  <div class="pb-thumb"><div class="plus">＋</div></div>
+                <!-- v2: 2-col grid, 사진별 description input, − 빈 슬롯 삭제 (첫 빈 슬롯 제외) -->
+                <div class="photobook-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
+                  <div style="display:flex;flex-direction:column;gap:8px;min-width:0;">
+                    <div class="pb-thumb filled" style="aspect-ratio:4/3;"></div>
+                    <div class="input input-sm"><input aria-label="포토북 1 사진 설명" placeholder="사진에 대한 간단한 설명을 입력해주세요" value="제주 한라산 등반"></div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:8px;min-width:0;">
+                    <div class="pb-thumb filled" style="aspect-ratio:4/3;"></div>
+                    <div class="input input-sm"><input aria-label="포토북 2 사진 설명" placeholder="사진에 대한 간단한 설명을 입력해주세요"></div>
+                  </div>
+                  <div class="pb-thumb" style="aspect-ratio:4/3;position:relative;"><button type="button" aria-label="빈 포토북 슬롯 삭제" style="position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:white;border:1px solid var(--border);color:var(--text-sec);display:flex;align-items:center;justify-content:center;font-size:14px;">−</button><div class="plus">＋</div></div>
+                  <div class="pb-thumb" style="aspect-ratio:4/3;"><div class="plus">＋</div></div>
                 </div>
               </div>
             </div>
@@ -2798,6 +2874,11 @@
       <aside class="quick-rail" aria-label="퀵 메뉴">
         <button class="quick-fab-toggle" type="button" aria-label="퀵 메뉴 열기" aria-expanded="false">＋</button>
         <div class="quick-menu">
+          <!-- v2 신규: 무료상담 → 클릭 시 FreeConsultModal 오픈 (X-1) -->
+          <button class="quick-btn" type="button" aria-label="무료상담 모달 열기">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span>무료상담</span>
+          </button>
           <button class="quick-btn" type="button">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.5-1.4 2-3.5 1.2-5.3A5 5 0 0 0 13 6.7L12 8l-1-1.3A5 5 0 0 0 3.8 8.7c-.8 1.8-.3 3.9 1.2 5.3l7 6 7-6Z"></path><path d="M12 8v4"></path><path d="M10 10h4"></path></svg>
             <span>자녀결혼</span>
@@ -2818,7 +2899,7 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 3v6h-6"></path><path d="M9 11h2v4H9z"></path><path d="M14 9h2v6h-2z"></path></svg>
             <span>33법칙</span>
           </button>
-          <button class="quick-btn top" type="button">TOP +</button>
+          <button class="quick-btn top" type="button">맨위로</button>
         </div>
       </aside>
     </div>
@@ -3117,33 +3198,45 @@
                 <div class="l-title">스타일 <span class="req">*</span> <span class="pin p3">B-2</span></div>
                 <div class="style-group">
                   <div class="style-sub">
-                    <div class="style-sub-head"><span class="style-sub-title">외모</span><span class="style-sub-count">2개</span></div>
+                    <div class="style-sub-head"><span class="style-sub-title">외모 스타일</span><span class="style-sub-count">2개</span></div>
                     <div class="style-chips">
                       <div class="radio selected">귀여운</div>
                       <div class="radio selected">청순한</div>
                       <div class="radio">세련된</div>
                       <div class="radio">지적인</div>
                       <div class="radio">훈훈한</div>
+                      <div class="radio">터프한</div>
+                      <div class="radio">패션에 민감한</div>
+                      <div class="radio">스포티한</div>
                     </div>
                   </div>
                   <div class="style-sub">
-                    <div class="style-sub-head"><span class="style-sub-title">성격</span><span class="style-sub-count">1개</span></div>
+                    <div class="style-sub-head"><span class="style-sub-title">성격/기질</span><span class="style-sub-count">1개</span></div>
                     <div class="style-chips">
                       <div class="radio selected">다정한</div>
                       <div class="radio">유머있는</div>
                       <div class="radio">차분한</div>
                       <div class="radio">활발한</div>
                       <div class="radio">리더십</div>
+                      <div class="radio">듬직한</div>
+                      <div class="radio">도도한</div>
+                      <div class="radio">대범한</div>
+                      <div class="radio">신중한</div>
+                      <div class="radio">열정적인</div>
+                      <div class="radio">낙천적인</div>
                     </div>
                   </div>
                   <div class="style-sub">
                     <div class="style-sub-head"><span class="style-sub-title">성품</span><span class="style-sub-count">1개</span></div>
                     <div class="style-chips">
-                      <div class="radio selected">성실</div>
+                      <div class="radio selected">성실한</div>
                       <div class="radio">책임감</div>
-                      <div class="radio">배려</div>
-                      <div class="radio">온화</div>
-                      <div class="radio">정직</div>
+                      <div class="radio">정직한</div>
+                      <div class="radio">지적인</div>
+                      <div class="radio">상냥한</div>
+                      <div class="radio">섬세한</div>
+                      <div class="radio">창의적인</div>
+                      <div class="radio">끈기있는</div>
                     </div>
                   </div>
                   <div class="style-total"><span>선택 합계 4 / 5</span><span class="max">최대 5개까지</span></div>
@@ -3193,14 +3286,30 @@
           <div class="m-card open">
             <button class="m-card-head" type="button" aria-expanded="true">
               <div class="num-badge">6</div>
-              <div><h3>프로필 사진</h3><div class="sub">carousel · drag로 순서변경</div></div>
+              <div><h3>프로필 사진</h3><div class="sub">carousel · 길게 누르면 위치 변경</div></div>
               <div class="grow"></div>
               <span class="pin p1">I-5</span>
               <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="m-card-body">
               <div class="m-field">
-                <div class="l-title">프로필 사진 <span class="req">*</span></div>
+                <div class="l-title">프로필 사진 <span class="req">*</span> <span class="pin p2">P2 · I-9</span></div>
+                <!-- I-9 v2 신규 — 모바일에서는 가이드가 carousel 위에 상단 노출 -->
+                <aside aria-label="사진 등록 TIP" style="background:var(--info-light);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:12px;display:flex;flex-direction:column;gap:8px;">
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <span style="font-weight:700;color:var(--info);">ⓘ</span>
+                    <h3 style="margin:0;font-size:13px;font-weight:700;color:var(--info);">사진 등록 TIP</h3>
+                  </div>
+                  <ul style="margin:0;padding-left:14px;list-style:disc;font-size:11px;line-height:1.45;color:var(--text-sec);">
+                    <li>얼굴이 잘 보이는 선명한 사진이 좋아요.</li>
+                    <li>마스크·선글라스 가린 사진은 대표로 사용할 수 없어요.</li>
+                    <li>AI 프로필 사진은 등록 불가.</li>
+                  </ul>
+                  <div style="display:flex;gap:8px;">
+                    <div style="flex:1;display:flex;flex-direction:column;gap:4px;"><p style="margin:0;font-size:11px;font-weight:700;">좋은 사진</p><div style="display:flex;flex-direction:column;gap:3px;"><div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-sm);"></div><div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-sm);"></div></div></div>
+                    <div style="flex:1;display:flex;flex-direction:column;gap:4px;"><p style="margin:0;font-size:11px;font-weight:700;">나쁜 사진</p><div style="display:flex;flex-direction:column;gap:3px;"><div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-sm);"></div><div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-sm);"></div></div></div>
+                  </div>
+                </aside>
                 <div class="m-carousel">
                   <div class="photo-slot filled m-photo-rep">
                     <div class="actions"><button class="icon-btn" type="button" aria-label="모바일 대표 사진 삭제"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
@@ -3217,14 +3326,19 @@
                   <div class="d"></div>
                   <div class="d"></div>
                 </div>
-                <div class="infobox info"><span class="ic">ⓘ</span><span>길게 누르면 위치 변경 모드. 좌/우 화살표 또는 drag로 이동.</span></div>
               </div>
               <div class="m-field">
                 <div class="l-title">포토북 <span class="pin p1">P1 · I-6</span></div>
-                <div class="l-desc">최대 8장. 추가 슬롯은 항상 끝에 위치합니다.</div>
-                <div class="photobook-grid">
-                  <div class="pb-thumb filled"></div>
-                  <div class="pb-thumb"><div class="plus">＋</div></div>
+                <div class="l-desc"><strong style="color:var(--primary);">최대 8장</strong>까지 슬롯을 추가할 수 있습니다.</div>
+                <!-- v2: 가로 carousel + 사진별 description input -->
+                <div class="photobook-grid" style="display:flex;gap:10px;overflow-x:auto;">
+                  <div style="flex:0 0 220px;display:flex;flex-direction:column;gap:6px;">
+                    <div class="pb-thumb filled" style="aspect-ratio:4/3;"></div>
+                    <div class="input input-sm"><input aria-label="모바일 포토북 1 설명" placeholder="사진에 대한 간단한 설명" value="제주 한라산"></div>
+                  </div>
+                  <div style="flex:0 0 220px;">
+                    <div class="pb-thumb" style="aspect-ratio:4/3;"><div class="plus">＋</div></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -3255,6 +3369,7 @@
 
         <!-- FAB (closed state) -->
         <div class="m-fab-menu" id="mobile-fab-menu-a" hidden>
+          <div class="item"><span class="ic">☎</span><span class="lab">무료상담</span></div>
           <div class="item"><span class="ic">♡</span><span class="lab">자녀결혼</span></div>
           <div class="item"><span class="ic">↗</span><span class="lab">업그레이드</span></div>
           <div class="item"><span class="ic">⌖</span><span class="lab">오시는길</span></div>
@@ -3325,6 +3440,7 @@
         </div>
 
         <div class="m-fab-menu" id="mobile-fab-menu-b">
+          <div class="item"><span class="ic">☎</span><span class="lab">무료상담</span></div>
           <div class="item"><span class="ic">♡</span><span class="lab">자녀결혼</span></div>
           <div class="item"><span class="ic">↗</span><span class="lab">업그레이드</span></div>
           <div class="item"><span class="ic">⌖</span><span class="lab">오시는길</span></div>
@@ -3479,6 +3595,51 @@
       </div>
     </div>
 
+    <!-- I-8 Validation Modal (v2 신규) — 미입력 항목 안내 -->
+    <div class="modal m-w-440" role="dialog" aria-modal="true" aria-labelledby="modal-validation-title" aria-describedby="modal-validation-desc">
+      <div class="modal-head">
+        <h3 id="modal-validation-title">입력하지 않은 항목이 있습니다</h3>
+        <span class="grow"></span>
+        <button class="close" type="button" aria-label="검증 모달 닫기">✕</button>
+      </div>
+      <div class="modal-body" id="modal-validation-desc">
+        <p style="margin:0;font-size:14px;color:var(--text-sec);">다음 항목을 입력해 주세요.</p>
+        <ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;list-style:disc;font-size:14px;color:var(--text);">
+          <li>결혼 경험</li>
+          <li>주소</li>
+          <li>출석 교회명 / 교단</li>
+          <li>모태신앙 여부</li>
+          <li>학교명 / 전공</li>
+          <li>스타일</li>
+          <li>프로필 사진</li>
+        </ul>
+      </div>
+      <div class="modal-foot">
+        <span class="caption">"다음" 클릭 → 첫 미입력 섹션으로 자동 스크롤</span>
+        <span class="grow"></span>
+        <span class="pin p1">P1 · I-8</span>
+        <button class="btn btn-primary btn-md" type="button" style="min-width:80px;">확인</button>
+      </div>
+    </div>
+
+    <!-- X-1 Free Consult Modal (v2 신규) — 헤더/퀵메뉴/FAB 공통 진입점 -->
+    <div class="modal m-w-440" role="dialog" aria-modal="true" aria-labelledby="modal-consult-title" aria-describedby="modal-consult-desc">
+      <div class="modal-head">
+        <h3 id="modal-consult-title">무료 상담</h3>
+        <span class="grow"></span>
+        <button class="close" type="button" aria-label="무료 상담 모달 닫기">✕</button>
+      </div>
+      <div class="modal-body" id="modal-consult-desc" style="align-items:center;text-align:center;">
+        <p style="margin:0;font-size:24px;font-weight:800;letter-spacing:-0.02em;color:var(--text-brand);">02)862-3920</p>
+        <p style="margin:0;font-size:13px;color:var(--text-sec);">평일 10:00 ~ 19:00 · 점심 12:30 ~ 13:30 · 주말/공휴일 휴무</p>
+      </div>
+      <div class="modal-foot">
+        <a href="tel:+8228623920" class="btn btn-primary btn-md" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">통화하기</a>
+        <span class="pin p2">P2 · X-1</span>
+        <button class="btn btn-primary btn-md" type="button">확인</button>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -3489,11 +3650,12 @@
     <div class="ds-hero">
       <div class="ds-kicker">C-Mate Profile Form System</div>
       <h1>기본정보 작성 화면을 위한 Design system</h1>
-      <p>이 시스템은 기획서의 S/R/I/C 항목과 현재 mockup의 실제 CSS를 하나로 묶은 구현 기준입니다. 새 필드나 모달을 추가할 때는 <b>토큰 → 레이아웃 → 컴포넌트 → 상태 → 접근성</b> 순서로 적용합니다.</p>
+      <p>이 시스템은 기획서의 S/R/I/C/X 항목과 현재 Next.js 16 구현(<code>app/_components/</code>)을 하나로 묶은 구현 기준입니다. 새 필드나 모달을 추가할 때는 <b>토큰 → 레이아웃 → 컴포넌트 → 상태 → 접근성</b> 순서로 적용합니다. <strong>모든 토큰은 <code>app/globals.css</code>의 단일 <code>@theme</code> 블록</strong>에서 관리되며 JSX/CSS에서 hex/px 리터럴 사용을 금지합니다.</p>
       <div class="ds-meta-row">
-        <span class="ds-version">v1.0.0 · 2026-05-21</span>
-        <span class="pin p2">Pretendard / 4px grid / 1023px shell breakpoint</span>
+        <span class="ds-version">v1.2.0 · 2026-05-22</span>
+        <span class="pin p2">Pretendard / 4px grid / 1280px (xl) shell breakpoint</span>
         <span class="pin p3">WCAG 2.1 AA target</span>
+        <span class="pin p0">Next.js 16 · RSC default · Tailwind v4 @theme</span>
       </div>
     </div>
 
@@ -4471,18 +4633,21 @@ type ButtonSize = 'sm' | 'md' | 'lg';
         <div class="ds-card-head">
           <div>
             <h2>17. Layout Contract</h2>
-            <p>웹과 모바일의 항목은 동일하고 배치만 달라집니다.</p>
+            <p>웹과 모바일의 항목은 동일하고 배치만 달라집니다. <strong>v4 기준 shell 전환점은 1280px (xl)</strong>.</p>
           </div>
+          <span class="pin p0">xl 1280px</span>
         </div>
         <div class="ds-card-body">
           <table class="ds-spec-table">
             <tbody>
-              <tr><td>Desktop</td><td><code>260px + 1fr</code> 2열 row. 1023px 이하 1열.</td></tr>
-              <tr><td>Desktop responsive</td><td>1023px 이하에서는 <code>Mobile 375</code>와 같은 app header, drawer, chip stepper, FAB quick 패턴으로 전환.</td></tr>
-              <tr><td>Mobile</td><td>6개 accordion card. 데스크톱 20개 필드와 동일 항목 유지.</td></tr>
-              <tr><td>Footer</td><td>Wide desktop은 viewport fixed + frame-end dock. Desktop responsive/Mobile은 dock 금지. Mobile site footer는 body 끝까지 배경을 채움.</td></tr>
-              <tr><td>Stepper</td><td>Desktop 5단 균등, 좁은 화면/모바일은 horizontal chip scroll.</td></tr>
-              <tr><td>Photo</td><td>Desktop grid, mobile carousel. 대표 변경/삭제 상태는 같은 모달 정책.</td></tr>
+              <tr><td>Desktop wide (xl+)</td><td>max-width 1440px · 3열 grid <code>172px(sidebar) + 1fr(content) + 68px(rail)</code> · 본문 폼은 <code>--spacing-form-content-width</code> 70rem cap</td></tr>
+              <tr><td>Row layout (xl+)</td><td><code>260px(라벨) + 1fr(필드)</code> 2열, gap 40px. labelAlign=center 시 수직 가운데 정렬.</td></tr>
+              <tr><td>Mobile-like shell (&lt; xl)</td><td>1280px 미만에서는 <code>Mobile 375</code>와 같은 app header, drawer, chip stepper, FAB quick 패턴으로 전환.</td></tr>
+              <tr><td>Mobile cards</td><td>6개 accordion <code>MobileCard</code>. 데스크탑과 <strong>완전히 동일한 18 필드 + 2 체크포인트</strong> 유지.</td></tr>
+              <tr><td>Footer</td><td>Wide desktop은 viewport fixed + <code>[data-cmate-frame]</code> rect 추적으로 frame-end dock. Mobile은 sticky bottom (safe-area).</td></tr>
+              <tr><td>Stepper</td><td>Desktop sticky 5단 균등, 모바일은 horizontal chip scroll + FormProgressBar.</td></tr>
+              <tr><td>Photo</td><td>Desktop 4 grid + ProfilePhotoGuide aside (1430px+에서 옆 배치). Mobile snap carousel + 가이드 상단 노출.</td></tr>
+              <tr><td>Photobook</td><td>Desktop 2-col grid (slot + description input). Mobile horizontal snap carousel.</td></tr>
             </tbody>
           </table>
         </div>
@@ -4536,54 +4701,64 @@ function canSelectStyle(nextSelectedIds) {
           <span class="pin p2">CODE MAP</span>
         </div>
         <div class="ds-card-body">
-          <div class="ds-code"><code>src/design-system/
-  tokens.css              // :root color, radius, shadow, spacing, motion, z, focus
-  global.css              // resets, sr-only, prefers-reduced-motion
-  components/
-    Button.tsx            // variant: primary | secondary | tertiary | danger, loading
-    IconButton.tsx        // aria-label required
-    Field.tsx             // label, required, helperText, error, aria-describedby
-    TextField.tsx         // input/textarea/select wrapper + states
-    RadioGroup.tsx        // single select chip group
-    Checkbox.tsx          // boolean option
-    Pin.tsx               // p0..p3 + status pill
-    Alert.tsx             // info | success | warning | danger (banner)
-    InfoBox.tsx           // inline helper variant
-    AutoSaveChip.tsx      // idle | saving | saved | error
-    Toast.tsx / ToastProvider.tsx  // queue, role=status|alert
-    Tooltip.tsx           // hover/focus + delay
-    Avatar.tsx            // sm | md | lg + dot
-    Skeleton.tsx          // line/thumb shimmer
-    Spinner.tsx           // 14/18/24
-    EmptyState.tsx        // icon + title + desc + CTA
-    PhotoSlot.tsx         // empty/filled/representative/uploading/error
-    SectionCard.tsx       // desktop card + mobile accordion contract
-    ProgressStepper.tsx   // done | current | upcoming + a11y
-    AppHeader.tsx         // desktop global header + responsive shell
-    MegaMenu.tsx          // hover/focus group panel
-    Drawer.tsx            // hamburger drawer + focus trap
-    QuickMenu.tsx         // desktop rail + compact/mobile FAB
-    StickyFooter.tsx      // desktop fixed + wide-only frame dock
-    MobileSiteFooter.tsx  // mobile legal/contact typography
-    Modal.tsx             // shell + ConfirmDialog (focus trap, esc, scroll lock)
-  hooks/
-    useAutosave.ts        // debounce + retry + state
-    useFocusTrap.ts       // modal/drawer
-    useReducedMotion.ts
-    useMediaQuery.ts      // --bp-lg shell switch
-  utils/
-    cn.ts                 // classnames
-    contrast.ts           // wcag check (dev tool)
-    format/               // date, currency, phone (ko-KR)
-  patterns/
-    ChurchSearchRequest.tsx
-    EducationRows.tsx
-    StyleChipGroup.tsx    // STYLE_MAX_TOTAL = 5
-    PhotoManager.tsx
-  tests/
-    a11y.spec.ts          // axe-core 회귀
-    visual/               // chromatic snapshots
-  stories/                // Storybook (옵션)</code></div>
+          <div class="ds-code"><code>app/
+  globals.css                          // @theme tokens (color · radius · shadow · spacing · motion · z · typography · breakpoint)
+  layout.tsx                           // RSC root: html lang="ko", Pretendard variable
+  page.tsx                             // redirect("/personal-info/base-info")
+  _fonts/
+    pretendard.ts                      // next/font/local + variable
+    PretendardVariable.woff2
+  (web)/
+    layout.tsx                         // Header / MobileHeader / Sidebar / [data-cmate-web-main] / Footer / QuickRail / MobileQuickFab
+    personal-info/base-info/
+      page.tsx                         // Stepper + BaseInfoForm wrapped in [data-cmate-frame]
+  _components/
+    ui/                                // 17 primitives
+      Button.tsx                       // variant: primary|secondary|tertiary|danger|icon · size sm|md|lg · layout auto|full|fill
+      Card.tsx                         // Card + CardHead (SECTION tag + title + status pill) + CardBody
+      MobileCard.tsx                   // accordion + 번호 배지 + 진행률 pill · MobileField
+      Row.tsx                          // desktop 260+1fr · required(*) · optional · helper · labelBadge
+      Input.tsx                        // size · state · layout · fieldWidth(height/heightCompact/major/photobook) · suffix · prefix
+      Select.tsx                       // appearance-none + custom chev · fieldWidth=salary
+      Radio.tsx · RadioGroup.tsx       // chip 스타일 · aria-required
+      Checkbox.tsx                     // 18×18 box · sr-only input + custom box
+      StyleChipGroup.tsx               // 3 그룹(외모 스타일·성격/기질·성품) 합산 ≤5
+      CountPill.tsx                    // n/total + size sm|md
+      HighlightBox.tsx                 // 상세 주소 등 보조 panel
+      InfoBox.tsx · InfoBoxIcon.tsx    // variant info|warning|success|danger
+      FormProgressBar.tsx              // md/sm · 0~100% transition
+      PhotoSlot.tsx                    // PhotoSlot (rep/normal · filled/empty) + PhotobookThumb (4:3 + − remove + + add)
+      types.ts                         // Size · ButtonVariant · FieldState union
+    modals/
+      ConfirmModal.tsx                 // width sm(440)|md(480)|lg(560) · variant primary|danger · cancelLabel false 시 단일 버튼
+      ChurchSearchModal.tsx            // 560 · query → EmptyState → inline reg form → submitted success
+    form/
+      BaseInfoForm.tsx                 // root client · 6 섹션 · ProgressMap · AutoSaveChip · 검증 ConfirmModal · D-Footer sync
+      base-info/
+        EducationSection.tsx           // 학력 자동 행 · DEGREE_ROWS map · 다운그레이드 confirm
+        ProfilePhotoGuide.tsx          // v2 신규 · TIP + 좋은/나쁜 사진 썸네일
+        SectionAnchor.tsx              // scroll-margin · 검증 시 scroll target
+        scrollToFieldAnchor.ts         // 보조: aria-expanded=false 아코디언 열기 + smooth scroll
+        types.ts                       // AutoSaveState · ProgressSection · MissingRequiredField · BASE_INFO_SECTION_ORDER · ANCHOR_ID
+        utils.ts
+    web-shell/
+      Header.tsx                       // xl+ desktop · 6 GNB + mega menu + profile/logout
+      MobileHeader.tsx                 // xl- mobile · fixed topbar + step chips + drawer
+      Sidebar.tsx                      // sticky · MyPageNavList (sidebar variant)
+      MyPageNavList.tsx                // grouped collapsible (sidebar/drawer variant)
+      myPageNav.ts                     // MY_PAGE_NAV 상수
+      Stepper.tsx                      // 5단 sticky · done/current/pending
+      Footer.tsx                       // desktop 2 col + mobile column
+      QuickRail.tsx                    // xl+ · 6 quick items + 맨위로 · frame-end dock
+      MobileQuickFab.tsx               // xl- · ＋↔✕ FAB · 6 menu stack
+      FreeConsultModal.tsx             // v2 신규 · 통화하기(모바일) + 확인
+      quickMenuItems.tsx               // QUICK_MENU_ITEMS 상수
+      consultation.ts                  // FREE_CONSULT_PHONE_DISPLAY / TEL
+      CmLogo.tsx · LogoutIcon.tsx
+  AGENTS.md / CLAUDE.md                // 프로젝트 룰: 토큰 only · primitives reuse · Next 16 caveat · RSC default · SKILL.md first
+.claude/skills/
+  cmate-web-shell/SKILL.md             // 웹 chrome glossary + 토큰 매핑
+  cmate-form-conventions/SKILL.md      // 폼 Card/Row · validation 타이밍 · auto-save · 필수 표기</code></div>
           <table class="ds-spec-table">
             <thead><tr><th>Quality Gate</th><th>Required Check</th></tr></thead>
             <tbody>
@@ -4625,6 +4800,10 @@ function canSelectStyle(nextSelectedIds) {
 
           <h3 style="margin:14px 0 4px;font-size:13px;font-weight:700;color:var(--text-sec);letter-spacing:0.08em;text-transform:uppercase;">Changelog</h3>
           <div class="ds-changelog">
+            <div class="ds-changelog-row">
+              <span class="ver">1.2.0</span>
+              <span class="desc"><strong>v4 — Next.js 16 구현 반영</strong>. ProfilePhotoGuide(I-9) · 검증 ConfirmModal(I-8) · FreeConsultModal(X-1) 신규 추가. QuickRail 6+맨위로로 확장. 헤더 site-actions 단순화(call info 제거). 포토북 description input + − empty remove. Shell 전환점을 1280px(xl)로 명시. <small>2026-05-22</small></span>
+            </div>
             <div class="ds-changelog-row">
               <span class="ver">1.0.0</span>
               <span class="desc">초기 릴리스. 색/타이포/스페이싱/라디우스/섀도우/모션/z-index/브레이크포인트 토큰화. 13개 컴포넌트 인벤토리 + 상태 매트릭스. 폼/모달/접근성 정책. <small>2026-05-21</small></span>

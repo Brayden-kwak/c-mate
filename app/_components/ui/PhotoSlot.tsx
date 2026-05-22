@@ -8,6 +8,8 @@ type PhotoSlotProps = {
   previewUrl?: string;
   onDelete?: () => void;
   onSetRepresentative?: () => void;
+  onMoveLeft?: () => void;
+  onMoveRight?: () => void;
   onUpload?: (file: File) => void;
 };
 
@@ -17,6 +19,8 @@ type PhotobookThumbProps = {
   onDelete?: () => void;
   onRemoveEmpty?: () => void;
   onUpload?: (file: File) => void;
+  onMoveLeft?: () => void;
+  onMoveRight?: () => void;
 };
 
 function RepresentativeBadge() {
@@ -32,15 +36,32 @@ function RepresentativeBadge() {
   );
 }
 
-export function PhotoSlot({ variant, filled, previewUrl, onDelete, onSetRepresentative, onUpload }: PhotoSlotProps) {
+function ChevronLeft() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5" aria-hidden="true">
+      <polyline points="15 18 9 12 15 6" />
+    </svg>
+  );
+}
+
+function ChevronRight() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5" aria-hidden="true">
+      <polyline points="9 18 15 12 9 6" />
+    </svg>
+  );
+}
+
+export function PhotoSlot({ variant, filled, previewUrl, onDelete, onSetRepresentative, onMoveLeft, onMoveRight, onUpload }: PhotoSlotProps) {
   const fileRef = useRef<HTMLInputElement>(null);
   const sizeClass = "w-[var(--spacing-photo-slot-width)] h-[var(--spacing-photo-slot-height)]";
   const isRepresentative = variant === "rep";
+  const hasBottomRow = !isRepresentative && (onSetRepresentative || onMoveLeft || onMoveRight);
 
   if (filled) {
     return (
       <div
-        className={`${sizeClass} relative rounded-lg overflow-hidden flex flex-col items-center justify-end border bg-center bg-cover bg-no-repeat ${isRepresentative ? "border-primary shadow-md" : "border-transparent"} ${previewUrl ? "" : "bg-photo-gradient"}`}
+        className={`${sizeClass} relative rounded-lg overflow-hidden border bg-center bg-cover bg-no-repeat ${isRepresentative ? "border-primary shadow-md" : "border-transparent"} ${previewUrl ? "" : "bg-photo-gradient"}`}
         style={previewUrl ? { backgroundImage: `url("${previewUrl}")` } : undefined}
       >
         {isRepresentative && <RepresentativeBadge />}
@@ -59,16 +80,38 @@ export function PhotoSlot({ variant, filled, previewUrl, onDelete, onSetRepresen
             </button>
           )}
         </div>
-        {!isRepresentative && (
-          onSetRepresentative && (
-            <button
-              type="button"
-              onClick={onSetRepresentative}
-              className="bg-surface text-text text-xs font-semibold px-3 py-1.5 rounded-pill border border-border-strong cursor-pointer"
-            >
-              ★ 대표 등록
-            </button>
-          )
+        {hasBottomRow && (
+          <div className="absolute bottom-2 left-0 right-0 flex items-center justify-between px-2">
+            {onMoveLeft ? (
+              <button
+                type="button"
+                onClick={onMoveLeft}
+                aria-label="이전으로 이동"
+                className="w-7 h-7 rounded-full flex items-center justify-center bg-black/40 text-white shrink-0"
+              >
+                <ChevronLeft />
+              </button>
+            ) : <span className="w-7 h-7 shrink-0" />}
+            {onSetRepresentative && (
+              <button
+                type="button"
+                onClick={onSetRepresentative}
+                className="bg-surface text-text text-xs font-semibold px-2.5 py-1 rounded-pill border border-border-strong cursor-pointer"
+              >
+                ★ 대표 등록
+              </button>
+            )}
+            {onMoveRight ? (
+              <button
+                type="button"
+                onClick={onMoveRight}
+                aria-label="다음으로 이동"
+                className="w-7 h-7 rounded-full flex items-center justify-center bg-black/40 text-white shrink-0"
+              >
+                <ChevronRight />
+              </button>
+            ) : <span className="w-7 h-7 shrink-0" />}
+          </div>
         )}
       </div>
     );
@@ -106,7 +149,7 @@ export function PhotoSlot({ variant, filled, previewUrl, onDelete, onSetRepresen
   );
 }
 
-export function PhotobookThumb({ filled, previewUrl, onDelete, onRemoveEmpty, onUpload }: PhotobookThumbProps) {
+export function PhotobookThumb({ filled, previewUrl, onDelete, onRemoveEmpty, onUpload, onMoveLeft, onMoveRight }: PhotobookThumbProps) {
   const fileRef = useRef<HTMLInputElement>(null);
 
   if (filled) {
@@ -127,6 +170,34 @@ export function PhotobookThumb({ filled, previewUrl, onDelete, onRemoveEmpty, on
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
+        )}
+        {(onMoveLeft || onMoveRight) && (
+          <div className="absolute bottom-1.5 left-0 right-0 flex items-center justify-between px-1.5">
+            {onMoveLeft ? (
+              <button
+                type="button"
+                onClick={onMoveLeft}
+                aria-label="이전으로 이동"
+                className="w-6 h-6 rounded-full flex items-center justify-center bg-black/40 text-white shrink-0"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3" aria-hidden="true">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+            ) : <span className="w-6 h-6 shrink-0" />}
+            {onMoveRight ? (
+              <button
+                type="button"
+                onClick={onMoveRight}
+                aria-label="다음으로 이동"
+                className="w-6 h-6 rounded-full flex items-center justify-center bg-black/40 text-white shrink-0"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            ) : <span className="w-6 h-6 shrink-0" />}
+          </div>
         )}
       </div>
     );
