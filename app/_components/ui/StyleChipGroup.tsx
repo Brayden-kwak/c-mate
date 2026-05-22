@@ -44,12 +44,7 @@ export function StyleChipGroup({ groups, maxTotal = 5, value = {}, onChange }: P
         const groupSelected = selected[group.label] ?? [];
         return (
           <div key={group.label} className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-text-secondary">{group.label}</span>
-              <span className="text-[10px] font-bold text-text-secondary bg-subtle px-2 py-0.5 rounded-pill tracking-[0.04em]">
-                {groupSelected.length}개
-              </span>
-            </div>
+            <span className="text-xs font-semibold text-text-secondary">{group.label}</span>
             <div className="flex flex-wrap gap-1.5">
               {group.options.map((opt) => {
                 const isSelected = groupSelected.includes(opt);
@@ -77,20 +72,6 @@ export function StyleChipGroup({ groups, maxTotal = 5, value = {}, onChange }: P
           </div>
         );
       })}
-
-      <div
-        className={[
-          "flex items-center gap-2 px-3.5 py-2.5 rounded-md text-[13px] font-semibold",
-          atMax
-            ? "bg-warning-light text-warning"
-            : "bg-primary-50 text-primary",
-        ].join(" ")}
-      >
-        <span>
-          선택 합계 {totalCount} / {maxTotal}
-        </span>
-        <span className="ml-auto font-normal opacity-85">최대 {maxTotal}개까지</span>
-      </div>
     </div>
   );
 }

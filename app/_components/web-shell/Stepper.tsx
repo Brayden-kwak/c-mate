@@ -14,7 +14,7 @@ const STEPS: Step[] = [
 
 export function Stepper() {
   return (
-    <div className="bg-surface border-b border-border px-8 flex">
+    <div className="bg-surface border-b border-border px-8 flex rounded-t-lg">
       {STEPS.map((step) => {
         const isCurrent = step.state === "current";
         const isDone = step.state === "done";

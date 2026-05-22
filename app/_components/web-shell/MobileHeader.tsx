@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const STEPS = [
   { num: 1, label: "기본정보", current: true },
@@ -29,27 +29,10 @@ const MY_PAGE = [
 
 export function MobileHeader() {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [progress, setProgress] = useState({ done: 0, total: 19 });
-  const percent = progress.total === 0 ? 0 : (progress.done / progress.total) * 100;
-
-  useEffect(() => {
-    function handleProgress(event: Event) {
-      const detail = (event as CustomEvent<{ done: number; total: number }>).detail;
-      if (detail) setProgress(detail);
-    }
-
-    window.addEventListener("cmate:progress", handleProgress);
-    return () => window.removeEventListener("cmate:progress", handleProgress);
-  }, []);
 
   return (
-    <div className="xl:hidden bg-surface border-b border-border relative z-[var(--z-header)]">
-      {/* Status bar */}
-      <div className="h-11 bg-surface flex items-center justify-between px-6 text-sm font-semibold">
-        <span>9:41</span>
-        <span className="text-[10px]">●●● ●</span>
-      </div>
-
+    <>
+      <div className="fixed top-0 left-0 right-0 xl:hidden z-(--z-header) bg-surface border-b border-border">
       {/* Topbar */}
       <div className="h-14 bg-surface border-b border-border flex items-center px-4 gap-3">
         <button
@@ -76,8 +59,7 @@ export function MobileHeader() {
         </button>
       </div>
 
-      {/* Step chips + progress */}
-      <div className="bg-surface px-4 pt-3 pb-3.5 flex flex-col gap-2.5">
+      <div className="bg-surface px-4 pt-3 pb-3.5">
         <div className="flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
           {STEPS.map((step) => (
             <div
@@ -103,22 +85,17 @@ export function MobileHeader() {
             </div>
           ))}
         </div>
-        <div className="flex items-center gap-2">
-          <div className="flex-1 h-[5px] bg-border-subtle rounded-pill overflow-hidden">
-            <div
-              className="h-full bg-primary rounded-pill"
-              style={{ width: `${percent}%` }}
-            />
-          </div>
-          <span className="text-[11px] font-semibold text-text-secondary">{progress.done} / {progress.total}</span>
-        </div>
       </div>
+
+      </div>
+
+      <div className="xl:hidden h-mobile-shell-header shrink-0" aria-hidden="true" />
 
       {/* Drawer */}
       {drawerOpen && (
         <div
           id="mobile-drawer"
-          className="fixed inset-0 top-11 z-[var(--z-drawer-backdrop)] flex justify-end bg-backdrop-drawer"
+          className="fixed inset-0 top-mobile-shell-header z-(--z-drawer-backdrop) flex justify-end bg-backdrop-drawer"
           onClick={(e) => e.target === e.currentTarget && setDrawerOpen(false)}
         >
           <div className="w-[292px] h-full bg-surface overflow-y-auto p-[18px] shadow-drawer">
@@ -167,6 +144,6 @@ export function MobileHeader() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

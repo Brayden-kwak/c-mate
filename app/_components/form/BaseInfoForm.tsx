@@ -8,6 +8,8 @@ import { RadioGroup } from "@/app/_components/ui/RadioGroup";
 import { Input } from "@/app/_components/ui/Input";
 import { InfoBox } from "@/app/_components/ui/InfoBox";
 import { HighlightBox } from "@/app/_components/ui/HighlightBox";
+import { CountPill } from "@/app/_components/ui/CountPill";
+import { FormProgressBar } from "@/app/_components/ui/FormProgressBar";
 import { StyleChipGroup, type StyleGroup } from "@/app/_components/ui/StyleChipGroup";
 import { PhotoSlot, PhotobookThumb } from "@/app/_components/ui/PhotoSlot";
 import { Button } from "@/app/_components/ui/Button";
@@ -16,13 +18,14 @@ import { ConfirmModal } from "@/app/_components/modals/ConfirmModal";
 import { ChurchSearchModal } from "@/app/_components/modals/ChurchSearchModal";
 import { EducationSection } from "@/app/_components/form/base-info/EducationSection";
 import type { AutoSaveState, ProgressMap, ProgressSection } from "@/app/_components/form/base-info/types";
-import { sectionMeta } from "@/app/_components/form/base-info/utils";
-
 type PhotoItem = { filled: boolean; previewUrl?: string; description?: string };
 const REQUIRED_PROFILE_PHOTOS = 2;
+const PHOTO_SECTION_PROGRESS_TOTAL = 2;
 const MAX_PHOTOBOOK_SLOTS = 8;
 
 /* ===== Style groups ===== */
+const STYLE_SELECTION_MAX = 5;
+
 const STYLE_GROUPS: StyleGroup[] = [
   { label: "외모", options: ["귀여운", "청순한", "세련된", "지적인", "훈훈한"] },
   { label: "성격", options: ["다정한", "유머있는", "차분한", "활발한", "리더십"] },
@@ -101,7 +104,7 @@ function FamilySection({
 
   const desktopContent = (
     <Card>
-      <CardHead tag="SECTION 1" title="가족 &amp; 거주" meta={sectionMeta({ done: complete, total: 2 })} />
+      <CardHead tag="SECTION 1" title="가족 &amp; 거주" progress={{ done: complete, total: 2 }} />
       <CardBody>
         <Row label="결혼 경험" required helper="사실대로 선택해 주세요. 허위 기재 시 민/형사 책임을 묻습니다.">
           <RadioGroup
@@ -151,7 +154,7 @@ function FamilySection({
   );
 
   const mobileContent = (
-    <MobileCard num={1} title="가족 & 거주" sub={sectionMeta({ done: complete, total: 2 })}>
+    <MobileCard num={1} title="가족 & 거주" progress={{ done: complete, total: 2 }}>
       <MobileField label="결혼 경험" required>
         <RadioGroup
           name="m-marriageExperience"
@@ -262,9 +265,9 @@ function FaithSection({
 
   const desktopContent = (
     <Card>
-      <CardHead tag="SECTION 2" title="신앙" meta={sectionMeta({ done: complete, total: 4 })} statusPill={complete === 4 ? "4/4 완료" : undefined} />
+      <CardHead tag="SECTION 2" title="신앙" progress={{ done: complete, total: 4 }} />
       <CardBody>
-        <Row label="출석 교회명 / 교단" required helper="검색되지 않는 교회는 모달에서 즉시 가입 신청할 수 있어요.">
+        <Row label="출석 교회명 / 교단" required>
           <div className="flex gap-2">
             <Input
               value={church}
@@ -288,7 +291,7 @@ function FaithSection({
             placeholder="담임목사님 성함을 입력해 주세요"
           />
         </Row>
-        <Row label="교회 주소" required helper="출석 교회의 주소를 입력해 주세요.">
+        <Row label="교회 주소" required>
           <div className="flex gap-2">
             <Input
               value={churchAddr}
@@ -303,7 +306,7 @@ function FaithSection({
             </Button>
           </div>
         </Row>
-        <Row label="모태신앙 여부" required helper="본인 기준으로 선택해 주세요.">
+        <Row label="모태신앙 여부" required>
           <RadioGroup
             name="nativeFaith"
             options={["그렇다", "그렇지 않다", "모태신앙은 아니지만 현재 믿고 있다"]}
@@ -317,7 +320,7 @@ function FaithSection({
   );
 
   const mobileContent = (
-    <MobileCard num={2} title="신앙" sub={sectionMeta({ done: complete, total: 4 })} statusPill={complete === 4}>
+    <MobileCard num={2} title="신앙" progress={{ done: complete, total: 4 }}>
       <MobileField label="출석 교회명 / 교단" required>
         <Input
           value={church}
@@ -349,7 +352,7 @@ function FaithSection({
           주소 찾기
         </Button>
       </MobileField>
-      <MobileField label="모태신앙 여부" required desc="본인 기준으로 선택해 주세요.">
+      <MobileField label="모태신앙 여부" required>
         <RadioGroup
           name="m-nativeFaith"
           options={["그렇다", "그렇지 않다", "모태신앙은 아니지만 현재 믿고 있다"]}
@@ -357,7 +360,6 @@ function FaithSection({
           onChange={(v) => { setNativeFaith(v); onSave(); }}
           aria-required
         />
-        <InfoBox>본인 기준으로 선택해 주세요.</InfoBox>
       </MobileField>
     </MobileCard>
   );
@@ -421,11 +423,15 @@ function AppearanceSection({
     onProgressChange({ done: complete, total: 4 });
   }, [complete, onProgressChange]);
 
+  const styleCountBadge = (
+    <CountPill done={selectedStyles} total={STYLE_SELECTION_MAX} />
+  );
+
   const desktopContent = (
     <Card>
-      <CardHead tag="SECTION 4" title="신체 &amp; 스타일" meta={sectionMeta({ done: complete, total: 4 })} />
+      <CardHead tag="SECTION 4" title="신체 &amp; 스타일" progress={{ done: complete, total: 4 }} />
       <CardBody>
-        <Row label="신장" required helper="본인의 키를 입력해 주세요.">
+        <Row label="신장" required>
           <Input
             type="number"
             value={height}
@@ -448,7 +454,7 @@ function AppearanceSection({
             aria-required
           />
         </Row>
-        <Row label="체형" required helper="옵션 위에 마우스를 올리면 정의가 표시됩니다.">
+        <Row label="체형" required>
           <RadioGroup
             name="bodyType"
             options={["슬림", "슬림탄탄", "보통", "근육질", "통통", "글래머"]}
@@ -457,10 +463,10 @@ function AppearanceSection({
             aria-required
           />
         </Row>
-        <Row label="스타일" required helper="외모·성격·성품 각 그룹에서 자유롭게 선택 (합계 최대 5개).">
+        <Row label="스타일" required labelAlign="start" labelBadge={styleCountBadge}>
           <StyleChipGroup
             groups={STYLE_GROUPS}
-            maxTotal={5}
+            maxTotal={STYLE_SELECTION_MAX}
             value={styleValue}
             onChange={(v) => { setStyleValue(v); onSave(); }}
           />
@@ -470,7 +476,7 @@ function AppearanceSection({
   );
 
   const mobileContent = (
-    <MobileCard num={4} title="신체 &amp; 스타일" sub={sectionMeta({ done: complete, total: 4 })}>
+    <MobileCard num={4} title="신체 &amp; 스타일" progress={{ done: complete, total: 4 }}>
       <MobileField label="신장" required>
         <Input type="number" value={height} onChange={(e) => setHeight(e.target.value)} onBlur={onSave} suffix="cm" fieldWidth="heightCompact" min={140} max={220} aria-label="신장" />
       </MobileField>
@@ -480,8 +486,18 @@ function AppearanceSection({
       <MobileField label="체형" required>
         <RadioGroup name="m-bodyType" options={["슬림", "슬림탄탄", "보통", "근육질", "통통", "글래머"]} value={bodyType} onChange={(v) => { setBodyType(v); onSave(); }} aria-required />
       </MobileField>
-      <MobileField label="스타일" required desc="외모·성격·성품 각 그룹에서 자유롭게 선택 (합계 최대 5개).">
-        <StyleChipGroup groups={STYLE_GROUPS} maxTotal={5} value={styleValue} onChange={(v) => { setStyleValue(v); onSave(); }} />
+      <MobileField
+        label="스타일"
+        required
+        desc="외모·성격·성품 각 그룹에서 자유롭게 선택 (합계 최대 5개)."
+        labelBadge={<CountPill done={selectedStyles} total={STYLE_SELECTION_MAX} size="sm" />}
+      >
+        <StyleChipGroup
+          groups={STYLE_GROUPS}
+          maxTotal={STYLE_SELECTION_MAX}
+          value={styleValue}
+          onChange={(v) => { setStyleValue(v); onSave(); }}
+        />
       </MobileField>
     </MobileCard>
   );
@@ -513,7 +529,7 @@ function LifestyleSection({
 
   const desktopContent = (
     <Card>
-      <CardHead tag="SECTION 5" title="생활 습관 &amp; 가치관" meta={sectionMeta({ done: complete, total: 3 })} />
+      <CardHead tag="SECTION 5" title="생활 습관 &amp; 가치관" progress={{ done: complete, total: 3 }} />
       <CardBody>
         <Row label="음주 여부" required>
           <RadioGroup
@@ -533,7 +549,7 @@ function LifestyleSection({
             aria-required
           />
         </Row>
-        <Row label="자녀 계획" required helper="결혼 후 자녀 계획에 대한 본인의 입장.">
+        <Row label="자녀 계획" required>
           <RadioGroup
             name="childrenPlan"
             options={["자녀를 갖기 희망", "자녀 계획 없음", "상호 논의 후 결정", "고민중임"]}
@@ -547,14 +563,14 @@ function LifestyleSection({
   );
 
   const mobileContent = (
-    <MobileCard num={5} title="생활 습관 &amp; 가치관" sub={sectionMeta({ done: complete, total: 3 })}>
+    <MobileCard num={5} title="생활 습관 &amp; 가치관" progress={{ done: complete, total: 3 }}>
       <MobileField label="음주 여부" required>
         <RadioGroup name="m-drinking" options={["즐겨합니다", "보통", "어쩔 수 없을 때", "전혀 하지 않습니다"]} value={drinking} onChange={(v) => { setDrinking(v); onSave(); }} aria-required />
       </MobileField>
       <MobileField label="흡연 여부" required>
         <RadioGroup name="m-smoking" options={["전혀 안 함", "가끔", "자주"]} value={smoking} onChange={(v) => { setSmoking(v); onSave(); }} aria-required />
       </MobileField>
-      <MobileField label="자녀 계획" required desc="결혼 후 자녀 계획에 대한 본인의 입장.">
+      <MobileField label="자녀 계획" required>
         <RadioGroup name="m-childrenPlan" options={["자녀를 갖기 희망", "자녀 계획 없음", "상호 논의 후 결정", "고민중임"]} value={childrenPlan} onChange={(v) => { setChildrenPlan(v); onSave(); }} aria-required />
       </MobileField>
     </MobileCard>
@@ -583,13 +599,18 @@ function PhotoSection({
 
   const filledCount = photos.filter((photo) => photo.filled).length;
   const pbFilledCount = pbPhotos.filter((photo) => photo.filled).length;
-  const complete = Math.min(filledCount, REQUIRED_PROFILE_PHOTOS);
-  const profilePhotoComplete = Number(filledCount >= REQUIRED_PROFILE_PHOTOS);
-  const photobookComplete = Number(pbFilledCount > 0);
+  const profilePhotoCheckpoint = Number(filledCount >= REQUIRED_PROFILE_PHOTOS);
+  const photobookCheckpoint = Number(pbFilledCount > 0);
+  const photoSectionDone = profilePhotoCheckpoint + photobookCheckpoint;
+  const photoSectionProgress = {
+    done: photoSectionDone,
+    total: PHOTO_SECTION_PROGRESS_TOTAL,
+    statusComplete: profilePhotoCheckpoint === 1,
+  };
 
   useEffect(() => {
-    onProgressChange({ done: profilePhotoComplete + photobookComplete, total: 2 });
-  }, [profilePhotoComplete, photobookComplete, onProgressChange]);
+    onProgressChange({ done: photoSectionDone, total: PHOTO_SECTION_PROGRESS_TOTAL });
+  }, [photoSectionDone, onProgressChange]);
 
   function requestDelete(index: number) {
     setDeleteModal({ index });
@@ -680,7 +701,7 @@ function PhotoSection({
   );
 
   const photoGuideImage = (
-    <div className="hidden h-[var(--spacing-photo-guide-height)] flex-none self-start xl:block">
+    <div className="hidden h-photo-guide-height flex-none self-start xl:block">
       <Image
         src="/images/base-info/picture-info.png"
         alt="사진 등록 TIP: 얼굴이 잘 보이는 좋은 사진과 피해야 할 사진 예시"
@@ -697,7 +718,7 @@ function PhotoSection({
       alt="사진 등록 TIP: 얼굴이 잘 보이는 좋은 사진과 피해야 할 사진 예시"
       width={545}
       height={900}
-      className="block h-auto w-[var(--spacing-photo-guide-mobile-width)] rounded-lg object-contain"
+      className="block h-auto w-photo-guide-mobile-width rounded-lg object-contain"
     />
   );
 
@@ -747,7 +768,7 @@ function PhotoSection({
           type="button"
           onClick={addPhotobookSlot}
           aria-label="포토북 슬롯 추가"
-          className="aspect-[4/3] w-full rounded-lg border border-dashed border-border-strong bg-surface text-text-tertiary flex items-center justify-center hover:border-primary hover:text-primary hover:bg-primary-bg transition-colors duration-fast ease-standard"
+          className="aspect-4/3 w-full rounded-lg border border-dashed border-border-strong bg-surface text-text-tertiary flex items-center justify-center hover:border-primary hover:text-primary hover:bg-primary-bg transition-colors duration-fast ease-standard"
         >
           <span className="text-[32px] font-light leading-none" aria-hidden="true">＋</span>
         </button>
@@ -758,7 +779,7 @@ function PhotoSection({
   const mobilePbCarousel = (
     <div className="flex w-full snap-x snap-mandatory gap-2.5 overflow-x-auto overscroll-x-contain pb-1">
       {pbPhotos.map((photo, i) => (
-        <div key={i} className="flex w-[var(--spacing-photobook-slot-width)] max-w-full flex-none snap-start flex-col gap-2">
+        <div key={i} className="flex w-photobook-slot-width max-w-full flex-none snap-start flex-col gap-2">
           <PhotobookThumb
             filled={photo.filled}
             previewUrl={photo.previewUrl}
@@ -784,7 +805,7 @@ function PhotoSection({
           type="button"
           onClick={addPhotobookSlot}
           aria-label="포토북 슬롯 추가"
-          className="aspect-[4/3] w-[var(--spacing-photobook-slot-width)] max-w-full flex-none snap-start rounded-lg border border-dashed border-border-strong bg-surface text-text-tertiary flex items-center justify-center hover:border-primary hover:text-primary hover:bg-primary-bg transition-colors duration-fast ease-standard"
+          className="aspect-4/3 w-photobook-slot-width max-w-full flex-none snap-start rounded-lg border border-dashed border-border-strong bg-surface text-text-tertiary flex items-center justify-center hover:border-primary hover:text-primary hover:bg-primary-bg transition-colors duration-fast ease-standard"
         >
           <span className="text-[32px] font-light leading-none" aria-hidden="true">＋</span>
         </button>
@@ -794,44 +815,43 @@ function PhotoSection({
 
   const desktopContent = (
     <Card>
-      <CardHead tag="SECTION 6" title="프로필 사진" meta={`필수 ${complete}/${REQUIRED_PROFILE_PHOTOS} 완료 · 포토북 선택`} />
+      <CardHead tag="SECTION 6" title="프로필 사진" progress={photoSectionProgress} />
       <CardBody>
-        <div className="pb-5">
-          <Row
-            label="프로필 사진"
-            required
-            helper={
-              <>
-                <span className="font-semibold text-primary">2장 필수 등록</span>
-                <br />
-                나를 잘 표현할 수 있는 사진을 업로드 해주세요.
-              </>
-            }
-          >
-            <div className="flex items-start gap-4">
-              <div className="flex-none">{photoGrid}</div>
-              {photoGuideImage}
-            </div>
-            <InfoBox>이미지 파일 크기는 10MB 이하로 업로드해주세요</InfoBox>
-          </Row>
-        </div>
-        <div className="pt-5">
-          <Row label="포토북" helper={
+        <Row
+          label="프로필 사진"
+          required
+          helper={
+            <>
+              <span className="font-semibold text-primary">2장 필수 등록</span>
+              <br />
+              나를 잘 표현할 수 있는 사진을 업로드 해주세요.
+            </>
+          }
+        >
+          <div className="flex items-start gap-4">
+            <div className="flex-none">{photoGrid}</div>
+            {photoGuideImage}
+          </div>
+          <InfoBox>이미지 파일 크기는 10MB 이하로 업로드해주세요</InfoBox>
+        </Row>
+        <Row
+          label="포토북"
+          helper={
             <>
               <span className="font-semibold text-primary">최대 8장</span>
               <br />
               나의 일상, 취미, 운동, 여행 등의 모습을 자유롭게 보여주는 공간입니다. 사진 추가 버튼을 눌러 추가해주세요.
             </>
-          }>
-            {pbGrid}
-          </Row>
-        </div>
+          }
+        >
+          {pbGrid}
+        </Row>
       </CardBody>
     </Card>
   );
 
   const mobileContent = (
-    <MobileCard num={6} title="프로필 사진" sub={`필수 ${complete}/${REQUIRED_PROFILE_PHOTOS} 완료 · 좌우 슬라이드`}>
+    <MobileCard num={6} title="프로필 사진" progress={photoSectionProgress}>
       <MobileField label="프로필 사진" required>
         {mobilePhotoGuideImage}
         {mobilePhotoCarousel}
@@ -946,12 +966,12 @@ function DFooter({ autoSave }: { autoSave: AutoSaveState }) {
       {/* Desktop sticky footer */}
       <div
         className={[
-          "hidden xl:block fixed z-[var(--z-footer)] overflow-hidden rounded-b-lg bg-surface border-t border-x border-border shadow-footer",
-          synced ? "" : "bottom-0 left-1/2 -translate-x-1/2 w-[min(calc(100%_-_360px),1040px)]",
+          "hidden xl:block fixed z-(--z-footer) overflow-hidden rounded-b-lg bg-surface border-t border-x border-border shadow-footer",
+          synced ? "" : "bottom-0 left-1/2 -translate-x-1/2 w-form-footer-width",
         ].join(" ")}
         style={desktopStyle}
       >
-        <div className="max-w-[1024px] mx-auto px-8 py-4 flex items-center gap-3">
+        <div className="max-w-form-content-width mx-auto px-8 py-4 flex items-center gap-3">
           <AutoSaveChip state={autoSave} />
           <span className="flex-1" />
           <Button variant="secondary" size="lg" type="button">
@@ -963,7 +983,7 @@ function DFooter({ autoSave }: { autoSave: AutoSaveState }) {
         </div>
       </div>
       {/* Mobile sticky footer */}
-      <div className="xl:hidden fixed inset-x-0 bottom-0 z-[var(--z-footer)] border-t border-border bg-surface shadow-footer">
+      <div className="xl:hidden fixed inset-x-0 bottom-0 z-(--z-footer) border-t border-border bg-surface shadow-footer">
         <div className="mx-auto flex w-full max-w-[430px] gap-2 px-4 pt-3 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
           <Button variant="secondary" size="md" type="button" className="w-[110px] shrink-0">
             저장하기
@@ -978,35 +998,32 @@ function DFooter({ autoSave }: { autoSave: AutoSaveState }) {
 }
 
 function ProgressHero({ progress }: { progress: ProgressSection }) {
-  const percent = progress.total === 0 ? 0 : (progress.done / progress.total) * 100;
-
   return (
     <>
       <div className="bg-page px-8 pt-14 pb-8 hidden xl:block">
-        <div className="max-w-[1024px] mx-auto flex flex-col gap-3">
+        <div className="max-w-form-content-width mx-auto flex flex-col gap-3">
           <div className="flex items-center gap-2 text-[11px] font-bold tracking-[0.16em]">
             <span className="text-primary">STEP 1 / 5</span>
             <span className="text-text-tertiary">·</span>
             <span className="text-text-secondary font-medium tracking-[0.08em]">기본정보 작성</span>
           </div>
           <h1 className="text-[32px] font-bold leading-snug m-0">기본정보</h1>
-          <div className="flex items-center gap-3 pt-2">
-            <div className="flex-1 h-1.5 bg-border-subtle rounded-pill overflow-hidden" role="progressbar" aria-valuemin={0} aria-valuemax={progress.total} aria-valuenow={progress.done}>
-              <div className="h-full bg-primary rounded-pill transition-[width] duration-slow ease-emphasized" style={{ width: `${percent}%` }} />
-            </div>
-            <span className="text-[13px] font-semibold text-text-secondary">
-              {progress.done} / {progress.total} 항목
-            </span>
-          </div>
         </div>
       </div>
 
-      <div className="xl:hidden px-4 pt-4 pb-2">
+      <div className="sticky top-0 z-(--z-sticky) hidden border-b border-border-subtle bg-page px-8 py-3 xl:block">
+        <div className="max-w-form-content-width mx-auto">
+          <FormProgressBar progress={progress} />
+        </div>
+      </div>
+
+      <div className="bg-page px-4 pt-4 pb-2 xl:hidden">
         <p className="text-xs font-bold tracking-[0.16em] text-primary mb-1">STEP 1 / 5</p>
         <h1 className="text-2xl font-bold text-text m-0 mb-1">기본정보</h1>
-        <p className="text-sm text-text-secondary m-0">
-          매칭 알고리즘의 핵심 입력값입니다.
-        </p>
+      </div>
+
+      <div className="sticky top-mobile-shell-header z-(--z-sticky) border-b border-border-subtle bg-page px-4 py-4 xl:hidden">
+        <FormProgressBar progress={progress} size="sm" />
       </div>
     </>
   );
@@ -1028,12 +1045,6 @@ export function BaseInfoForm() {
     (acc, section) => ({ done: acc.done + section.done, total: acc.total + section.total }),
     { done: 0, total: 0 }
   );
-
-  const { done: progressDone, total: progressTotal } = progress;
-
-  useEffect(() => {
-    window.dispatchEvent(new CustomEvent("cmate:progress", { detail: { done: progressDone, total: progressTotal } }));
-  }, [progressDone, progressTotal]);
 
   const updateProgress = useCallback((key: keyof ProgressMap, section: ProgressSection) => {
     setProgressMap((current) => {

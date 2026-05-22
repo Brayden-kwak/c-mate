@@ -12,7 +12,6 @@ import { ConfirmModal } from "@/app/_components/modals/ConfirmModal";
 import { Select } from "@/app/_components/ui/Select";
 import { Checkbox } from "@/app/_components/ui/Checkbox";
 import type { ProgressSection } from "./types";
-import { sectionMeta } from "./utils";
 
 type EduRow = { id: number; degree: string; school: string; major: string };
 
@@ -28,7 +27,6 @@ const DEGREE_ROWS: Record<string, string[]> = {
   석사: ["학사", "석사"],
   박사: ["학사", "석사", "박사"],
 };
-const DEGREE_SEQUENCE = ["고졸", "전문대", "학사", "석사", "박사"];
 const EDUCATION_OPTIONS = ["고졸", "전문대", "학사", "석사", "박사"];
 
 export function EducationSection({ onSave, onProgressChange }: Props) {
@@ -47,9 +45,6 @@ export function EducationSection({ onSave, onProgressChange }: Props) {
   const [salary, setSalary] = useState("");
   const [salaryHidden, setSalaryHidden] = useState(false);
   const nextId = useRef(10);
-  const availableEduTags = education
-    ? (DEGREE_ROWS[education] ?? []).filter((tag) => !eduRows.some((row) => row.degree === tag))
-    : [];
   const hasCompleteSchoolRow = eduRows.length > 0 && eduRows.every((row) => row.school.trim() && row.major.trim());
   const complete =
     Number(Boolean(education)) +
@@ -95,23 +90,6 @@ export function EducationSection({ onSave, onProgressChange }: Props) {
     onSave();
   }
 
-  function addEduRow() {
-    const currentIndex = education ? DEGREE_SEQUENCE.indexOf(education) : -1;
-    const nextDegree =
-      availableEduTags[0] ?? DEGREE_SEQUENCE[Math.min(currentIndex + 1, DEGREE_SEQUENCE.length - 1)] ?? "고졸";
-    const nextEducation = DEGREE_SEQUENCE.find((degree) => (DEGREE_ROWS[degree] ?? []).includes(nextDegree)) ?? nextDegree;
-
-    setEducation((current) => {
-      if (!current) return nextEducation;
-      return DEGREE_SEQUENCE.indexOf(nextEducation) > DEGREE_SEQUENCE.indexOf(current) ? nextEducation : current;
-    });
-    setEduRows((rows) => {
-      if (rows.some((row) => row.degree === nextDegree)) return rows;
-      return [...rows, { id: ++nextId.current, degree: nextDegree, school: "", major: "" }];
-    });
-    onSave();
-  }
-
   function applyWorkplace() {
     if (workplaceQuery.trim()) {
       setWorkplace(workplaceQuery.trim());
@@ -130,7 +108,11 @@ export function EducationSection({ onSave, onProgressChange }: Props) {
     setJobQuery("");
   }
 
-  const eduStack = (
+  const schoolMajorPlaceholder = (
+    <p className="text-[13px] text-text-secondary m-0">최종 학력을 선택해주세요.</p>
+  );
+
+  const eduStack = education ? (
     <div className="flex flex-col gap-2">
       {eduRows.map((row) => (
         <div key={row.id} className="flex items-center gap-2.5">
@@ -183,15 +165,12 @@ export function EducationSection({ onSave, onProgressChange }: Props) {
           )}
         </div>
       ))}
-      <div>
-        <Button variant="secondary" size="sm" type="button" onClick={addEduRow}>
-          ＋ 학력 추가
-        </Button>
-      </div>
     </div>
+  ) : (
+    schoolMajorPlaceholder
   );
 
-  const mobileEduStack = (
+  const mobileEduStack = education ? (
     <div className="flex flex-col gap-2">
       {eduRows.map((row) => (
         <div key={row.id} className="bg-subtle rounded-md px-3 py-2.5 flex flex-col gap-2">
@@ -218,17 +197,16 @@ export function EducationSection({ onSave, onProgressChange }: Props) {
           <Input placeholder="전공" value={row.major} onChange={(e) => updateEduRow(row.id, "major", e.target.value)} onBlur={onSave} size="sm" aria-label={`${row.degree} 전공`} />
         </div>
       ))}
-      <Button variant="secondary" size="sm" type="button" onClick={addEduRow} className="self-start">
-        ＋ 학력 추가
-      </Button>
     </div>
+  ) : (
+    schoolMajorPlaceholder
   );
 
   const desktopContent = (
     <Card>
-      <CardHead tag="SECTION 3" title="학력 &amp; 직장" meta={sectionMeta({ done: complete, total: 5 })} />
+      <CardHead tag="SECTION 3" title="학력 &amp; 직장" progress={{ done: complete, total: 5 }} />
       <CardBody>
-        <Row label="최종 학력" required helper="선택 시 학교/전공 행이 자동으로 늘어납니다.">
+        <Row label="최종 학력" required>
           <RadioGroup
             name="education"
             options={EDUCATION_OPTIONS}
@@ -238,10 +216,14 @@ export function EducationSection({ onSave, onProgressChange }: Props) {
           />
           <InfoBox>학사 → 석사로 변경 시 기존 학사 행은 보존됩니다.</InfoBox>
         </Row>
-        <Row label="학교명 / 전공" required helper="검색 또는 직접 입력 모두 가능. 우측 휴지통으로 삭제.">
+        <Row
+          label="학교명 / 전공"
+          required
+          labelAlign={education ? "start" : "center"}
+        >
           {eduStack}
         </Row>
-        <Row label="직업 / 직무" required helper="현재 종사하는 분야를 선택해 주세요.">
+        <Row label="직업 / 직무" required>
           <div className="flex gap-2">
             <Input
               value={job}
@@ -270,7 +252,7 @@ export function EducationSection({ onSave, onProgressChange }: Props) {
             </Button>
           </div>
         </Row>
-        <Row label="연봉" required helper="민감 정보이므로 비공개 옵션을 제공합니다.">
+        <Row label="연봉" required>
           <div className="flex items-center gap-4 flex-wrap">
             <Select value={salary} onChange={(e) => { setSalary(e.target.value); onSave(); }} fieldWidth="salary">
               <option value="">연봉 구간 선택</option>
@@ -287,10 +269,9 @@ export function EducationSection({ onSave, onProgressChange }: Props) {
   );
 
   const mobileContent = (
-    <MobileCard num={3} title="학력 &amp; 직장" sub={sectionMeta({ done: complete, total: 5 })}>
+    <MobileCard num={3} title="학력 &amp; 직장" progress={{ done: complete, total: 5 }}>
       <MobileField label="최종 학력" required>
         <RadioGroup name="m-education" options={EDUCATION_OPTIONS} value={education} onChange={handleDegreeChange} aria-required />
-        <InfoBox>학력 선택 시 학교/전공 행이 자동으로 늘어납니다.</InfoBox>
       </MobileField>
       <MobileField label="학교 / 전공" required>
         {mobileEduStack}

@@ -19,6 +19,19 @@ type PhotobookThumbProps = {
   onUpload?: (file: File) => void;
 };
 
+function RepresentativeBadge() {
+  return (
+    <span
+      className="absolute top-2 left-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-primary text-white shadow-sm"
+      aria-label="대표 사진"
+    >
+      <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+      </svg>
+    </span>
+  );
+}
+
 export function PhotoSlot({ variant, filled, previewUrl, onDelete, onSetRepresentative, onUpload }: PhotoSlotProps) {
   const fileRef = useRef<HTMLInputElement>(null);
   const sizeClass = "w-[var(--spacing-photo-slot-width)] h-[var(--spacing-photo-slot-height)]";
@@ -30,6 +43,7 @@ export function PhotoSlot({ variant, filled, previewUrl, onDelete, onSetRepresen
         className={`${sizeClass} relative rounded-lg overflow-hidden flex flex-col items-center justify-end border bg-center bg-cover bg-no-repeat ${isRepresentative ? "border-primary shadow-md" : "border-transparent"} ${previewUrl ? "" : "bg-photo-gradient"}`}
         style={previewUrl ? { backgroundImage: `url("${previewUrl}")` } : undefined}
       >
+        {isRepresentative && <RepresentativeBadge />}
         <div className="absolute top-2 right-2 flex gap-1">
           {onDelete && (
             <button
@@ -45,11 +59,7 @@ export function PhotoSlot({ variant, filled, previewUrl, onDelete, onSetRepresen
             </button>
           )}
         </div>
-        {isRepresentative ? (
-          <span className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold tracking-[0.04em] px-2.5 py-1 rounded-pill">
-            ★ 대표
-          </span>
-        ) : (
+        {!isRepresentative && (
           onSetRepresentative && (
             <button
               type="button"
@@ -66,7 +76,7 @@ export function PhotoSlot({ variant, filled, previewUrl, onDelete, onSetRepresen
 
   return (
     <div
-      className={`${sizeClass} relative rounded-lg overflow-hidden bg-subtle border ${isRepresentative ? "border-primary shadow-md p-4 pb-10" : "border-border p-3"} flex flex-col items-center justify-center text-center cursor-pointer hover:border-border-strong hover:bg-border-subtle transition-colors duration-fast ease-standard`}
+      className={`${sizeClass} relative rounded-lg overflow-hidden bg-subtle border ${isRepresentative ? "border-primary shadow-md p-4" : "border-border p-3"} flex flex-col items-center justify-center text-center cursor-pointer hover:border-border-strong hover:bg-border-subtle transition-colors duration-fast ease-standard`}
       onClick={() => fileRef.current?.click()}
       role="button"
       tabIndex={0}
@@ -91,11 +101,7 @@ export function PhotoSlot({ variant, filled, previewUrl, onDelete, onSetRepresen
           정면 얼굴이 잘 나온 사진 (타인에게 먼저 노출됩니다.)
         </span>
       )}
-      {isRepresentative && (
-        <span className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-pill bg-primary px-2.5 py-1 text-xs font-bold tracking-[0.04em] text-white">
-          ★ 대표
-        </span>
-      )}
+      {isRepresentative && <RepresentativeBadge />}
     </div>
   );
 }

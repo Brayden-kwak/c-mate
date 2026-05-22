@@ -9,15 +9,15 @@ export const metadata: Metadata = {
 export default function BaseInfoPage() {
   return (
     <div
-      className="xl:relative xl:w-full xl:overflow-hidden xl:rounded-lg xl:border xl:border-border xl:bg-page xl:shadow-md"
+      className="xl:relative xl:w-full xl:overflow-visible xl:rounded-lg xl:border xl:border-border xl:bg-page xl:shadow-md"
       data-cmate-frame
     >
-      <div className="hidden xl:block -mx-0">
+      <div className="hidden xl:block mx-0">
         <Stepper />
       </div>
 
       <div className="xl:px-8 xl:pb-0">
-        <div className="max-w-[1024px] xl:mx-auto">
+        <div className="max-w-form-content-width xl:mx-auto">
           <BaseInfoForm />
         </div>
       </div>

@@ -1,21 +1,28 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import type { SectionProgressBadge } from "@/app/_components/form/base-info/types";
 
 type CardProps = {
   num: number;
   title: string;
   sub?: string;
-  statusPill?: boolean;
+  progress?: SectionProgressBadge;
   children: ReactNode;
   defaultOpen?: boolean;
 };
 
-export function MobileCard({ num, title, sub, statusPill, children, defaultOpen = true }: CardProps) {
+export function MobileCard({ num, title, sub, progress, children, defaultOpen = true }: CardProps) {
   const [open, setOpen] = useState(defaultOpen);
+  const isComplete = progress
+    ? (progress.statusComplete ?? progress.done >= progress.total)
+    : false;
+  const statusClass = isComplete
+    ? "bg-success-light text-success"
+    : "bg-subtle text-text-secondary";
 
   return (
-    <div className="bg-surface border border-border rounded-lg shadow-sm overflow-hidden flex-shrink-0">
+    <div className="bg-surface border border-border rounded-lg shadow-sm overflow-hidden shrink-0">
       <button
         type="button"
         aria-expanded={open}
@@ -29,9 +36,12 @@ export function MobileCard({ num, title, sub, statusPill, children, defaultOpen 
           <h3 className="text-[15px] font-bold text-text m-0 leading-tight">{title}</h3>
           {sub && <div className="text-[11px] text-text-tertiary mt-0.5">{sub}</div>}
         </div>
-        {statusPill && (
-          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-pill bg-success-light text-success text-[11px] font-semibold before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-success shrink-0">
-            완료
+        {progress && (
+          <span
+            className={`inline-flex items-center px-2 py-0.5 rounded-pill text-[11px] font-semibold shrink-0 ${statusClass}`}
+            aria-label={isComplete ? "완료" : "미완료"}
+          >
+            {progress.done}/{progress.total}
           </span>
         )}
         <svg
@@ -48,7 +58,7 @@ export function MobileCard({ num, title, sub, statusPill, children, defaultOpen 
         </svg>
       </button>
       {open && (
-        <div className="px-4 pt-5 pb-6 flex flex-col gap-4 border-t border-border-subtle">
+        <div className="flex flex-col gap-5 border-t border-border-subtle px-4 pt-6 pb-8">
           {children}
         </div>
       )}
@@ -60,19 +70,21 @@ type FieldProps = {
   label: ReactNode;
   required?: boolean;
   desc?: ReactNode;
+  labelBadge?: ReactNode;
   children: ReactNode;
 };
 
-export function MobileField({ label, required, desc, children }: FieldProps) {
+export function MobileField({ label, required, desc, labelBadge, children }: FieldProps) {
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center gap-1.5 flex-wrap">
+      <div className="flex w-full items-center gap-1.5 flex-wrap">
         <span className="text-sm font-semibold text-text">{label}</span>
         {required && (
           <span className="text-danger font-bold" aria-hidden="true">
             *
           </span>
         )}
+        {labelBadge && <span className="ml-auto shrink-0">{labelBadge}</span>}
       </div>
       {desc && <p className="text-xs text-text-secondary leading-normal m-0">{desc}</p>}
       {children}

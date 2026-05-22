@@ -85,6 +85,11 @@
   --spacing-photo-guide-mobile-width: calc((var(--spacing-photo-slot-width) * 2) + var(--spacing-photo-grid-gap-mobile));
   --spacing-photobook-slot-width: 20.75rem;
   --spacing-photobook-slot-height: 15.5625rem;
+  --spacing-form-content-width: 70rem;
+  --spacing-form-shell-offset: 22.5rem;
+  --spacing-form-footer-width: min(calc(100% - var(--spacing-form-shell-offset)), var(--spacing-form-content-width));
+  /* 모바일 앱 헤더: topbar(h-14) + step 칩 영역 */
+  --spacing-mobile-shell-header: 7rem;
 
   /* Shadow */
   --shadow-footer: 0 -8px 24px rgba(15, 23, 42, 0.06);
