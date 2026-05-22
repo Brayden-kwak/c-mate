@@ -88,9 +88,9 @@
     (var(--spacing-photo-guide-width) - var(--spacing-6) - var(--spacing-3)) / 2
   );
   --spacing-photo-guide-thumb-height: calc(var(--spacing-photo-guide-thumb-width) * 307 / 517);
-  /* 769~1429px: 프로필 슬롯 2열 너비에 맞춘 컴팩트 예시 썸네일 */
+  /* 769~1429px·모바일: 슬롯 2열 너비 안에 맞춘 컴팩트 예시 썸네일 (좁은 뷰포트 여유 포함) */
   --spacing-photo-guide-thumb-width-compact: calc(
-    (var(--spacing-photo-guide-mobile-width) - var(--spacing-7) - var(--spacing-3)) / 2
+    (var(--spacing-photo-guide-mobile-width) - var(--spacing-8) - var(--spacing-4)) / 2
   );
   --spacing-photo-guide-thumb-height-compact: calc(
     var(--spacing-photo-guide-thumb-width-compact) * 307 / 517

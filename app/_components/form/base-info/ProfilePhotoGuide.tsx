@@ -21,7 +21,7 @@ const BAD_EXAMPLE_IMAGES = [
 ] as const;
 
 const THUMB_CLASS =
-  "relative shrink-0 overflow-hidden rounded-md bg-subtle w-[var(--spacing-photo-guide-thumb-width-compact)] h-[var(--spacing-photo-guide-thumb-height-compact)] photo-guide-wide:w-[var(--spacing-photo-guide-thumb-width)] photo-guide-wide:h-[var(--spacing-photo-guide-thumb-height)]";
+  "relative w-full max-w-[var(--spacing-photo-guide-thumb-width-compact)] aspect-[517/307] overflow-hidden rounded-md bg-subtle photo-guide-wide:w-[var(--spacing-photo-guide-thumb-width)] photo-guide-wide:max-w-none photo-guide-wide:h-[var(--spacing-photo-guide-thumb-height)] photo-guide-wide:aspect-auto";
 
 type ExampleThumbProps = {
   src: string;
@@ -34,7 +34,7 @@ const ExampleThumb = ({ src, alt }: ExampleThumbProps) => (
       src={src}
       alt={alt}
       fill
-      sizes="(min-width: 89.375rem) 8rem, (min-width: 48rem) 10rem, 45vw"
+      sizes="(min-width: 89.375rem) 8rem, 40vw"
       className="object-cover"
     />
   </div>
@@ -63,18 +63,18 @@ export const ProfilePhotoGuide = ({ className = "" }: Props) => {
         <hr className="border-0 border-t border-border-subtle" />
       </div>
 
-      <div className="flex w-full min-w-0 gap-3 px-3.5 pb-3.5 photo-guide-wide:px-3">
-        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-          <p className="shrink-0 text-sm font-bold text-text">좋은 사진</p>
-          <div className="flex flex-col gap-1">
+      <div className="flex w-full min-w-0 gap-2 px-3.5 pb-3.5 photo-guide-wide:gap-3 photo-guide-wide:px-3">
+        <div className="flex min-w-0 flex-1 flex-col items-center gap-1.5 photo-guide-wide:items-stretch">
+          <p className="w-full shrink-0 text-sm font-bold text-text">좋은 사진</p>
+          <div className="flex w-full min-w-0 flex-col gap-1">
             {GOOD_EXAMPLE_IMAGES.map((image) => (
               <ExampleThumb key={image.src} src={image.src} alt={image.alt} />
             ))}
           </div>
         </div>
-        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-          <p className="shrink-0 text-sm font-bold text-text">나쁜 사진</p>
-          <div className="flex flex-col gap-1">
+        <div className="flex min-w-0 flex-1 flex-col items-center gap-1.5 photo-guide-wide:items-stretch">
+          <p className="w-full shrink-0 text-sm font-bold text-text">나쁜 사진</p>
+          <div className="flex w-full min-w-0 flex-col gap-1">
             {BAD_EXAMPLE_IMAGES.map((image) => (
               <ExampleThumb key={image.src} src={image.src} alt={image.alt} />
             ))}
