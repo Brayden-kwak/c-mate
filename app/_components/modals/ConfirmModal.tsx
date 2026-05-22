@@ -57,18 +57,19 @@ export function ConfirmModal({
         <div className="px-7 pb-5 flex flex-col gap-4">{children}</div>
 
         {/* Footer */}
-        <div className="flex items-center gap-2 px-7 py-4 border-t border-border-subtle">
-          <span className="flex-1" />
-          {cancelLabel && (
-            <Button variant="tertiary" size="md" type="button" onClick={onClose}>
-              {cancelLabel}
-            </Button>
-          )}
-          {onConfirm && (
-            <Button variant={variant} size="md" type="button" onClick={onConfirm}>
-              {confirmLabel}
-            </Button>
-          )}
+        <div className="px-7 py-4 border-t border-border-subtle">
+          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
+            {cancelLabel && (
+              <Button variant="tertiary" size="lg" type="button" onClick={onClose} className="w-full sm:w-auto">
+                {cancelLabel}
+              </Button>
+            )}
+            {onConfirm && (
+              <Button variant={variant} size="lg" type="button" onClick={onConfirm} className="w-full sm:w-auto">
+                {confirmLabel}
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>

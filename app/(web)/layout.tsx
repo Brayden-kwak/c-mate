@@ -12,7 +12,7 @@ export default function WebLayout({ children }: { children: ReactNode }) {
       <Header />
       <MobileHeader />
       <div
-        className="max-w-[1440px] mx-auto w-full flex-1 xl:grid xl:grid-cols-[172px_minmax(0,1fr)_68px] xl:gap-7 xl:px-7 xl:pt-12 xl:pb-18"
+        className="max-w-[1440px] mx-auto w-full flex-1 xl:relative xl:grid xl:grid-cols-[172px_minmax(0,1fr)_68px] xl:gap-7 xl:px-7 xl:pt-12 xl:pb-18"
         data-cmate-web-main
       >
         <Sidebar />

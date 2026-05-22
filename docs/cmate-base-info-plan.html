@@ -229,25 +229,26 @@ img { max-width: 100%; height: auto; }
 <h4 id="s-1-p0">S-1. 질문 성격별 섹션 그룹화 <span class="pin p0">P0</span></h4>
 <p><strong>문제 정의</strong> &nbsp;·&nbsp; 20개 섹션이 평면 리스트로 나열되어 사용자가 "어디쯤 작성 중인지" 가늠하기 어렵다.</p>
 <p><strong>검증 결과</strong> &nbsp;·&nbsp; 결혼경험·주소·교회·학력·신체·생활습관·사진이 모두 동일한 비중·간격으로 나열되고, 모바일에서는 스크롤 깊이가 매우 길어져 인지부하가 가중된다.</p>
-<p><strong>개선안 — 6개 의미 그룹화</strong></p>
+<p><strong>개선안 — 6개 의미 그룹화 (v2 구현)</strong></p>
 <table>
 <thead><tr><th style="width:6%">#</th><th style="width:24%">그룹명</th><th style="width:10%">항목 수</th><th>포함 항목</th></tr></thead>
 <tbody>
-<tr><td><span class="group-num">1</span></td><td><strong>가족 &amp; 거주</strong></td><td>2개</td><td>결혼 경험 · 주소(+ 상세주소)</td></tr>
-<tr><td><span class="group-num">2</span></td><td><strong>신앙</strong></td><td>4개</td><td>출석 교회명/교단 · 담임목사님 성함 · 교회 주소 · 모태신앙 여부</td></tr>
+<tr><td><span class="group-num">1</span></td><td><strong>가족 &amp; 거주</strong></td><td>2개</td><td>결혼 경험 · 주소(+ 상세주소 선택)</td></tr>
+<tr><td><span class="group-num">2</span></td><td><strong>신앙</strong></td><td>4개</td><td>출석 교회명/교단 · 담임목사님 성함 · 교회 주소 · <strong>모태신앙 여부 (이동)</strong></td></tr>
 <tr><td><span class="group-num">3</span></td><td><strong>학력 &amp; 직장</strong></td><td>5개</td><td>최종 학력 · 학교명/전공 · 직업/직무 · 직장명 · 연봉</td></tr>
 <tr><td><span class="group-num">4</span></td><td><strong>신체 &amp; 스타일</strong></td><td>4개</td><td>신장 · 혈액형 · 체형 · 스타일</td></tr>
 <tr><td><span class="group-num">5</span></td><td><strong>생활 습관 &amp; 가치관</strong></td><td>3개</td><td>음주 여부 · 흡연 여부 · 자녀 계획</td></tr>
-<tr><td><span class="group-num">6</span></td><td><strong>프로필 사진</strong></td><td>필수+자유</td><td>프로필 사진 (대표 + 보조) · 포토북</td></tr>
+<tr><td><span class="group-num">6</span></td><td><strong>프로필 사진</strong></td><td>2 체크포인트</td><td>프로필 사진 (대표 + 보조 · 최소 2장) · 포토북 (최대 8장)</td></tr>
 </tbody>
 </table>
+<div class="note warning"><span class="ic">⚠</span><span><strong>이동 사항</strong> · As-Is에서 <em>생활습관/가치관</em>에 있던 <strong>모태신앙</strong>은 의미상 신앙 영역이므로 Section 2로 옮긴다. Section 5는 음주·흡연·자녀계획 3개로 단순화.</span></div>
 <p><strong>적용 가이드</strong></p>
 <ul>
-<li>각 그룹은 <strong>독립된 카드</strong>로 표현 (<em>SECTION N</em> 태그 + 헤더 + 메타 + 본문 구조)</li>
-<li>그룹 헤더에는 <strong>섹션 번호 배지 · 그룹명 · 항목 수 · 완료율</strong> 표시 (예: <em>4개 항목 · 3/4 완료</em>)</li>
-<li><strong>모바일</strong>에서는 그룹 헤더가 <strong>accordion</strong>으로 동작 (펼침/접힘), 헤더는 sticky로 컨텍스트 유지</li>
-<li>완료 상태 아이콘 — <span class="ok">●</span> 완료 / <span class="warn">●</span> 진행 중 / <span class="muted">○</span> 미작성</li>
-<li>"다음" 시도 시 미입력 항목이 있는 그룹은 자동으로 펼침 + 첫 미입력 필드로 스크롤</li>
+<li>각 그룹은 <strong>독립된 Card</strong>로 표현 (<em>SECTION N</em> 태그 + 헤더 + 진행률 pill + body)</li>
+<li>그룹 헤더에는 <strong>섹션 태그 · 그룹명 · 완료 pill(n/total)</strong> 표시. <code class="token">CardHead</code> 컴포넌트가 done≥total 시 success-light 배경으로 자동 전환</li>
+<li><strong>모바일</strong>에서는 <code class="token">MobileCard</code>가 accordion으로 동작 (defaultOpen=true) · <code class="token">aria-expanded</code> 동기화</li>
+<li>완료 상태 — <strong>success</strong>(done≥total) / <strong>subtle</strong>(미완료) · 색상 + 텍스트 병행</li>
+<li>"다음" 시도 시 검증 모달 노출 → 확인 클릭 시 <code class="token">scrollToFieldAnchor()</code>로 첫 미입력 섹션 카드로 부드러운 스크롤. 모바일 accordion이 접혀 있으면 펼침</li>
 </ul>
 
 <h4 id="s-2-p0">S-2. 5단계 상단 프로그레스바에 단계명 라벨 <span class="pin p0">P0</span></h4>
@@ -682,21 +683,24 @@ img { max-width: 100%; height: auto; }
 </table>
 <hr />
 
-<h2 id="5-design-system">5. 디자인 시스템</h2>
-<p>모킹 파일 <em>05 · Design System</em> 뷰의 20개 항목을 본 기획서 컨텍스트에 맞춰 요약한다. 모든 컴포넌트는 <strong>토큰 → 레이아웃 → 컴포넌트 → 상태 → 접근성</strong> 순으로 적용한다.</p>
+<h2 id="5-design-system">5. 디자인 시스템 (v2 구현 반영)</h2>
+<p>모킹 파일 <em>05 · Design System</em> 뷰의 20개 항목을 본 기획서 컨텍스트에 맞춰 요약한다. 모든 컴포넌트는 <strong>토큰 → 레이아웃 → 컴포넌트 → 상태 → 접근성</strong> 순으로 적용한다. <strong>v2 구현 기준</strong>: Tailwind v4의 <code class="token">@theme</code> 블록을 단일 출처로 두고, <code class="token">app/globals.css</code> 한 파일에서만 토큰을 정의·확장한다.</p>
 
-<h3 id="51-source-of-truth">5.1 Source of Truth (토큰)</h3>
-<p>색상·radius·shadow·spacing·z-index·motion은 모두 CSS 변수로 관리. 리터럴 hex/px 금지.</p>
+<h3 id="51-source-of-truth">5.1 Source of Truth (토큰) — <code class="token">app/globals.css</code></h3>
+<p>색상·radius·shadow·spacing·z-index·motion·typography는 모두 <code class="token">@theme</code> 변수로 관리. JSX/CSS에서 리터럴 hex/px 사용 금지. Tailwind 유틸 (<code class="token">bg-primary</code>, <code class="token">rounded-lg</code>, <code class="token">shadow-md</code>) 만 사용.</p>
 <table>
-<thead><tr><th style="width:22%">토큰 그룹</th><th>주요 값</th></tr></thead>
+<thead><tr><th style="width:22%">토큰 그룹</th><th>주요 값 · 이름</th></tr></thead>
 <tbody>
-<tr><td>Brand</td><td><strong>primary</strong> #FF6B7E · primary-hover #FF4F66 · primary-light #FFF1F3 · primary-soft #FFE4E8</td></tr>
-<tr><td>Status</td><td>danger #DC2626 · warning #D97706 · success #059669 · info #2563EB (각각 light 변형 보유)</td></tr>
-<tr><td>Text</td><td>text #0F172A (AAA) · text-sec #475569 (AAA) · text-tert #94A3B8 (placeholder/meta 한정)</td></tr>
-<tr><td>Surface</td><td>bg #FFFFFF · bg-page #FAFAFA · bg-subtle #F8FAFC · bg-disabled #F1F5F9</td></tr>
+<tr><td>Brand</td><td><code class="token">--color-primary</code> #FF6B7E · <code class="token">--color-primary-hover</code> #FF4F66 · <code class="token">--color-primary-50</code> #FFF1F3 · <code class="token">--color-primary-bg</code> #FFF5F7 · <code class="token">--color-primary-soft</code> #FFE4E8</td></tr>
+<tr><td>Status</td><td>danger #DC2626 / danger-light #FEF2F2 / danger-hover #B91C1C · warning #D97706 / warning-light #FFFBEB · success #059669 / success-light #ECFDF5 · info #2563EB / info-light #EFF6FF</td></tr>
+<tr><td>Text</td><td>text #0F172A (AAA) · text-secondary #475569 (AAA) · text-tertiary #94A3B8 (placeholder/meta) · <em>brand chrome</em>: text-brand #273247 · text-brand-muted #68707C</td></tr>
+<tr><td>Surface</td><td>surface #FFFFFF · page #FAFAFA · subtle #F8FAFC · disabled #F1F5F9 · shell #F7F7F8 · <em>photo gradient</em> #2C3540 → #0F172A</td></tr>
 <tr><td>Border</td><td>border #E5E7EB · border-subtle #F1F5F9 · border-strong #CBD5E1</td></tr>
+<tr><td>Backdrop</td><td>backdrop-modal rgba(15,23,42,0.4) · backdrop-drawer rgba(15,23,42,0.28)</td></tr>
+<tr><td>Avatar accent</td><td>avatar-accent #25CDA2 (헤더 프로필 이니셜)</td></tr>
 </tbody>
 </table>
+<div class="note info"><span class="ic">ⓘ</span><span><strong>v2 추가 토큰</strong> · <code class="token">--spacing-photo-slot-*</code> · <code class="token">--spacing-photo-guide-*</code> · <code class="token">--spacing-photobook-slot-*</code> · <code class="token">--spacing-mobile-fab-*</code> · <code class="token">--spacing-form-content-width</code>(70rem) · <code class="token">--spacing-mobile-action-footer-*</code> 등 폼/사진/모바일 전용 spacing 토큰을 추가해 매직넘버를 제거.</span></div>
 
 <h3 id="52-spacing-radius">5.2 Spacing &amp; Radius</h3>
 <table>
@@ -722,32 +726,38 @@ img { max-width: 100%; height: auto; }
 </table>
 <p><strong>Z-index 스케일</strong> &nbsp;·&nbsp; base 0 → sticky 30 → fab 35 → footer 40 → rail 45 → drawer 50 → header 60 → modal 80 → toast 90</p>
 
-<h3 id="54-component-inventory">5.4 컴포넌트 인벤토리</h3>
+<h3 id="54-component-inventory">5.4 컴포넌트 인벤토리 (Next.js 16 실제 파일 매핑)</h3>
 <table>
-<thead><tr><th style="width:28%">컴포넌트</th><th style="width:32%">본 페이지 사용처</th><th>핵심 규칙</th></tr></thead>
+<thead><tr><th style="width:24%">컴포넌트</th><th style="width:28%">파일 경로</th><th>핵심 규칙 / Props</th></tr></thead>
 <tbody>
-<tr><td><strong>AppHeader</strong></td><td>전 페이지 상단</td><td>1024+ wide / ≤1023 app shell (햄버거+드로어로 전환)</td></tr>
-<tr><td><strong>MegaMenu</strong></td><td>헤더 hover/focus 시 펼침</td><td>6 col grid · ESC/외부 클릭 닫기 · 모바일은 Drawer 대체</td></tr>
-<tr><td><strong>Drawer</strong></td><td>모바일 햄버거 메뉴</td><td>focus trap · aria-expanded 동기화 · MAIN MENU + MY PAGE 2 섹션</td></tr>
-<tr><td><strong>ProgressStepper</strong></td><td>5단계 라벨 (S-2)</td><td>done(success) / current(primary) / upcoming(text-tert) · 모바일은 chip scroll</td></tr>
-<tr><td><strong>SectionCard</strong></td><td>6 그룹 (S-1)</td><td>desktop card · mobile accordion · 헤더에 SECTION 태그+완료율</td></tr>
-<tr><td><strong>Field</strong></td><td>모든 입력 라벨</td><td>label + required(*) + helperText + error · aria-describedby</td></tr>
-<tr><td><strong>TextField / Select</strong></td><td>일반 입력</td><td>default/hover/focus/filled/error/disabled 6 상태</td></tr>
-<tr><td><strong>SearchableField</strong></td><td>주소·교회·학교·직장</td><td>input + [검색] 버튼 인접 · 모달 트리거</td></tr>
-<tr><td><strong>RadioGroup</strong></td><td>옵션형 단일선택</td><td>chip 스타일 · 모바일 wrap / stacked</td></tr>
-<tr><td><strong>StyleChipGroup</strong></td><td>스타일 다중선택 (B-2)</td><td>외모/성격/성품 3 그룹 · 합산 최대 5</td></tr>
-<tr><td><strong>Checkbox</strong></td><td>연봉 비공개 (C-2) 등</td><td>독립 boolean · 라벨 전체 클릭 가능</td></tr>
-<tr><td><strong>HighlightBox</strong></td><td>주소 상세 (I-1) · 교회 가입 (I-2)</td><td>중립 panel + 헤더(title + "선택" tag) + body</td></tr>
-<tr><td><strong>PhotoSlot</strong></td><td>I-5 사진</td><td>empty/filled/representative/uploading/error 5 상태</td></tr>
-<tr><td><strong>PhotobookGrid</strong></td><td>I-6 포토북</td><td>trailing add slot · 최대 8장 · drag &amp; drop</td></tr>
-<tr><td><strong>StickyFooter</strong></td><td>I-7 저장/다음</td><td>자동저장 chip + secondary + primary · wide desktop dock</td></tr>
-<tr><td><strong>QuickMenu / FAB</strong></td><td>R-2 모바일 퀵</td><td>desktop rail / ≤1023 FAB(＋↔✕) · dock 금지</td></tr>
-<tr><td><strong>Modal</strong></td><td>검색·삭제 확인</td><td>440/480/560 size matrix · focus trap · ESC · body scroll lock</td></tr>
-<tr><td><strong>Pin · StatusPill</strong></td><td>우선순위·완료 표시</td><td>P0(danger)/P1(warning)/P2(info)/P3(neutral)</td></tr>
-<tr><td><strong>Alert · InfoBox</strong></td><td>안내·경고</td><td>info/success/warning/danger 색상 매핑 고정</td></tr>
-<tr><td><strong>AutoSaveChip</strong></td><td>저장 상태 (B-5)</td><td>idle/saving/saved/error 4 상태</td></tr>
-<tr><td><strong>Toast</strong></td><td>저장 결과 알림</td><td>최대 3개 스택 · success 2s / info 3s / danger 5s</td></tr>
-<tr><td><strong>EmptyState</strong></td><td>교회 검색 결과 없음</td><td>icon → title(15/600) → desc(13/sec) → primary CTA</td></tr>
+<tr><td><strong>Header</strong> (Desktop)</td><td><code class="token">app/_components/web-shell/Header.tsx</code></td><td>1280px(xl) 이상에서 렌더. 6개 GNB + 헤더 hover/focus 시 mega 펼침 · 우측 프로필+로그아웃 (브랜드 chrome)</td></tr>
+<tr><td><strong>MobileHeader</strong></td><td><code class="token">app/_components/web-shell/MobileHeader.tsx</code></td><td>1280px(xl) 미만 fixed topbar (←·기본정보·햄버거) + 단계 칩 sticky. 리사이즈 시 drawer 자동 닫힘</td></tr>
+<tr><td><strong>Sidebar / MyPageNavList</strong></td><td><code class="token">app/_components/web-shell/Sidebar.tsx</code></td><td>Stepper 하단이 viewport에 닿을 때부터 sticky · 그룹(내 정보/매칭 라운지) collapse + 단일 링크</td></tr>
+<tr><td><strong>Stepper</strong></td><td><code class="token">app/_components/web-shell/Stepper.tsx</code></td><td>5단(기본정보/나의소개/매력어필/라이프스타일/이상형정보). current=primary underline, done=success, pending=text-tert. sticky top:0</td></tr>
+<tr><td><strong>FormProgressBar</strong></td><td><code class="token">app/_components/ui/FormProgressBar.tsx</code></td><td>md (데스크탑) / sm (모바일) 사이즈 · 0~100% 전환 (<code class="token">--duration-slow</code>) · ARIA progressbar</td></tr>
+<tr><td><strong>Card / CardHead / CardBody</strong></td><td><code class="token">app/_components/ui/Card.tsx</code></td><td>SECTION N tag + h2 + meta + status pill (done≥total → success-light)</td></tr>
+<tr><td><strong>MobileCard / MobileField</strong></td><td><code class="token">app/_components/ui/MobileCard.tsx</code></td><td>accordion + 번호 배지(7px round) + 진행률 pill · 펼침 상태에서 헤더 클릭 시 토글</td></tr>
+<tr><td><strong>Row</strong></td><td><code class="token">app/_components/ui/Row.tsx</code></td><td>desktop 260px+1fr 2열 · required(*) · optional(선택) · helper · labelBadge (CountPill)</td></tr>
+<tr><td><strong>Button</strong></td><td><code class="token">app/_components/ui/Button.tsx</code></td><td>variant: primary/secondary/tertiary/danger/icon · size: sm/md/lg · layout: auto/full/fill</td></tr>
+<tr><td><strong>Input</strong></td><td><code class="token">app/_components/ui/Input.tsx</code></td><td>size, state(default/error/disabled), layout, fieldWidth(height/heightCompact/major/photobook), suffix, prefix</td></tr>
+<tr><td><strong>Select</strong></td><td><code class="token">app/_components/ui/Select.tsx</code></td><td>chev SVG · fieldWidth=salary (17.5rem) · disabled cursor-not-allowed</td></tr>
+<tr><td><strong>RadioGroup</strong></td><td><code class="token">app/_components/ui/RadioGroup.tsx</code></td><td>chip 스타일 · selected→primary white · 모바일 wrap · aria-required 동기화</td></tr>
+<tr><td><strong>Checkbox</strong></td><td><code class="token">app/_components/ui/Checkbox.tsx</code></td><td>독립 boolean · 18×18 box · 라벨 전체 클릭</td></tr>
+<tr><td><strong>StyleChipGroup</strong></td><td><code class="token">app/_components/ui/StyleChipGroup.tsx</code></td><td>3 그룹(외모 스타일/성격·기질/성품) · 합산 ≤5 · atMax 시 비선택 disabled</td></tr>
+<tr><td><strong>CountPill</strong></td><td><code class="token">app/_components/ui/CountPill.tsx</code></td><td>n/total · size sm/md · done≥total → success-light</td></tr>
+<tr><td><strong>HighlightBox</strong></td><td><code class="token">app/_components/ui/HighlightBox.tsx</code></td><td>"상세 주소"(선택) 같은 보조 영역 panel · 색상 강조 없음</td></tr>
+<tr><td><strong>InfoBox · InfoBoxIcon</strong></td><td><code class="token">app/_components/ui/InfoBox.tsx</code></td><td>variant info/warning/success/danger · 인라인 안내 메시지</td></tr>
+<tr><td><strong>PhotoSlot / PhotobookThumb</strong></td><td><code class="token">app/_components/ui/PhotoSlot.tsx</code></td><td>variant rep/normal · filled+preview/empty+upload · 대표 badge · ★ 대표 등록 CTA · 포토북 4:3 + − remove on empty</td></tr>
+<tr><td><strong>ProfilePhotoGuide</strong></td><td><code class="token">app/_components/form/base-info/ProfilePhotoGuide.tsx</code></td><td><strong>v2 신규</strong> · TIP 박스 + 좋은 사진 3 / 나쁜 사진 3 · 1430px+ 사진 슬롯 옆, 그 이하 상단</td></tr>
+<tr><td><strong>SectionAnchor</strong></td><td><code class="token">app/_components/form/base-info/SectionAnchor.tsx</code></td><td>섹션 카드 시작 anchor (scroll-margin) · 검증 모달의 scroll target</td></tr>
+<tr><td><strong>ConfirmModal</strong></td><td><code class="token">app/_components/modals/ConfirmModal.tsx</code></td><td>width sm(440)/md(480)/lg(560) · variant primary/danger · cancelLabel false 시 단일 버튼</td></tr>
+<tr><td><strong>ChurchSearchModal</strong></td><td><code class="token">app/_components/modals/ChurchSearchModal.tsx</code></td><td>560px · 검색 → EmptyState → inline 가입 폼 → submitted success</td></tr>
+<tr><td><strong>FreeConsultModal</strong></td><td><code class="token">app/_components/web-shell/FreeConsultModal.tsx</code></td><td><strong>v2 신규</strong> · 1280px 미만에서 통화하기 CTA(<code class="token">tel:</code>) 추가, 그 이상에서는 확인 단일 버튼</td></tr>
+<tr><td><strong>QuickRail</strong></td><td><code class="token">app/_components/web-shell/QuickRail.tsx</code></td><td>데스크탑 우측 fixed rail · 6개 항목(무료상담·자녀결혼·업그레이드·오시는길·프로필컨설팅·33법칙) + 맨위로 · frame-end dock</td></tr>
+<tr><td><strong>MobileQuickFab</strong></td><td><code class="token">app/_components/web-shell/MobileQuickFab.tsx</code></td><td>+↔✕ 토글 · 메뉴 항목 6개 stack (위쪽) · ESC/리사이즈로 닫힘</td></tr>
+<tr><td><strong>Footer</strong></td><td><code class="token">app/_components/web-shell/Footer.tsx</code></td><td>desktop 2 col + mobile single column · 상담 전화 직접 노출 · 회사 정보</td></tr>
+<tr><td><strong>EducationSection</strong></td><td><code class="token">app/_components/form/base-info/EducationSection.tsx</code></td><td>학력 자동 행 (DEGREE_ROWS map) · 다운그레이드 confirm + affected-list · 직업/직장 검색 모달</td></tr>
+<tr><td><strong>BaseInfoForm (root)</strong></td><td><code class="token">app/_components/form/BaseInfoForm.tsx</code></td><td>6 섹션 · ProgressMap 집계 · AutoSaveChip (idle/saving/saved/error) · D-Footer sync · 검증 ConfirmModal</td></tr>
 </tbody>
 </table>
 
@@ -800,13 +810,16 @@ img { max-width: 100%; height: auto; }
 
 <h3 id="59-layout-contract">5.8 Layout Contract</h3>
 <table>
-<thead><tr><th style="width:22%">영역</th><th>규칙</th></tr></thead>
+<thead><tr><th style="width:22%">영역</th><th>규칙 (v2 구현)</th></tr></thead>
 <tbody>
-<tr><td>Desktop wide</td><td><strong>260px(라벨) + 1fr(필드)</strong> 2열 row. max-width 1440px. 1023px 이하 1열 전환</td></tr>
-<tr><td>Desktop responsive (≤1023px)</td><td>Mobile 375와 동일한 <strong>app shell</strong> 패턴 — 앱 헤더, 햄버거 드로어, chip stepper, FAB 퀵</td></tr>
-<tr><td>Mobile</td><td>6개 accordion card. 데스크탑 18개 필드와 <strong>완전히 동일한 항목</strong> 유지</td></tr>
-<tr><td>Footer</td><td>Wide desktop은 viewport fixed + frame-end dock · Mobile/compact는 dock 금지 · 모바일 site footer는 body 끝까지 배경을 채움</td></tr>
-<tr><td>Photo</td><td>Desktop grid 4 slots · Mobile carousel(1.2장 peek) + dots</td></tr>
+<tr><td>Shell breakpoint</td><td><strong>1280px (xl)</strong>이 핵심 전환점. xl 이상 = wide desktop, xl 미만 = mobile-like shell (앱 헤더 / 햄버거 드로어 / chip stepper / FAB)</td></tr>
+<tr><td>Desktop wide (xl+)</td><td>max-width 1440px · 3열 grid <code class="token">172px(sidebar) + 1fr(content) + 68px(rail placeholder)</code> · 본문 폼은 <code class="token">--spacing-form-content-width</code>(70rem) cap</td></tr>
+<tr><td>Row layout (xl+)</td><td><strong>260px(라벨) + 1fr(필드)</strong> 2열, gap 40px. labelAlign=center 시 라벨 칼럼 수직 가운데 정렬. labelAlign=start 시 상단 정렬 + helper 노출</td></tr>
+<tr><td>Mobile (&lt; xl)</td><td>6개 <code class="token">MobileCard</code> accordion · MobileField는 label / required / desc / labelBadge / children stack · 데스크탑과 <strong>동일 18 필드 + 2 체크포인트</strong> 유지</td></tr>
+<tr><td>Footer</td><td>Wide desktop: viewport fixed → frame-end dock 동기화 (<code class="token">[data-cmate-frame]</code> rect 추적) · Mobile: viewport 하단 sticky (safe-area-inset-bottom 포함)</td></tr>
+<tr><td>QuickRail</td><td>xl 이상 frame 우측 고정 · 1440px 이상에서는 viewport 우측 고정으로 전환 · 1280px 미만에서는 MobileQuickFab으로 unmount</td></tr>
+<tr><td>Photo</td><td>Desktop: PhotoSlot 4 grid (2열) · 1430px(<code class="token">--breakpoint-photo-guide-wide</code>) 이상에서 ProfilePhotoGuide가 옆에 배치 · Mobile: horizontal snap carousel</td></tr>
+<tr><td>Photobook</td><td>Desktop: 2열 grid + 사진별 description input + + trailing slot · Mobile: snap carousel + 가로 스크롤</td></tr>
 </tbody>
 </table>
 
@@ -872,14 +885,17 @@ img { max-width: 100%; height: auto; }
 </tbody>
 </table>
 
-<h3 id="64">6.4 "다음" 클릭</h3>
+<h3 id="64">6.4 "다음" 클릭 (v2 검증 모달 플로우 — I-8)</h3>
 <table>
 <thead><tr><th style="width:25%">분기</th><th>처리</th></tr></thead>
 <tbody>
-<tr><td><span class="ok">●</span> 검증 OK</td><td>강제 저장(loading) → <code class="token">/personal-info/myinfo</code>로 이동</td></tr>
-<tr><td><span class="no">●</span> 검증 실패</td><td>첫 미입력 필드로 부드럽게 스크롤 + 빨간 outline + inline 에러 + toast 요약</td></tr>
+<tr><td><span class="ok">●</span> 검증 OK (allMissingFields.length === 0)</td><td>강제 저장(loading) → 다음 단계 라우트로 이동 (현재 stub. <code class="token">/personal-info/myinfo</code> 예정)</td></tr>
+<tr><td><span class="no">●</span> 검증 실패</td><td><strong>전용 ConfirmModal "입력하지 않은 항목이 있습니다"</strong> 오픈 · 본문에 누락 라벨 리스트 (disc unordered list) · 확인 버튼 단일 (cancelLabel=false) · 클릭 시 <code class="token">scrollToFieldAnchor(firstMissingId)</code> 호출로 첫 미입력 섹션 카드로 부드러운 스크롤</td></tr>
+<tr><td><span class="muted">●</span> Mobile accordion 접힌 상태</td><td><code class="token">scrollToFieldAnchor</code>가 <code class="token">button[aria-expanded='false']</code>를 찾아 자동 click → 펼침 + 첫 필드 노출</td></tr>
 </tbody>
 </table>
+<p><strong>누락 라벨 매핑</strong> &nbsp;·&nbsp; 각 섹션의 <code class="token">onMissingFieldsChange</code> 콜백이 <code class="token">{ id, label }</code>를 reportback. label은 사용자 친화적 한국어 (예: "결혼 경험", "주소", "출석 교회명 / 교단", "담임목사님 성함" 등).</p>
+<div class="note info"><span class="ic">ⓘ</span><span><strong>왜 모달 방식인가</strong> · 미입력 항목이 여러 섹션에 분산되어 있을 때 toast/inline error만으로는 한눈에 파악이 어렵다. 모달로 <strong>전체 리스트</strong>를 보여주고 첫 항목으로 안내함으로써 사용자가 작업 우선순위를 잡을 수 있다.</span></div>
 
 <h3 id="65">6.5 최종학력 다운그레이드 (석사 → 고졸)</h3>
 <table>
@@ -963,6 +979,33 @@ img { max-width: 100%; height: auto; }
 </table>
 <hr />
 
+<h2 id="8-impl">8.1 구현 현황 (v2 Next.js 16)</h2>
+<p>본 페이지에 정의된 27개 항목 중 v2 구현 완료된 컴포넌트 및 파일을 한 표로 정리. <strong>모든 변경은 docs/cmate-redesign-mockup.html과 동일한 토큰·레이아웃·인터랙션 규칙</strong>을 따른다.</p>
+<table>
+<thead><tr><th style="width:10%">레이어</th><th style="width:36%">실제 코드</th><th>요약</th></tr></thead>
+<tbody>
+<tr><td><strong>토큰</strong></td><td><code class="token">app/globals.css</code> (single <code class="token">@theme</code>)</td><td>140+ 변수 (색·radius·shadow·spacing 50+·motion·z·typography·breakpoint)</td></tr>
+<tr><td><strong>폼 루트</strong></td><td><code class="token">app/_components/form/BaseInfoForm.tsx</code></td><td>6 섹션 + ProgressMap 집계 + AutoSaveChip + 검증 ConfirmModal + D-Footer sync</td></tr>
+<tr><td><strong>섹션</strong></td><td><code class="token">app/_components/form/base-info/EducationSection.tsx</code> + BaseInfoForm 내부 5 섹션 컴포넌트</td><td>Family / Faith / Education / Appearance / Lifestyle / Photo · 각각 onSave / onProgressChange / onMissingFieldsChange props</td></tr>
+<tr><td><strong>UI primitives</strong></td><td><code class="token">app/_components/ui/*</code> (17 파일)</td><td>Button, Card, Checkbox, CountPill, FormProgressBar, HighlightBox, InfoBox, InfoBoxIcon, Input, MobileCard, PhotoSlot, Radio, RadioGroup, Row, Select, StyleChipGroup, types</td></tr>
+<tr><td><strong>Modals</strong></td><td><code class="token">app/_components/modals/</code></td><td>ConfirmModal (sm/md/lg · primary/danger) · ChurchSearchModal (560 · empty→reg form→success)</td></tr>
+<tr><td><strong>Web shell</strong></td><td><code class="token">app/_components/web-shell/*</code> (14 파일)</td><td>Header · MobileHeader · Sidebar · Stepper · Footer · QuickRail · MobileQuickFab · FreeConsultModal · MyPageNavList · CmLogo · LogoutIcon · quickMenuItems · myPageNav · consultation</td></tr>
+<tr><td><strong>App tree</strong></td><td><code class="token">app/(web)/personal-info/base-info/page.tsx</code></td><td>RSC default. <code class="token">[data-cmate-frame]</code>으로 footer/rail 동기화 target 지정. Stepper만 xl 이상 노출</td></tr>
+<tr><td><strong>Skills (가이드)</strong></td><td><code class="token">.claude/skills/cmate-web-shell/SKILL.md</code> · <code class="token">.claude/skills/cmate-form-conventions/SKILL.md</code></td><td>웹 chrome, 폼 컨벤션, 토큰 glossary 단일 출처. 새 영역 작업 전 반드시 로드</td></tr>
+</tbody>
+</table>
+
+<h3 id="8-2-key-derivations">8.2 v2에서 새로 도입된 컨벤션</h3>
+<ul>
+<li><strong>RSC 기본</strong> — 모든 페이지/레이아웃은 Server Component. 인터랙션이 필요한 leaf 컴포넌트에만 <code class="token">'use client'</code> (예: BaseInfoForm, Header mega menu, ConfirmModal)</li>
+<li><strong>Korean labels in JSX</strong> — i18n key extraction 미적용. 라벨 변경은 PR로 직접</li>
+<li><strong>Token-only styling</strong> — JSX/CSS에서 hex/px 리터럴 금지. 새 spacing/색은 <code class="token">app/globals.css</code> @theme 에 토큰 추가 → Tailwind 유틸로만 사용</li>
+<li><strong>Primitives reuse</strong> — Button/Input/Select/Radio/Checkbox/Card/Row는 union 타입 variant만 확장. arbitrary className 패스 금지</li>
+<li><strong>Next 16 caveat</strong> — 새 route/metadata/Server Action 작성 전 <code class="token">node_modules/next/dist/docs/</code> 확인</li>
+<li><strong>Stop-gate</strong> — <code class="token">npm run check</code>(typecheck + lint) 항상 통과 후 commit. PR 크기 변경은 <code class="token">bkit:code-review</code> 호출</li>
+</ul>
+<hr />
+
 <h2 id="9">9. 부록 — 변경 요약표</h2>
 <table>
 <thead><tr><th style="width:8%">ID</th><th>항목</th><th style="width:8%">우선</th><th style="width:14%">화면 영향</th><th style="width:18%">데이터 영향</th></tr></thead>
@@ -991,6 +1034,9 @@ img { max-width: 100%; height: auto; }
 <tr><td><strong>B-3</strong></td><td>체형 가이드</td><td><span class="pin p3">P3</span></td><td>작음</td><td>없음</td></tr>
 <tr><td><strong>B-4</strong></td><td>신장 suffix</td><td><span class="pin p3">P3</span></td><td>작음</td><td>없음</td></tr>
 <tr><td><strong>B-5</strong></td><td>자동저장 chip</td><td><span class="pin p2">P2</span></td><td>작음</td><td>없음</td></tr>
+<tr><td><strong>I-8</strong></td><td>검증 모달 (v2 신규)</td><td><span class="pin p1">P1</span></td><td>중</td><td>없음</td></tr>
+<tr><td><strong>I-9</strong></td><td>사진 가이드 aside (v2 신규)</td><td><span class="pin p2">P2</span></td><td>중</td><td>없음</td></tr>
+<tr><td><strong>X-1</strong></td><td>무료상담 통합 모달 (v2 신규)</td><td><span class="pin p2">P2</span></td><td>작음</td><td>없음</td></tr>
 </tbody>
 </table>
 <hr />

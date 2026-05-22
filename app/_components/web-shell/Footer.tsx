@@ -1,7 +1,16 @@
 import { CmLogo } from "@/app/_components/web-shell/CmLogo";
+import { FooterCompanyToggle } from "@/app/_components/web-shell/FooterCompanyToggle";
 
 const FOOTER_LINKS = ["크리스천메이트", "이용약관", "개인정보처리방침", "손해배상청구절차", "아동 안전 표준 정책"];
 const MOBILE_LINKS = ["이용약관", "개인정보처리방침", "손해배상청구절차", "아동 안전 표준 정책", "로그아웃"];
+
+function FooterLink({ label, className }: { label: string; className: string }) {
+  return (
+    <button type="button" className={className}>
+      {label}
+    </button>
+  );
+}
 
 export function Footer() {
   return (
@@ -11,18 +20,18 @@ export function Footer() {
         <div>
           <div className="flex flex-wrap gap-[18px] mb-[34px]">
             {FOOTER_LINKS.map((link) => (
-              <a key={link} href="#" className="text-text-brand text-xs font-bold no-underline hover:text-primary transition-colors duration-fast ease-standard">
-                {link}
-              </a>
+              <FooterLink
+                key={link}
+                label={link}
+                className="text-text-brand text-xs font-bold hover:text-primary transition-colors duration-fast ease-standard"
+              />
             ))}
           </div>
           <CmLogo />
-          <div className="mt-[18px] text-text-brand-muted text-[11px] leading-relaxed">
-            (주)크리스천메이트 · 대표 임승리 · 주소 서울 금천구 가산디지털1로 181 W센터 3층 119호<br />
-            사업자등록번호 247-86-02178 · 통신판매업 신고번호 제2023-서울금천-02585호<br />
-            FAX. 02-585-3920 · E-mail mate0910@c-mate.co.kr · 개인정보보호책임자 임승리<br />
+          <FooterCompanyToggle className="mt-[18px]" />
+          <p className="mt-3 text-text-brand-muted text-[11px] leading-relaxed m-0">
             2026 Copyright(c) 크리스천 메이트 All Right Reserved.
-          </div>
+          </p>
         </div>
         <div className="text-right text-text-brand">
           <p className="mb-[22px] text-base font-extrabold leading-snug m-0">
@@ -55,15 +64,18 @@ export function Footer() {
           <strong className="text-[21px] font-extrabold tracking-tight">02)862-3920</strong>
         </div>
         <p className="text-text-brand-muted text-[13px] font-semibold leading-snug mb-[18px] m-0">
-          평일 10:00 ~ 19:00 점심 12:30 ~ 13:30 주말·공휴일 휴무
+          평일 10:00 ~ 19:00 | 점심 12:30 ~ 13:30 | 주말·공휴일 휴무
         </p>
         <div className="flex flex-wrap gap-x-3.5 gap-y-2.5 pt-[18px] border-t border-border mb-[18px]">
           {MOBILE_LINKS.map((link) => (
-            <a key={link} href="#" className="text-text-brand-muted text-[13px] font-bold no-underline">
-              {link}
-            </a>
+            <FooterLink
+              key={link}
+              label={link}
+              className="text-text-brand-muted text-[13px] font-bold"
+            />
           ))}
         </div>
+        <FooterCompanyToggle className="mb-3" />
         <p className="text-text-brand-muted text-xs leading-snug m-0">
           2026 Copyright(c) 크리스천 메이트 All Right Reserved.
         </p>

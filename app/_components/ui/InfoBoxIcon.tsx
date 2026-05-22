@@ -6,7 +6,7 @@ type Props = {
 export const InfoBoxIcon = ({ className = "" }: Props) => {
   return (
     <span
-      className={`inline-flex size-4 shrink-0 items-center justify-center font-bold leading-none text-info mt-px ${className}`}
+      className={`inline-flex size-4 shrink-0 items-center justify-center font-bold leading-none text-info ${className}`}
       aria-hidden="true"
     >
       ⓘ

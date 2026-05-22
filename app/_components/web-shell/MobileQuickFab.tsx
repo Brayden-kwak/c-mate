@@ -49,9 +49,9 @@ export function MobileQuickFab() {
                   setConsultOpen(true);
                 }
               }}
-              className="flex min-h-touch-min items-center gap-2 rounded-md px-2.5 text-left text-[13px] font-semibold text-text whitespace-nowrap hover:bg-subtle transition-colors duration-fast ease-standard"
+              className="flex min-h-touch-min items-center gap-2 rounded-md px-2.5 text-left text-[13px] font-semibold text-text-brand whitespace-nowrap hover:bg-subtle transition-colors duration-fast ease-standard"
             >
-              <span className="text-text-secondary">{item.icon}</span>
+              <span className="w-5 h-5 flex items-center justify-center shrink-0">{item.icon}</span>
               <span>{item.label}</span>
             </button>
           ))}

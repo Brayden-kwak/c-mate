@@ -46,5 +46,21 @@
     "feature": null,
     "phase": null,
     "progress": null
+  },
+  {
+    "sessionId": "c6565cab-195f-4d8c-8d57-2ea6d53a4260",
+    "reason": "clear",
+    "endedAt": "2026-05-22T12:29:53.840Z",
+    "feature": null,
+    "phase": null,
+    "progress": null
+  },
+  {
+    "sessionId": "3190dfc1-8437-46d3-8167-4796450c22d8",
+    "reason": "clear",
+    "endedAt": "2026-05-22T14:06:03.121Z",
+    "feature": null,
+    "phase": null,
+    "progress": null
   }
 ]

@@ -6,10 +6,17 @@ import { Input } from "@/app/_components/ui/Input";
 import { Button } from "@/app/_components/ui/Button";
 import { InfoBox } from "@/app/_components/ui/InfoBox";
 
+export type ChurchSelectResult = {
+  church: string;
+  denom: string;
+  pastor: string;
+  addr: string;
+};
+
 type Props = {
   open: boolean;
   onClose: () => void;
-  onSelect: (church: string) => void;
+  onSelect: (result: ChurchSelectResult) => void;
 };
 
 export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
@@ -38,10 +45,14 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
 
   function handleSubmitReg() {
     if (!regName || !regDenom) return;
-    const value = `${regName} / ${regDenom}`;
     setSubmitted(true);
     setShowReg(false);
-    onSelect(value);
+    onSelect({
+      church: regName,
+      denom: regDenom,
+      pastor: regPastor,
+      addr: regAddr,
+    });
   }
 
   return (
@@ -137,11 +148,11 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
                   />
                 </div>
               </RegField>
-              <div className="flex gap-2 justify-end mt-1">
-                <Button variant="tertiary" size="md" type="button" onClick={() => setShowReg(false)}>
+              <div className="flex flex-col-reverse gap-3 mt-1 sm:flex-row sm:justify-end">
+                <Button variant="tertiary" size="lg" type="button" onClick={() => setShowReg(false)} className="w-full sm:w-auto">
                   취소
                 </Button>
-                <Button variant="primary" size="md" type="button" onClick={handleSubmitReg}>
+                <Button variant="primary" size="lg" type="button" onClick={handleSubmitReg} className="w-full sm:w-auto">
                   신청하기
                 </Button>
               </div>
