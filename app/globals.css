@@ -100,6 +100,7 @@
   --spacing-photobook-slot-height: 15.5625rem;
   --spacing-form-content-width: 70rem;
   --spacing-layout-max: 90rem;
+  --spacing-header-nav-width: 42rem;
   /* pad + sidebar col + gap (1.75 + 10.75 + 1.75) — viewport left → main 시작 */
   --spacing-sidebar-gutter-to-main: 14.25rem;
   /* (gutter-to-main / 2) − pad — ml 보정으로 메뉴를 해당 구간 중앙에 */
@@ -222,6 +223,26 @@ body {
 
 @utility animate-toast-exit {
   animation: toast-exit var(--duration-slow) var(--ease-emphasized) forwards;
+}
+
+/* 스크롤 유지, 스크롤바만 비표시 (mockup .m-body / .m-step-chips) */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* 모바일 앱 셸(xl 미만): 페이지·내부 overflow 스크롤바 비표시 */
+@media (width < 80rem) {
+  :where(html, body, *) {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  :where(html, body, *)::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* iOS Safari: font-size < 16px triggers auto-zoom on input focus.

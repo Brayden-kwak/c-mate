@@ -1,5 +1,9 @@
+type LogoutIconProps = {
+  className?: string;
+};
+
 /** 헤더 로그아웃 — [ ] + → (오른쪽으로 나가는 화살표) */
-export function LogoutIcon() {
+export function LogoutIcon({ className = "w-5 h-5 shrink-0" }: LogoutIconProps) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -8,7 +12,7 @@ export function LogoutIcon() {
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="w-5 h-5 shrink-0"
+      className={className}
       aria-hidden="true"
     >
       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
