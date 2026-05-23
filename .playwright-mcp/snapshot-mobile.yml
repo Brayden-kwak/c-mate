@@ -1,0 +1,395 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e553]:
+    - button "이전 화면으로" [ref=e554]: ←
+    - generic [ref=e555]: 기본정보
+    - button "전체 메뉴 열기" [ref=e556]:
+      - img [ref=e557]
+  - generic [ref=e559]:
+    - generic [ref=e560]:
+      - generic [ref=e561]: "1"
+      - generic [ref=e562]: 기본정보
+    - generic [ref=e563]:
+      - generic [ref=e564]: "2"
+      - generic [ref=e565]: 나의소개
+    - generic [ref=e566]:
+      - generic [ref=e567]: "3"
+      - generic [ref=e568]: 매력어필
+    - generic [ref=e569]:
+      - generic [ref=e570]: "4"
+      - generic [ref=e571]: 라이프
+    - generic [ref=e572]:
+      - generic [ref=e573]: "5"
+      - generic [ref=e574]: 이상형
+  - main [ref=e49]:
+    - generic [ref=e80]:
+      - generic [ref=e577]:
+        - progressbar "기본정보 진행 0 / 20" [ref=e578]
+        - generic [ref=e579]: 0 / 20 항목
+      - generic [ref=e582]:
+        - button "1 혼인 & 거주 미완료" [expanded] [ref=e583]:
+          - generic [ref=e584]: "1"
+          - heading "혼인 & 거주" [level=3] [ref=e586]
+          - generic "미완료" [ref=e587]: 0/2
+          - img [ref=e588]
+        - generic [ref=e590]:
+          - generic [ref=e591]:
+            - generic [ref=e592]:
+              - generic [ref=e593]: 결혼 경험
+              - generic [ref=e594]: "*"
+            - radiogroup [ref=e595]:
+              - generic [ref=e596] [cursor=pointer]:
+                - radio "초혼" [ref=e597]
+                - text: 초혼
+              - generic [ref=e598] [cursor=pointer]:
+                - radio "재혼" [ref=e599]
+                - text: 재혼
+              - generic [ref=e600] [cursor=pointer]:
+                - radio "사실혼인" [ref=e601]
+                - text: 사실혼인
+          - generic [ref=e602]:
+            - generic [ref=e603]:
+              - generic [ref=e604]: 주소
+              - generic [ref=e605]: "*"
+            - radiogroup [ref=e606]:
+              - generic [ref=e607] [cursor=pointer]:
+                - radio "국내" [ref=e608]
+                - text: 국내
+              - generic [ref=e609] [cursor=pointer]:
+                - radio "해외" [ref=e610]
+                - text: 해외
+            - textbox "주소" [disabled] [ref=e612]:
+              - /placeholder: 주소를 검색해 주세요
+            - button "주소 검색" [ref=e613]
+            - generic [ref=e614]:
+              - generic [ref=e615]:
+                - generic [ref=e616]: 상세 주소
+                - generic [ref=e617]: 선택
+              - textbox "상세 주소" [ref=e619]:
+                - /placeholder: 동/호수, 건물명 등
+      - generic [ref=e622]:
+        - button "2 신앙 미완료" [expanded] [ref=e623]:
+          - generic [ref=e624]: "2"
+          - heading "신앙" [level=3] [ref=e626]
+          - generic "미완료" [ref=e627]: 0/4
+          - img [ref=e628]
+        - generic [ref=e630]:
+          - generic [ref=e631]:
+            - generic [ref=e632]:
+              - generic [ref=e633]: 출석 교회명 / 교단
+              - generic [ref=e634]: "*"
+            - paragraph [ref=e635]: 교회 검색 후 교회명·교단·담임목사·주소가 자동으로 채워집니다.
+            - generic [ref=e636]:
+              - textbox "출석 교회명" [disabled] [ref=e638]
+              - textbox "교단" [disabled] [ref=e640]
+            - button "교회 검색" [ref=e641]
+          - generic [ref=e642]:
+            - generic [ref=e643]:
+              - generic [ref=e644]: 담임목사님 성함
+              - generic [ref=e645]: "*"
+            - textbox "담임목사님 성함" [disabled] [ref=e647]
+          - generic [ref=e648]:
+            - generic [ref=e649]:
+              - generic [ref=e650]: 교회 주소
+              - generic [ref=e651]: "*"
+            - textbox "교회 주소" [disabled] [ref=e653]
+          - generic [ref=e654]:
+            - generic [ref=e655]:
+              - generic [ref=e656]: 모태신앙 여부
+              - generic [ref=e657]: "*"
+            - radiogroup [ref=e658]:
+              - generic [ref=e659] [cursor=pointer]:
+                - radio "그렇다" [ref=e660]
+                - text: 그렇다
+              - generic [ref=e661] [cursor=pointer]:
+                - radio "그렇지 않다" [ref=e662]
+                - text: 그렇지 않다
+      - generic [ref=e665]:
+        - button "3 학력 & 직장 미완료" [expanded] [ref=e666]:
+          - generic [ref=e667]: "3"
+          - heading "학력 & 직장" [level=3] [ref=e669]
+          - generic "미완료" [ref=e670]: 0/5
+          - img [ref=e671]
+        - generic [ref=e673]:
+          - generic [ref=e674]:
+            - generic [ref=e675]:
+              - generic [ref=e676]: 최종 학력
+              - generic [ref=e677]: "*"
+            - radiogroup [ref=e678]:
+              - generic [ref=e679] [cursor=pointer]:
+                - radio "고졸" [ref=e680]
+                - text: 고졸
+              - generic [ref=e681] [cursor=pointer]:
+                - radio "전문대" [ref=e682]
+                - text: 전문대
+              - generic [ref=e683] [cursor=pointer]:
+                - radio "학사" [ref=e684]
+                - text: 학사
+              - generic [ref=e685] [cursor=pointer]:
+                - radio "석사" [ref=e686]
+                - text: 석사
+              - generic [ref=e687] [cursor=pointer]:
+                - radio "박사" [ref=e688]
+                - text: 박사
+          - generic [ref=e689]:
+            - generic [ref=e690]:
+              - generic [ref=e691]: 학교 / 전공
+              - generic [ref=e692]: "*"
+            - generic [ref=e693]:
+              - generic [ref=e694]: ⓘ
+              - generic [ref=e695]: 최종 학력을 선택해주세요.
+          - generic [ref=e696]:
+            - generic [ref=e697]:
+              - generic [ref=e698]: 직업 / 직무
+              - generic [ref=e699]: "*"
+            - textbox "직업 / 직무" [ref=e701]
+            - button "직업 검색" [ref=e702]
+          - generic [ref=e703]:
+            - generic [ref=e704]:
+              - generic [ref=e705]: 직장명
+              - generic [ref=e706]: "*"
+            - textbox "직장명" [ref=e708]:
+              - /placeholder: 직장명을 입력해 주세요
+          - generic [ref=e709]:
+            - generic [ref=e710]:
+              - generic [ref=e711]: 연봉
+              - generic [ref=e712]: "*"
+            - combobox "연봉 구간" [ref=e714]:
+              - generic [ref=e715]: 연봉 구간 선택
+              - img
+            - generic [ref=e717] [cursor=pointer]:
+              - checkbox [ref=e718]
+              - generic [ref=e720]: 연봉 비공개
+            - generic [ref=e721]:
+              - generic [ref=e722]: ⓘ
+              - generic [ref=e723]: 비공개 시 다른 회원에게 노출되지 않으며, 매니저 매칭에만 활용됩니다.
+      - generic [ref=e726]:
+        - button "4 신체 & 스타일 미완료" [expanded] [ref=e727]:
+          - generic [ref=e728]: "4"
+          - heading "신체 & 스타일" [level=3] [ref=e730]
+          - generic "미완료" [ref=e731]: 0/4
+          - img [ref=e732]
+        - generic [ref=e734]:
+          - generic [ref=e735]:
+            - generic [ref=e736]:
+              - generic [ref=e737]: 신장
+              - generic [ref=e738]: "*"
+            - generic [ref=e739]:
+              - spinbutton "신장" [ref=e740]
+              - generic [ref=e741]: cm
+          - generic [ref=e742]:
+            - generic [ref=e743]:
+              - generic [ref=e744]: 혈액형
+              - generic [ref=e745]: "*"
+            - radiogroup [ref=e746]:
+              - generic [ref=e747] [cursor=pointer]:
+                - radio "A형" [ref=e748]
+                - text: A형
+              - generic [ref=e749] [cursor=pointer]:
+                - radio "B형" [ref=e750]
+                - text: B형
+              - generic [ref=e751] [cursor=pointer]:
+                - radio "AB형" [ref=e752]
+                - text: AB형
+              - generic [ref=e753] [cursor=pointer]:
+                - radio "O형" [ref=e754]
+                - text: O형
+          - generic [ref=e755]:
+            - generic [ref=e756]:
+              - generic [ref=e757]: 체형
+              - generic [ref=e758]: "*"
+            - radiogroup [ref=e759]:
+              - generic [ref=e760] [cursor=pointer]:
+                - radio "슬림" [ref=e761]
+                - text: 슬림
+              - generic [ref=e762] [cursor=pointer]:
+                - radio "슬림탄탄" [ref=e763]
+                - text: 슬림탄탄
+              - generic [ref=e764] [cursor=pointer]:
+                - radio "보통" [ref=e765]
+                - text: 보통
+              - generic [ref=e766] [cursor=pointer]:
+                - radio "근육질" [ref=e767]
+                - text: 근육질
+              - generic [ref=e768] [cursor=pointer]:
+                - radio "통통" [ref=e769]
+                - text: 통통
+              - generic [ref=e770] [cursor=pointer]:
+                - radio "글래머" [ref=e771]
+                - text: 글래머
+          - generic [ref=e772]:
+            - generic [ref=e773]:
+              - generic [ref=e774]: 스타일
+              - generic [ref=e775]: "*"
+              - generic [ref=e777]: 0/5
+            - paragraph [ref=e778]: 외모 스타일·성격/기질·성품 각 그룹에서 자유롭게 선택 (합계 최대 5개).
+            - generic [ref=e779]:
+              - generic [ref=e780]:
+                - generic [ref=e781]: 외모 스타일
+                - generic [ref=e782]:
+                  - button "귀여운" [ref=e783] [cursor=pointer]
+                  - button "청순한" [ref=e784] [cursor=pointer]
+                  - button "세련된" [ref=e785] [cursor=pointer]
+                  - button "지적인" [ref=e786] [cursor=pointer]
+                  - button "훈훈한" [ref=e787] [cursor=pointer]
+                  - button "터프한" [ref=e788] [cursor=pointer]
+                  - button "패션에 민감한" [ref=e789] [cursor=pointer]
+                  - button "스포티한" [ref=e790] [cursor=pointer]
+              - generic [ref=e791]:
+                - generic [ref=e792]: 성격/기질
+                - generic [ref=e793]:
+                  - button "다정한" [ref=e794] [cursor=pointer]
+                  - button "유머있는" [ref=e795] [cursor=pointer]
+                  - button "차분한" [ref=e796] [cursor=pointer]
+                  - button "활발한" [ref=e797] [cursor=pointer]
+                  - button "리더십 있는" [ref=e798] [cursor=pointer]
+                  - button "대범한" [ref=e799] [cursor=pointer]
+                  - button "신중한" [ref=e800] [cursor=pointer]
+                  - button "열정적인" [ref=e801] [cursor=pointer]
+                  - button "낙천적인" [ref=e802] [cursor=pointer]
+                  - button "상냥한" [ref=e803] [cursor=pointer]
+                  - button "섬세한" [ref=e804] [cursor=pointer]
+                  - button "창의적인" [ref=e805] [cursor=pointer]
+              - generic [ref=e806]:
+                - generic [ref=e807]: 성품
+                - generic [ref=e808]:
+                  - button "성실한" [ref=e809] [cursor=pointer]
+                  - button "책임감 있는" [ref=e810] [cursor=pointer]
+                  - button "정직한" [ref=e811] [cursor=pointer]
+                  - button "듬직한" [ref=e812] [cursor=pointer]
+                  - button "끈기있는" [ref=e813] [cursor=pointer]
+      - generic [ref=e816]:
+        - button "5 생활 습관 & 가치관 미완료" [expanded] [ref=e817]:
+          - generic [ref=e818]: "5"
+          - heading "생활 습관 & 가치관" [level=3] [ref=e820]
+          - generic "미완료" [ref=e821]: 0/3
+          - img [ref=e822]
+        - generic [ref=e824]:
+          - generic [ref=e825]:
+            - generic [ref=e826]:
+              - generic [ref=e827]: 음주 여부
+              - generic [ref=e828]: "*"
+            - radiogroup [ref=e829]:
+              - generic [ref=e830] [cursor=pointer]:
+                - radio "즐겨함" [ref=e831]
+                - text: 즐겨함
+              - generic [ref=e832] [cursor=pointer]:
+                - radio "보통" [ref=e833]
+                - text: 보통
+              - generic [ref=e834] [cursor=pointer]:
+                - radio "어쩔 수 없을 때" [ref=e835]
+                - text: 어쩔 수 없을 때
+              - generic [ref=e836] [cursor=pointer]:
+                - radio "전혀 하지 않음" [ref=e837]
+                - text: 전혀 하지 않음
+          - generic [ref=e838]:
+            - generic [ref=e839]:
+              - generic [ref=e840]: 흡연 여부
+              - generic [ref=e841]: "*"
+            - radiogroup [ref=e842]:
+              - generic [ref=e843] [cursor=pointer]:
+                - radio "흡연" [ref=e844]
+                - text: 흡연
+              - generic [ref=e845] [cursor=pointer]:
+                - radio "비흡연" [ref=e846]
+                - text: 비흡연
+          - generic [ref=e847]:
+            - generic [ref=e848]:
+              - generic [ref=e849]: 자녀 계획
+              - generic [ref=e850]: "*"
+            - radiogroup [ref=e851]:
+              - generic [ref=e852] [cursor=pointer]:
+                - radio "자녀를 갖기 희망" [ref=e853]
+                - text: 자녀를 갖기 희망
+              - generic [ref=e854] [cursor=pointer]:
+                - radio "자녀 계획 없음" [ref=e855]
+                - text: 자녀 계획 없음
+              - generic [ref=e856] [cursor=pointer]:
+                - radio "상호 논의 후 결정" [ref=e857]
+                - text: 상호 논의 후 결정
+              - generic [ref=e858] [cursor=pointer]:
+                - radio "고민중" [ref=e859]
+                - text: 고민중
+      - generic [ref=e862]:
+        - button "6 프로필 사진 미완료" [expanded] [ref=e863]:
+          - generic [ref=e864]: "6"
+          - heading "프로필 사진" [level=3] [ref=e866]
+          - generic "미완료" [ref=e867]: 0/2
+          - img [ref=e868]
+        - generic [ref=e870]:
+          - generic [ref=e871]:
+            - generic [ref=e872]:
+              - generic [ref=e873]: 프로필 사진
+              - generic [ref=e874]: "*"
+            - complementary "사진 등록 TIP" [ref=e875]:
+              - generic [ref=e876]:
+                - generic [ref=e877]:
+                  - generic [ref=e878]: ⓘ
+                  - heading "사진 등록 TIP" [level=3] [ref=e879]
+                - list [ref=e880]:
+                  - listitem [ref=e881]: 얼굴이 잘 보이는 선명한 사진이 좋아요.
+                  - listitem [ref=e882]: 마스크, 선글라스 등으로 가린 사진은 대표 사진으로 사용할 수 없어요.
+                  - listitem [ref=e883]: AI 프로필 사진은 등록이 불가해요.
+                  - listitem [ref=e884]: 여러명이 함께 나오거나, 흐릿하거나 어두운 사진은 피해주세요.
+                - separator [ref=e885]
+              - generic [ref=e886]:
+                - generic [ref=e887]:
+                  - paragraph [ref=e888]: 좋은 사진
+                  - generic [ref=e889]:
+                    - img "좋은 사진 예시 1" [ref=e891]
+                    - img "좋은 사진 예시 2" [ref=e893]
+                    - img "좋은 사진 예시 3" [ref=e895]
+                - generic [ref=e896]:
+                  - paragraph [ref=e897]: 나쁜 사진
+                  - generic [ref=e898]:
+                    - img "나쁜 사진 예시 1" [ref=e900]
+                    - img "나쁜 사진 예시 2" [ref=e902]
+                    - img "나쁜 사진 예시 3" [ref=e904]
+            - generic [ref=e905]:
+              - button "사진 추가" [ref=e907] [cursor=pointer]:
+                - button "Choose File" [ref=e908]
+                - generic [ref=e909]: ＋
+                - generic [ref=e910]:
+                  - text: 정면 얼굴이 잘 나온 사진
+                  - text: (타인에게 먼저 노출됩니다.)
+                - generic "대표 사진" [ref=e911]:
+                  - img [ref=e912]
+              - button "사진 추가" [ref=e915] [cursor=pointer]:
+                - button "Choose File" [ref=e916]
+                - generic [ref=e917]: ＋
+              - button "사진 추가" [ref=e919] [cursor=pointer]:
+                - button "Choose File" [ref=e920]
+                - generic [ref=e921]: ＋
+              - button "사진 추가" [ref=e923] [cursor=pointer]:
+                - button "Choose File" [ref=e924]
+                - generic [ref=e925]: ＋
+          - generic [ref=e926]:
+            - generic [ref=e927]:
+              - generic [ref=e928]: 포토북
+              - button "포토북 슬롯 추가" [ref=e930]: + 추가
+            - paragraph [ref=e931]: 최대 8장까지 슬롯을 추가할 수 있습니다.
+            - button "포토북 사진 추가" [ref=e934] [cursor=pointer]:
+              - button "Choose File" [ref=e935]
+              - generic [ref=e936]: ＋
+      - generic [ref=e938]:
+        - button "저장하기" [ref=e939]
+        - button "다음" [ref=e940]
+  - contentinfo [ref=e941]:
+    - generic [ref=e942]:
+      - generic [ref=e943]: 상담 문의
+      - strong [ref=e944]: 02)862-3920
+    - paragraph [ref=e945]: 평일 10:00 ~ 19:00 | 점심 12:30 ~ 13:30 | 주말·공휴일 휴무
+    - generic [ref=e946]:
+      - button "이용약관" [ref=e947]
+      - button "개인정보처리방침" [ref=e948]
+      - button "손해배상청구절차" [ref=e949]
+      - button "아동 안전 표준 정책" [ref=e950]
+      - button "로그아웃" [ref=e951]
+    - button "크리스천메이트 회사 정보" [ref=e953]:
+      - generic [ref=e954]: 크리스천메이트 회사 정보
+      - img [ref=e955]
+    - paragraph [ref=e957]: 2026 Copyright(c) 크리스천 메이트 All Right Reserved.
+  - generic "퀵 메뉴" [ref=e958]:
+    - button "퀵 메뉴 열기" [ref=e959]: ＋
+  - button "Open Next.js Dev Tools" [ref=e548] [cursor=pointer]:
+    - img [ref=e549]
+  - alert [ref=e552]

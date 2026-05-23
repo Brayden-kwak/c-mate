@@ -45,8 +45,8 @@ const STYLE_SELECTION_MAX = 5;
 
 const STYLE_GROUPS: StyleGroup[] = [
   { label: "외모 스타일", options: ["귀여운", "청순한", "세련된", "지적인", "훈훈한", "터프한", "패션에 민감한", "스포티한"] },
-  { label: "성격/기질", options: ["다정한", "유머있는", "차분한", "활발한", "리더십", "듬직한", "도도한", "대범한", "신중한", "열정적인", "낙천적인"] },
-  { label: "성품", options: ["성실한", "책임감", "정직한", "지적인", "상냥한", "섬세한", "창의적인", "끈기있는"] },
+  { label: "성격/기질", options: ["다정한", "유머있는", "차분한", "활발한", "리더십 있는", "대범한", "신중한", "열정적인", "낙천적인", "상냥한", "섬세한", "창의적인"] },
+  { label: "성품", options: ["성실한", "책임감 있는", "정직한", "듬직한", "끈기있는"] },
 ];
 
 /* ===== Auto-save chip ===== */
@@ -73,21 +73,6 @@ const AutoSaveChip = ({ state }: { state: AutoSaveState }) => {
     );
   }
   return null;
-}
-
-/* ===== Delete preview tile (for photo delete modal) ===== */
-const PhotoTile = ({ badge, faded }: { badge?: string; faded?: boolean }) => {
-  return (
-    <div
-      className={`w-[72px] h-[88px] rounded-md bg-photo-gradient flex items-end justify-center p-2 ${faded ? "opacity-40" : ""}`}
-    >
-      {badge && (
-        <span className="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-pill">
-          {badge}
-        </span>
-      )}
-    </div>
-  );
 }
 
 /* ===== Section 1 ===== */
@@ -158,7 +143,7 @@ const FamilySection = ({
               placeholder="주소를 검색해 주세요"
             />
             <Button variant="secondary" size="md" type="button" onClick={() => setAddrModalOpen(true)}>
-              주소 찾기
+              주소 검색
             </Button>
           </div>
           <HighlightBox
@@ -206,7 +191,7 @@ const FamilySection = ({
           placeholder="주소를 검색해 주세요"
         />
         <Button variant="secondary" size="md" type="button" layout="full" onClick={() => setAddrModalOpen(true)}>
-          주소 찾기
+          주소 검색
         </Button>
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
@@ -236,7 +221,7 @@ const FamilySection = ({
       <ConfirmModal
         open={addrModalOpen}
         onClose={() => { setAddrModalOpen(false); setAddrQuery(""); }}
-        title="주소 찾기"
+        title="주소 검색"
         confirmLabel="확인"
         onConfirm={applyAddress}
         width="sm"
@@ -244,13 +229,13 @@ const FamilySection = ({
         <Input
           value={addrQuery}
           onChange={(e) => setAddrQuery(e.target.value)}
-          placeholder="도로명 또는 지번 주소 입력"
+          placeholder="임시로 주소를 입력하시면 인풋 박스에 채워집니다."
           autoFocus
           aria-label="주소 검색"
           onKeyDown={(e) => e.key === "Enter" && applyAddress()}
         />
         <p className="text-[13px] text-text-secondary m-0">
-          실제 서비스에서는 카카오/다음 우편번호 API를 연동합니다.
+          실제 카카오 주소 검색창이 뜨며, 해당 창은 테스트용입니다.
         </p>
       </ConfirmModal>
     </>
@@ -336,7 +321,7 @@ const FaithSection = ({
           <Row label="모태신앙 여부" required>
             <RadioGroup
               name="nativeFaith"
-              options={["그렇다", "그렇지 않다", "모태신앙은 아니지만 현재 믿고 있다"]}
+              options={["그렇다", "그렇지 않다"]}
               value={nativeFaith}
               onChange={(v) => { setNativeFaith(v); onSave(); }}
               aria-required
@@ -386,7 +371,7 @@ const FaithSection = ({
         <MobileField label="모태신앙 여부" required>
           <RadioGroup
             name="m-nativeFaith"
-            options={["그렇다", "그렇지 않다", "모태신앙은 아니지만 현재 믿고 있다"]}
+            options={["그렇다", "그렇지 않다"]}
             value={nativeFaith}
             onChange={(v) => { setNativeFaith(v); onSave(); }}
             aria-required
@@ -515,7 +500,7 @@ const AppearanceSection = ({
           <Input type="number" value={height} onChange={(e) => setHeight(e.target.value)} onBlur={onSave} suffix="cm" fieldWidth="heightCompact" min={140} max={220} aria-label="신장" />
         </MobileField>
         <MobileField label="혈액형" required>
-          <RadioGroup name="m-bloodType" options={["A형", "B형", "AB형", "O형", "모름"]} value={bloodType} onChange={(v) => { setBloodType(v); onSave(); }} aria-required />
+          <RadioGroup name="m-bloodType" options={["A형", "B형", "AB형", "O형"]} value={bloodType} onChange={(v) => { setBloodType(v); onSave(); }} aria-required />
         </MobileField>
         <MobileField label="체형" required>
           <RadioGroup name="m-bodyType" options={["슬림", "슬림탄탄", "보통", "근육질", "통통", "글래머"]} value={bodyType} onChange={(v) => { setBodyType(v); onSave(); }} aria-required />
@@ -580,7 +565,7 @@ const LifestyleSection = ({
         <Row label="음주 여부" required>
           <RadioGroup
             name="drinking"
-            options={["즐겨합니다", "보통", "어쩔 수 없을 때", "전혀 하지 않습니다"]}
+            options={["즐겨함", "보통", "어쩔 수 없을 때", "전혀 하지 않음"]}
             value={drinking}
             onChange={(v) => { setDrinking(v); onSave(); }}
             aria-required
@@ -589,7 +574,7 @@ const LifestyleSection = ({
         <Row label="흡연 여부" required>
           <RadioGroup
             name="smoking"
-            options={["전혀 안 함", "가끔", "자주"]}
+            options={["흡연", "비흡연"]}
             value={smoking}
             onChange={(v) => { setSmoking(v); onSave(); }}
             aria-required
@@ -598,7 +583,7 @@ const LifestyleSection = ({
         <Row label="자녀 계획" required>
           <RadioGroup
             name="childrenPlan"
-            options={["자녀를 갖기 희망", "자녀 계획 없음", "상호 논의 후 결정", "고민중임"]}
+            options={["자녀를 갖기 희망", "자녀 계획 없음", "상호 논의 후 결정", "고민중"]}
             value={childrenPlan}
             onChange={(v) => { setChildrenPlan(v); onSave(); }}
             aria-required
@@ -613,13 +598,13 @@ const LifestyleSection = ({
     <SectionAnchor id={SECTION_LIFESTYLE}>
     <MobileCard num={5} title="생활 습관 &amp; 가치관" progress={{ done: complete, total: 3 }}>
         <MobileField label="음주 여부" required>
-          <RadioGroup name="m-drinking" options={["즐겨합니다", "보통", "어쩔 수 없을 때", "전혀 하지 않습니다"]} value={drinking} onChange={(v) => { setDrinking(v); onSave(); }} aria-required />
+          <RadioGroup name="m-drinking" options={["즐겨함", "보통", "어쩔 수 없을 때", "전혀 하지 않음"]} value={drinking} onChange={(v) => { setDrinking(v); onSave(); }} aria-required />
         </MobileField>
         <MobileField label="흡연 여부" required>
-          <RadioGroup name="m-smoking" options={["전혀 안 함", "가끔", "자주"]} value={smoking} onChange={(v) => { setSmoking(v); onSave(); }} aria-required />
+          <RadioGroup name="m-smoking" options={["흡연", "비흡연"]} value={smoking} onChange={(v) => { setSmoking(v); onSave(); }} aria-required />
         </MobileField>
         <MobileField label="자녀 계획" required>
-          <RadioGroup name="m-childrenPlan" options={["자녀를 갖기 희망", "자녀 계획 없음", "상호 논의 후 결정", "고민중임"]} value={childrenPlan} onChange={(v) => { setChildrenPlan(v); onSave(); }} aria-required />
+          <RadioGroup name="m-childrenPlan" options={["자녀를 갖기 희망", "자녀 계획 없음", "상호 논의 후 결정", "고민중"]} value={childrenPlan} onChange={(v) => { setChildrenPlan(v); onSave(); }} aria-required />
         </MobileField>
     </MobileCard>
     </SectionAnchor>
@@ -910,7 +895,7 @@ const PhotoSection = ({
           }
         >
           <div className="flex w-full min-w-0 flex-col gap-4 photo-guide-wide:flex-row photo-guide-wide:items-start">
-            <ProfilePhotoGuide className="order-1 photo-guide-wide:order-2 photo-guide-wide:h-[var(--spacing-photo-guide-height)] photo-guide-wide:w-[var(--spacing-photo-guide-width)] photo-guide-wide:shrink-0 photo-guide-wide:self-start" />
+            <ProfilePhotoGuide className="order-1 photo-guide-wide:order-2 photo-guide-wide:h-photo-guide-height photo-guide-wide:w-photo-guide-width photo-guide-wide:shrink-0 photo-guide-wide:self-start" />
             <div className="order-2 flex-none photo-guide-wide:order-1">{photoGrid}</div>
           </div>
           <InfoBox>이미지 파일 크기는 10MB 이하로 업로드해주세요</InfoBox>
@@ -976,13 +961,12 @@ const PhotoSection = ({
       <ConfirmModal
         open={!!deleteModal}
         onClose={() => setDeleteModal(null)}
-        title={isRep ? undefined : "사진 삭제"}
         ariaLabel={
           isRep
             ? isRepDeleteBlocked
               ? "대표 사진 필수 안내"
               : "대표사진 삭제 확인"
-            : undefined
+            : "사진 삭제 확인"
         }
         confirmLabel={isRepDeleteBlocked ? "확인" : "삭제"}
         cancelLabel={isRepDeleteBlocked ? false : "취소"}
@@ -990,41 +974,32 @@ const PhotoSection = ({
         variant={isRepDeleteBlocked ? "primary" : "danger"}
         width={isRepDeleteBlocked ? "sm" : "md"}
       >
-        {hasReplacementPhoto && (
-          <div className="flex items-start gap-3 bg-danger-light rounded-md p-4">
-            <span className="text-danger text-lg font-bold shrink-0">!</span>
-            <div>
-              <div className="text-sm font-semibold text-text">두 번째 사진이 대표가 됩니다</div>
-              <div className="text-[13px] text-text-secondary mt-1">해당 사진을 삭제하면 두 번째에 등록된 사진이 대표 사진으로 자동 승격됩니다.</div>
+        {hasReplacementPhoto ? (
+          <div className="text-center mt-2 mb-4">
+            <div className="mt-1 text-md text-text-secondary">
+              해당 사진을 삭제하면 두 번째에 등록된 사진이<br />대표 사진으로 자동 승격됩니다.
             </div>
           </div>
-        )}
-        {isRepDeleteBlocked ? (
-          <p className="m-0 text-center text-sm font-semibold text-text">
+        ) : isRepDeleteBlocked ? (
+          <p className="m-0 text-center text-md font-semibold text-text">
             대표 사진은 필수 입니다. 반드시 등록해주세요
           </p>
-        ) : isRep && hasReplacementPhoto ? (
-          <div className="flex items-center gap-3 justify-center">
-            <PhotoTile badge="★ 대표" faded />
-            <span className="text-text-secondary text-lg">→</span>
-            <PhotoTile badge="★ 대표" />
-          </div>
         ) : (
-          <p className="m-0 text-center text-sm font-semibold text-text">정말 삭제하시겠습니까?</p>
+          <p className="text-md text-text-secondary text-center mt-2 mb-4">정말 삭제하시겠습니까?</p>
         )}
       </ConfirmModal>
 
       <ConfirmModal
         open={!!pbDeleteModal}
         onClose={() => setPbDeleteModal(null)}
-        title="사진 삭제"
+        ariaLabel="사진 삭제 확인"
         confirmLabel="삭제"
         cancelLabel="취소"
         onConfirm={confirmPbDelete}
         variant="danger"
         width="md"
       >
-        <p className="m-0 text-center text-sm font-semibold text-text">정말 삭제하시겠습니까?</p>
+        <p className="text-md text-text-secondary text-center mt-2 mb-4">정말 삭제하시겠습니까?</p>
       </ConfirmModal>
     </>
   );

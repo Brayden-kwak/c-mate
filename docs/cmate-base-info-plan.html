@@ -122,7 +122,7 @@ img { max-width: 100%; height: auto; }
 <tr><td><strong>I-7</strong></td><td>인터랙션</td><td>저장하기·저장 후 다음 두 primary가 인접</td><td>sticky footer 3요소 = 자동저장 chip + 저장(secondary) + 다음(primary). wide desktop은 frame-end dock</td><td><span class="pin p1">P1</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td>BaseInfoForm <code class="token">DFooter</code></td></tr>
 <tr><td><strong>I-8</strong></td><td>인터랙션</td><td>"다음" 클릭 후 미입력 항목이 무엇인지 가독성 낮음</td><td>전용 검증 모달 "입력하지 않은 항목이 있습니다" + 누락 라벨 리스트 + 확인 시 첫 미입력 섹션으로 부드러운 스크롤</td><td><span class="pin p1">P1</span></td><td>없음</td><td><span class="ok">●</span> 완료 (v2 신규)</td><td>validation <code class="token">ConfirmModal</code> + <code class="token">scrollToFieldAnchor</code></td></tr>
 <tr><td><strong>I-9</strong></td><td>인터랙션</td><td>프로필 사진 가이드(좋은/나쁜 예시)가 본문에 강제 노출</td><td>전용 <code class="token">ProfilePhotoGuide</code> aside — 좋은 사진 3장·나쁜 사진 3장 썸네일. 1430px+에서 사진 슬롯 옆, 그 이하/모바일에서 상단</td><td><span class="pin p2">P2</span></td><td>없음</td><td><span class="ok">●</span> 완료 (v2 신규)</td><td><code class="token">ProfilePhotoGuide</code></td></tr>
-<tr><td><strong>C-1</strong></td><td>콘텐츠</td><td>옵션 라벨 모호 (모태신앙·음주·자녀계획)</td><td>모태신앙 "…현재 믿고 있다" · 음주 "전혀 하지 않습니다" · 자녀계획 4종 단순화</td><td><span class="pin p2">P2</span></td><td>label only</td><td><span class="ok">●</span> 완료</td><td>RadioGroup options 상수</td></tr>
+<tr><td><strong>C-1</strong></td><td>콘텐츠</td><td>옵션 라벨 모호 (모태신앙·음주·자녀계획)</td><td>모태신앙 제3옵션 제거 · 음주 "전혀 하지 않음" · 자녀계획 4종 단순화</td><td><span class="pin p2">P2</span></td><td>label/options</td><td><span class="ok">●</span> 완료</td><td>RadioGroup options 상수</td></tr>
 <tr><td><strong>C-2</strong></td><td>콘텐츠</td><td>연봉이 강제 공개·민감 정보</td><td>Select + "연봉 비공개" Checkbox 추가 · 비공개 시 다른 회원에게 미노출, 매니저 매칭에만 활용</td><td><span class="pin p2">P2</span></td><td><strong>+salary.is_private</strong></td><td><span class="ok">●</span> 완료</td><td><code class="token">EducationSection</code> 연봉 Row</td></tr>
 <tr><td><strong>C-3</strong></td><td>콘텐츠</td><td>helper text 11개가 산재해 가독성 저하</td><td>중복 · 직접 입력으로 대체 가능한 항목 제거 · 핵심 안내만 유지 (warning 위계)</td><td><span class="pin p2">P2</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td>각 Row · InfoBox</td></tr>
 <tr><td><strong>C-4</strong></td><td>콘텐츠</td><td>타이포 스케일 모호 · 가독성 저하</td><td>Pretendard 9 단계 스케일 통일 (Display 32 → Micro 11) · rem 기반 / OS 글자 확대 대응</td><td><span class="pin p2">P2</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td>app/globals.css <code class="token">--font-weight-*</code></td></tr>
@@ -281,7 +281,7 @@ img { max-width: 100%; height: auto; }
 <thead><tr><th>위치</th><th>버튼</th><th>현재 스타일</th></tr></thead>
 <tbody>
 <tr><td>우측 fixed 사이드</td><td>자녀결혼, 업그레이드, 오시는길, 프로필컨설팅, 33법칙, TOP</td><td>원형 fab 6개</td></tr>
-<tr><td>검색 트리거 (인라인)</td><td>주소 찾기, 교회 검색, 학교 검색, 직업 검색</td><td>검정 사각 버튼</td></tr>
+<tr><td>검색 트리거 (인라인)</td><td>주소 검색, 교회 검색, 학교 검색, 직업 검색</td><td>검정 사각 버튼</td></tr>
 <tr><td>학교 행 우측</td><td>추가, 검색 (인접 배치 — 오클릭 위험)</td><td>사각 버튼</td></tr>
 <tr><td>사진 슬롯</td><td>업로드하기, 변경하기</td><td>그레이 사각 버튼</td></tr>
 <tr><td>페이지 하단</td><td>저장하기, 저장 후 다음</td><td>우측 정렬 2개 (위계 모호)</td></tr>
@@ -292,7 +292,7 @@ img { max-width: 100%; height: auto; }
 <thead><tr><th style="width:18%">위계</th><th style="width:18%">언제</th><th>예시</th></tr></thead>
 <tbody>
 <tr><td>🔴 <strong>Primary</strong></td><td>페이지 핵심 액션 · 1개</td><td>"다음", 모달 내 "확인/저장"</td></tr>
-<tr><td>⚫ <strong>Secondary</strong></td><td>필드/섹션 보조</td><td>"검색", "추가", "저장하기", "주소 찾기"</td></tr>
+<tr><td>⚫ <strong>Secondary</strong></td><td>필드/섹션 보조</td><td>"검색", "추가", "저장하기", "주소 검색"</td></tr>
 <tr><td>⚪ <strong>Tertiary</strong></td><td>취소·되돌리기</td><td>모달 "취소", "이전"</td></tr>
 <tr><td>🗑️ <strong>Danger</strong></td><td>삭제 (확인 모달 필수)</td><td>"삭제", "계속 진행"(다운그레이드)</td></tr>
 </tbody>
@@ -567,20 +567,20 @@ img { max-width: 100%; height: auto; }
 
 <h3 id="content">🧾 CONTENT — 콘텐츠/카피 개선</h3>
 
-<h4 id="c-1-p2">C-1. 옵션 라벨 정정 (모태신앙 · 음주 · 자녀계획) <span class="pin p2">P2</span></h4>
+<h4 id="c-1-p2">C-1. 옵션 라벨/선택지 정정 (모태신앙 · 음주 · 자녀계획) <span class="pin p2">P2</span></h4>
 <p>일부 라벨이 모호하거나 부자연스럽다. value(API key)는 유지하고 label만 변경하므로 데이터 마이그레이션은 불필요하다.</p>
 <table>
 <thead><tr><th style="width:13%">항목</th><th>현재 라벨</th><th>개선 라벨</th><th>사유</th></tr></thead>
 <tbody>
-<tr><td><strong>모태신앙</strong></td><td>모태신앙은 아니지만 현재 믿는 가족이 있다</td><td><strong>모태신앙은 아니지만 현재 믿고 있다</strong></td><td>본인 답변이어야 하는데 가족 유무를 묻고 있어 질문 의도와 불일치</td></tr>
-<tr><td><strong>음주여부</strong></td><td>아예 하지 않습니다</td><td><strong>전혀 하지 않습니다</strong></td><td>"아예"는 구어체이며 거친 인상</td></tr>
+<tr><td><strong>모태신앙</strong></td><td>제3옵션(가족/현재 신앙 혼합 답변)</td><td><strong>옵션 제거</strong></td><td>현재 신앙 여부가 아니라 모태신앙 여부를 묻는 항목이므로 질문 의도와 불일치</td></tr>
+<tr><td><strong>음주여부</strong></td><td>아예 하지 않습니다</td><td><strong>전혀 하지 않음</strong></td><td>"아예"는 구어체이며 거친 인상</td></tr>
 <tr><td rowspan="4"><strong>자녀계획</strong></td><td>결혼 후 자녀 갖기를 희망</td><td><strong>자녀를 갖기 희망</strong></td><td>길이 단순화, 톤 정돈</td></tr>
 <tr><td>현재/미래에도 자녀 계획이 없음</td><td><strong>자녀 계획 없음</strong></td><td>단순화</td></tr>
 <tr><td>상호 논의 후 결정</td><td><strong>상호 논의 후 결정</strong></td><td>유지</td></tr>
-<tr><td>아직 생각이 정리되지 않음</td><td><strong>고민중임</strong></td><td>길이 단순화</td></tr>
+<tr><td>아직 생각이 정리되지 않음</td><td><strong>고민중</strong></td><td>길이 단순화</td></tr>
 </tbody>
 </table>
-<div class="note info"><span class="ic">ⓘ</span><span><strong>데이터 마이그레이션 주의</strong> — value 키는 그대로 유지 → 기존 사용자 데이터에 영향 없음. label만 변경하므로 UI 변경 deploy 시점에 즉시 반영된다.</span></div>
+<div class="note info"><span class="ic">ⓘ</span><span><strong>데이터 마이그레이션 주의</strong> — 음주·자녀계획은 value 키를 유지하고 label만 변경한다. 모태신앙은 질문 의도에 맞지 않는 제3옵션을 제거하되, v2 미출시 옵션이므로 기존 사용자 데이터 영향은 없다.</span></div>
 
 <h4 id="c-2-p2">C-2. 연봉 비공개 체크박스 <span class="pin p2">P2</span></h4>
 <p><strong>문제 정의</strong> &nbsp;·&nbsp; 연봉은 매우 민감한 정보. 현재 셀렉트로 강제 선택해야 하며, 다른 회원에게 공개되는지 모호하다.</p>
@@ -959,7 +959,7 @@ img { max-width: 100%; height: auto; }
 <table>
 <thead><tr><th style="width:6%">#</th><th style="width:8%">ID</th><th>항목</th><th style="width:14%">화면 영향</th><th style="width:18%">데이터 영향</th></tr></thead>
 <tbody>
-<tr><td>1</td><td>C-1</td><td>옵션 라벨 정정 (모태신앙 · 음주 · 자녀계획)</td><td>작음</td><td>label only</td></tr>
+<tr><td>1</td><td>C-1</td><td>옵션 라벨/선택지 정정 (모태신앙 · 음주 · 자녀계획)</td><td>작음</td><td>label/options</td></tr>
 <tr><td>2</td><td>C-3</td><td>helper text 위계 재정렬 / 불필요 제거</td><td>작음</td><td>없음</td></tr>
 <tr><td>3</td><td>C-4</td><td>타이포그래피 스케일 적용 (본문 14→16, helper 12→13)</td><td>큼 (visual)</td><td>없음</td></tr>
 <tr><td>4</td><td>C-2</td><td>연봉 비공개 체크박스 추가</td><td>작음</td><td><strong>isPrivate 컬럼</strong></td></tr>

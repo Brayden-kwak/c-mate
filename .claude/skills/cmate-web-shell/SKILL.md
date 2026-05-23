@@ -71,7 +71,7 @@ Define once as Tailwind v4 `@theme` in `app/globals.css`. Never hardcode hex/px 
 - **Shadow** — sm `0 1px 2px rgba(0,0,0,.04)` · md `0 4px 12px rgba(0,0,0,.06)` · lg `0 12px 32px rgba(0,0,0,.10)` · modal `0 20px 48px rgba(0,0,0,.20)`.
 - **Motion** — durations 0.12 / 0.15 / 0.24; ease standard `cubic-bezier(.2,0,0,1)` · emphasized `cubic-bezier(.3,0,.1,1)`.
 - **Z-index** — base 0 · sticky 30 · footer 40 · rail 45 · drawer-backdrop 50 · header 60 · modal 80 · toast 90 · viewer-nav 100.
-- **Font** — Pretendard (fallback system-ui); weights 400/500/600/700/800; type scale Display 32 · Title 20 · Section 18 · Body 14 · Helper 13 · Caption 12 · Micro 11.
+- **Font** — Pretendard (fallback system-ui); weights 400/500/600/700/800; type scale Display 32 · Title 20 · Section 18 · md/Body-modal 16 · sm/Body 14 · Helper 13 · Caption 12 · Micro 11. `text-md` (16) is canonical for modal body copy; `text-sm` (14) remains the default body size for forms and lists.
 - **Breakpoints** — ≤599 sm · 600–767 md · 768–1023 lg (mobile app shell) · 1024+ xl (desktop 2-col, max-width 1440).
 
 **Single source of truth = `app/globals.css` `@theme` block.** This skill is a catalog; do not redefine tokens elsewhere. If a value is missing from `globals.css`, add it there (not in components). Mockup `:root` (lines 9–108) is the original reference.
@@ -99,6 +99,12 @@ Define once as Tailwind v4 `@theme` in `app/globals.css`. Never hardcode hex/px 
 - **Church search** — zero results → EmptyState + "＋ 교회/교단 가입 신청하기" → inline reg form in same modal → "24시간 내 매니저 확인" notice; user may proceed to Step 2 while pending.
 - **Photo delete/reorder** — delete rep when others exist: warning modal "두 번째 사진이 대표가 됩니다"; delete rep-only: blocking modal "대표사진은 반드시 등록"; reorder via DnD (desktop) / long-press carousel (mobile) / Shift+←/→ (keyboard).
 - **Education downgrade** — degree change purges existing rows after warning modal listing affected entries.
+
+## Modal rules (design system)
+
+- **No top-right close button** — modal headers must not contain a `✕` close affordance. Closing happens via backdrop click, ESC key, and the footer cancel/confirm buttons. Do not re-introduce `ModalCloseButton` or any inline `✕` icon button in modal headers (the primitive was removed for this reason).
+- **Header layout** — when a `title` exists, render only `<h3>` in the header. If no title, omit the header entirely.
+- **Body text size** — modal body copy (empty-state messages, confirmation prose, inline form helpers, textarea content) uses `text-md` (16px) — defined via `--text-md` in `globals.css`. Do not use `text-sm` for prose inside a modal body. Form labels and field-level helpers inside the body still follow their primitive's own scale.
 
 ## Next.js port conventions
 

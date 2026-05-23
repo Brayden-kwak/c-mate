@@ -2,7 +2,6 @@
 
 import type { ReactNode } from "react";
 import { Button } from "@/app/_components/ui/Button";
-import { ModalCloseButton } from "@/app/_components/ui/ModalCloseButton";
 
 type Props = {
   open: boolean;
@@ -14,6 +13,7 @@ type Props = {
   confirmLabel?: string;
   cancelLabel?: string | false;
   onConfirm?: () => void;
+  confirmDisabled?: boolean;
   variant?: "danger" | "primary";
   width?: "sm" | "md" | "lg";
 };
@@ -27,6 +27,7 @@ export function ConfirmModal({
   confirmLabel = "확인",
   cancelLabel = "취소",
   onConfirm,
+  confirmDisabled,
   variant = "primary",
   width = "md",
 }: Props) {
@@ -36,7 +37,7 @@ export function ConfirmModal({
 
   return (
     <div
-      className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center bg-backdrop-modal p-4"
+      className="fixed inset-0 z-(--z-modal) flex items-center justify-center bg-backdrop-modal p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
@@ -46,30 +47,32 @@ export function ConfirmModal({
         aria-label={title ? undefined : ariaLabel}
       >
         {/* Header */}
-        <div
-          className={
-            title
-              ? "flex items-center gap-3 px-7 pt-6 pb-3"
-              : "flex items-center justify-end px-7 pt-6 pb-0"
-          }
-        >
-          {title ? <h3 className="text-xl font-bold text-text m-0 flex-1">{title}</h3> : null}
-          <ModalCloseButton onClick={onClose} />
-        </div>
+        {title ? (
+          <div className="flex items-center gap-3 px-7 pt-6 pb-3">
+            <h3 className="text-xl font-bold text-text m-0 flex-1">{title}</h3>
+          </div>
+        ) : null}
 
         {/* Body */}
-        <div className="flex flex-col gap-5 px-7 py-10">{children}</div>
+        <div className="flex flex-col gap-5 px-7 py-5">{children}</div>
 
         {/* Footer */}
-        <div className="border-t border-border-subtle px-7 pt-5 pb-6">
+        <div className="px-7 pb-6">
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
             {cancelLabel && (
-              <Button variant="tertiary" size="lg" type="button" onClick={onClose} className="w-full sm:w-auto">
+              <Button variant="tertiary" size="lg" type="button" onClick={onClose} className="w-full sm:flex-1">
                 {cancelLabel}
               </Button>
             )}
             {onConfirm && (
-              <Button variant={variant} size="lg" type="button" onClick={onConfirm} className="w-full sm:w-auto">
+              <Button
+                variant={variant}
+                size="lg"
+                type="button"
+                onClick={onConfirm}
+                disabled={confirmDisabled}
+                className="w-full sm:flex-1"
+              >
                 {confirmLabel}
               </Button>
             )}

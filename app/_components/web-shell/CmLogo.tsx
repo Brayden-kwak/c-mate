@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-const LOGO_SRC = "/images/logo.jpg";
+const LOGO_SRC = "/images/logo/logo.png";
 
 type CmLogoProps = {
   className?: string;
