@@ -51,16 +51,11 @@ export const QUICK_MENU_ITEMS: QuickMenuItem[] = [
   },
   {
     label: "자녀결혼",
-    icon: <QuickMenuImage src="/images/quick-children.png" size="lg" />,
+    icon: <QuickMenuImage src="/images/quick-menu/quick-children.png" size="lg" />,
   },
   {
     label: "업그레이드",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden="true">
-        <path d="M12 20h9" />
-        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
-      </svg>
-    ),
+    icon: <QuickMenuImage src="/images/quick-menu/quick-upgrade.png" size="sm" />,
   },
   {
     label: "오시는길",
@@ -83,6 +78,6 @@ export const QUICK_MENU_ITEMS: QuickMenuItem[] = [
   },
   {
     label: "33법칙",
-    icon: <QuickMenuImage src="/images/quick-33.png" size="sm" />,
+    icon: <QuickMenuImage src="/images/quick-menu/quick-33.png" size="sm" />,
   },
 ];

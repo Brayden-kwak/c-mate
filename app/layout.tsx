@@ -6,9 +6,9 @@ export const metadata: Metadata = {
   title: "cmate",
   description: "크리스천메이트",
   icons: {
-    icon: [{ url: "/images/logo-icon.png", type: "image/png" }],
-    shortcut: "/images/logo-icon.png",
-    apple: "/images/logo-icon.png",
+    icon: [{ url: "/images/logo/logo-icon.png", type: "image/png" }],
+    shortcut: "/images/logo/logo-icon.png",
+    apple: "/images/logo/logo-icon.png",
   },
 };
 

@@ -9,8 +9,18 @@ import { Button } from "@/app/_components/ui/Button";
 import { InfoBox } from "@/app/_components/ui/InfoBox";
 import { MobileCard, MobileField } from "@/app/_components/ui/MobileCard";
 import { ConfirmModal } from "@/app/_components/modals/ConfirmModal";
-import { Select } from "@/app/_components/ui/Select";
+import { DropdownSelect, type DropdownOption } from "@/app/_components/ui/DropdownSelect";
 import { Checkbox } from "@/app/_components/ui/Checkbox";
+
+const SALARY_OPTIONS: DropdownOption[] = [
+  { value: "3000-under", label: "3,000만원 미만" },
+  { value: "3000-4000", label: "3,000 ~ 4,000만원" },
+  { value: "4000-5000", label: "4,000 ~ 5,000만원" },
+  { value: "5000-6000", label: "5,000 ~ 6,000만원" },
+  { value: "6000-8000", label: "6,000 ~ 8,000만원" },
+  { value: "8000-1e", label: "8,000만원 ~ 1억" },
+  { value: "1e-over", label: "1억 이상" },
+];
 import { SectionAnchor } from "./SectionAnchor";
 import { BASE_INFO_SECTION_ANCHOR_ID, type MissingRequiredField, type ProgressSection } from "./types";
 
@@ -44,13 +54,13 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
   const [jobModalOpen, setJobModalOpen] = useState(false);
   const [jobQuery, setJobQuery] = useState("");
   const [workplace, setWorkplace] = useState("");
-  const [workplaceModalOpen, setWorkplaceModalOpen] = useState(false);
-  const [workplaceQuery, setWorkplaceQuery] = useState("");
   const [schoolModalRowId, setSchoolModalRowId] = useState<number | null>(null);
   const [schoolQuery, setSchoolQuery] = useState("");
   const [salary, setSalary] = useState("");
   const [salaryHidden, setSalaryHidden] = useState(false);
   const nextId = useRef(10);
+  const trimmedSchoolQuery = schoolQuery.trim();
+  const trimmedJobQuery = jobQuery.trim();
   const hasCompleteSchoolRow = eduRows.length > 0 && eduRows.every((row) => row.school.trim() && row.major.trim());
   const complete =
     Number(Boolean(education)) +
@@ -123,15 +133,6 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
     onSave();
   };
 
-  const applyWorkplace = () => {
-    if (workplaceQuery.trim()) {
-      setWorkplace(workplaceQuery.trim());
-      onSave();
-    }
-    setWorkplaceModalOpen(false);
-    setWorkplaceQuery("");
-  };
-
   const applyJob = () => {
     if (jobQuery.trim()) {
       setJob(jobQuery.trim());
@@ -147,10 +148,11 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
   };
 
   const applySchool = () => {
-    if (schoolModalRowId !== null && schoolQuery.trim()) {
-      updateEduRow(schoolModalRowId, "school", schoolQuery.trim());
-      onSave();
+    if (schoolModalRowId === null || !trimmedSchoolQuery) {
+      return;
     }
+    updateEduRow(schoolModalRowId, "school", trimmedSchoolQuery);
+    onSave();
     setSchoolModalRowId(null);
     setSchoolQuery("");
   };
@@ -169,13 +171,12 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
           <Input
             placeholder="학교명을 검색해 주세요"
             value={row.school}
-            onChange={(e) => updateEduRow(row.id, "school", e.target.value)}
-            onBlur={onSave}
             layout="fill"
             aria-label={`${row.degree} 학교명`}
+            disabled
           />
           <Button variant="secondary" size="md" type="button" onClick={() => openSchoolSearch(row.id, row.school)}>
-            검색
+            학교 검색
           </Button>
           <Input
             placeholder="전공"
@@ -237,9 +238,9 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
               </button>
             )}
           </div>
-          <Input placeholder="학교명을 검색해 주세요" value={row.school} onChange={(e) => updateEduRow(row.id, "school", e.target.value)} onBlur={onSave} aria-label={`${row.degree} 학교명`} />
+          <Input placeholder="학교명을 검색해 주세요" value={row.school} aria-label={`${row.degree} 학교명`} disabled />
           <Button variant="secondary" size="md" type="button" layout="full" onClick={() => openSchoolSearch(row.id, row.school)}>
-            검색
+            학교 검색
           </Button>
           <Input placeholder="전공" value={row.major} onChange={(e) => updateEduRow(row.id, "major", e.target.value)} onBlur={onSave} aria-label={`${row.degree} 전공`} />
         </div>
@@ -280,33 +281,31 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
               layout="fill"
             />
             <Button variant="secondary" size="md" type="button" onClick={() => setJobModalOpen(true)}>
-              직업검색
+              직업 검색
             </Button>
           </div>
         </Row>
         <Row label="직장명" required helper="직장명은 앞 2글자만 공개되며, 나머지는 블라인드 처리됩니다.">
-          <div className="flex gap-2">
-            <Input
-              value={workplace}
-              onChange={(e) => setWorkplace(e.target.value)}
-              onBlur={onSave}
-              aria-label="직장명"
-              layout="fill"
-              placeholder="직장명을 검색해 주세요"
-            />
-            <Button variant="secondary" size="md" type="button" onClick={() => setWorkplaceModalOpen(true)}>
-              직장 검색
-            </Button>
-          </div>
+          <Input
+            value={workplace}
+            onChange={(e) => setWorkplace(e.target.value)}
+            onBlur={onSave}
+            aria-label="직장명"
+            layout="fill"
+            placeholder="직장명을 입력해 주세요"
+          />
         </Row>
         <Row label="연봉" required>
           <div className="flex items-center gap-4 flex-wrap">
-            <Select value={salary} onChange={(e) => { setSalary(e.target.value); onSave(); }} fieldWidth="salary">
-              <option value="">연봉 구간 선택</option>
-              <option>3,000만원 미만</option><option>3,000 ~ 4,000만원</option>
-              <option>4,000 ~ 5,000만원</option><option>5,000 ~ 6,000만원</option>
-              <option>6,000 ~ 8,000만원</option><option>8,000만원 ~ 1억</option><option>1억 이상</option>
-            </Select>
+            <DropdownSelect
+              value={salary}
+              onChange={(v) => { setSalary(v); onSave(); }}
+              options={SALARY_OPTIONS}
+              placeholder="연봉 구간 선택"
+              fieldWidth="salary"
+              aria-label="연봉 구간"
+              aria-required
+            />
             <Checkbox label="연봉 비공개" checked={salaryHidden} onChange={(e) => { setSalaryHidden(e.target.checked); onSave(); }} />
           </div>
           <InfoBox>비공개 시 다른 회원에게 노출되지 않으며, 매니저 매칭에만 활용됩니다.</InfoBox>
@@ -328,23 +327,24 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
       <MobileField label="직업 / 직무" required>
         <Input value={job} onChange={(e) => setJob(e.target.value)} onBlur={onSave} aria-label="직업 / 직무" />
         <Button variant="secondary" size="md" type="button" layout="full" onClick={() => setJobModalOpen(true)}>
-          직업검색
+          직업 검색
         </Button>
       </MobileField>
       <MobileField label="직장명" required>
-        <Input value={workplace} onChange={(e) => setWorkplace(e.target.value)} onBlur={onSave} aria-label="직장명" placeholder="직장명을 검색해 주세요" />
-        <Button variant="secondary" size="md" type="button" layout="full" onClick={() => setWorkplaceModalOpen(true)}>
-          직장 검색
-        </Button>
+        <Input value={workplace} onChange={(e) => setWorkplace(e.target.value)} onBlur={onSave} aria-label="직장명" placeholder="직장명을 입력해 주세요" />
       </MobileField>
       <MobileField label="연봉" required>
-        <Select value={salary} onChange={(e) => { setSalary(e.target.value); onSave(); }}>
-          <option value="">연봉 구간 선택</option>
-          <option>3,000만원 미만</option><option>3,000 ~ 4,000만원</option>
-          <option>4,000 ~ 5,000만원</option><option>5,000 ~ 6,000만원</option>
-          <option>6,000 ~ 8,000만원</option><option>8,000만원 ~ 1억</option><option>1억 이상</option>
-        </Select>
-        <Checkbox label="연봉 비공개" checked={salaryHidden} onChange={(e) => { setSalaryHidden(e.target.checked); onSave(); }} />
+        <DropdownSelect
+          value={salary}
+          onChange={(v) => { setSalary(v); onSave(); }}
+          options={SALARY_OPTIONS}
+          placeholder="연봉 구간 선택"
+          aria-label="연봉 구간"
+          aria-required
+        />
+        <div className="py-2">
+          <Checkbox label="연봉 비공개" checked={salaryHidden} onChange={(e) => { setSalaryHidden(e.target.checked); onSave(); }} />
+        </div>
         <InfoBox>비공개 시 다른 회원에게 노출되지 않으며, 매니저 매칭에만 활용됩니다.</InfoBox>
       </MobileField>
     </MobileCard>
@@ -368,7 +368,7 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
         <div className="flex items-start gap-3 bg-warning-light rounded-md p-4">
           <span className="text-warning text-lg font-bold shrink-0">⚠</span>
           <div>
-            <div className="text-sm font-semibold text-text">
+            <div className="text-md font-semibold text-text">
               {education} → {pendingEduChange?.newDegree}으로 변경
             </div>
             <div className="text-[13px] text-text-secondary mt-1">
@@ -397,53 +397,62 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
         open={jobModalOpen}
         onClose={() => { setJobModalOpen(false); setJobQuery(""); }}
         title="직업 검색"
-        confirmLabel="확인"
-        onConfirm={applyJob}
+        cancelLabel="취소"
+        confirmLabel="등록하기"
+        onConfirm={trimmedJobQuery ? applyJob : undefined}
         width="sm"
       >
-        <Input
-          value={jobQuery}
-          onChange={(e) => setJobQuery(e.target.value)}
-          autoFocus
-          aria-label="직업 검색"
-          onKeyDown={(e) => e.key === "Enter" && applyJob()}
-        />
-      </ConfirmModal>
-
-      <ConfirmModal
-        open={workplaceModalOpen}
-        onClose={() => { setWorkplaceModalOpen(false); setWorkplaceQuery(""); }}
-        title="직장 검색"
-        confirmLabel="확인"
-        onConfirm={applyWorkplace}
-        width="sm"
-      >
-        <Input
-          value={workplaceQuery}
-          onChange={(e) => setWorkplaceQuery(e.target.value)}
-          placeholder="직장명을 입력해 주세요"
-          autoFocus
-          aria-label="직장 검색"
-          onKeyDown={(e) => e.key === "Enter" && applyWorkplace()}
-        />
+        <div className="flex flex-col gap-4">
+          <Input
+            value={jobQuery}
+            onChange={(e) => setJobQuery(e.target.value)}
+            placeholder="직업/직무를 입력해 주세요"
+            autoFocus
+            aria-label="직업 검색"
+            onKeyDown={(e) => e.key === "Enter" && trimmedJobQuery && applyJob()}
+          />
+          {trimmedJobQuery ? (
+            <div className="bg-subtle rounded-lg p-5 text-center">
+              <div className="text-md font-semibold text-text">
+                &lsquo;{trimmedJobQuery}&rsquo; 검색 결과가 없어요
+              </div>
+              <p className="mt-2 mb-0 text-md leading-relaxed text-text-secondary">
+                하단의 등록하기를 누르면 입력한 직업/직무로 등록됩니다.
+              </p>
+            </div>
+          ) : null}
+        </div>
       </ConfirmModal>
 
       <ConfirmModal
         open={schoolModalRowId !== null}
         onClose={() => { setSchoolModalRowId(null); setSchoolQuery(""); }}
         title="학교 검색"
-        confirmLabel="확인"
-        onConfirm={applySchool}
+        cancelLabel="취소"
+        confirmLabel="등록하기"
+        onConfirm={trimmedSchoolQuery ? applySchool : undefined}
         width="sm"
       >
-        <Input
-          value={schoolQuery}
-          onChange={(e) => setSchoolQuery(e.target.value)}
-          placeholder="학교명을 입력해 주세요"
-          autoFocus
-          aria-label="학교 검색"
-          onKeyDown={(e) => e.key === "Enter" && applySchool()}
-        />
+        <div className="flex flex-col gap-4">
+          <Input
+            value={schoolQuery}
+            onChange={(e) => setSchoolQuery(e.target.value)}
+            placeholder="학교명을 입력해 주세요"
+            autoFocus
+            aria-label="학교 검색"
+            onKeyDown={(e) => e.key === "Enter" && trimmedSchoolQuery && applySchool()}
+          />
+          {trimmedSchoolQuery ? (
+            <div className="bg-subtle rounded-lg p-5 text-center">
+              <div className="text-md font-semibold text-text">
+                &lsquo;{trimmedSchoolQuery}&rsquo; 검색 결과가 없어요
+              </div>
+              <p className="mt-2 mb-0 text-md leading-relaxed text-text-secondary">
+                하단의 등록하기를 누르면 입력한 학교명으로 등록됩니다.
+              </p>
+            </div>
+          ) : null}
+        </div>
       </ConfirmModal>
     </>
   );

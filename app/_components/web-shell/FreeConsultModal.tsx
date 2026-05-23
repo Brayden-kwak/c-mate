@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/app/_components/ui/Button";
-import { ModalCloseButton } from "@/app/_components/ui/ModalCloseButton";
 import {
   FREE_CONSULT_PHONE_DISPLAY,
   FREE_CONSULT_TEL,
@@ -43,7 +42,6 @@ export function FreeConsultModal({ open, onClose }: Props) {
           <h3 id="free-consult-title" className="text-xl font-bold text-text m-0 flex-1">
             무료 상담
           </h3>
-          <ModalCloseButton onClick={onClose} />
         </div>
 
         <div className="px-7 pb-5 flex flex-col gap-3 items-center text-center">

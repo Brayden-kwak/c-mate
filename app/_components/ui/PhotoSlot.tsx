@@ -132,6 +132,7 @@ export function PhotoSlot({ variant, filled, previewUrl, onDelete, onSetRepresen
         accept="image/jpeg,image/png"
         className="sr-only"
         tabIndex={-1}
+        onClick={(e) => e.stopPropagation()}
         onChange={(e) => {
           const file = e.target.files?.[0];
           if (file && onUpload) onUpload(file);
@@ -155,7 +156,7 @@ export function PhotobookThumb({ filled, previewUrl, onDelete, onRemoveEmpty, on
   if (filled) {
     return (
       <div
-        className={`relative aspect-[4/3] w-full rounded-lg overflow-hidden bg-center bg-cover bg-no-repeat ${previewUrl ? "" : "bg-photo-gradient"}`}
+        className={`relative aspect-4/3 w-full rounded-lg overflow-hidden bg-center bg-cover bg-no-repeat ${previewUrl ? "" : "bg-photo-gradient"}`}
         style={previewUrl ? { backgroundImage: `url("${previewUrl}")` } : undefined}
       >
         {onDelete && (
@@ -205,7 +206,7 @@ export function PhotobookThumb({ filled, previewUrl, onDelete, onRemoveEmpty, on
 
   return (
     <div
-      className="relative aspect-[4/3] w-full rounded-lg overflow-hidden bg-subtle border border-border flex items-center justify-center cursor-pointer hover:border-border-strong hover:bg-border-subtle transition-colors duration-fast ease-standard"
+      className="relative aspect-4/3 w-full rounded-lg overflow-hidden bg-subtle border border-border flex items-center justify-center cursor-pointer hover:border-border-strong hover:bg-border-subtle transition-colors duration-fast ease-standard"
       onClick={() => fileRef.current?.click()}
       role="button"
       tabIndex={0}
@@ -231,6 +232,7 @@ export function PhotobookThumb({ filled, previewUrl, onDelete, onRemoveEmpty, on
         accept="image/jpeg,image/png"
         className="sr-only"
         tabIndex={-1}
+        onClick={(e) => e.stopPropagation()}
         onChange={(e) => {
           const file = e.target.files?.[0];
           if (file && onUpload) onUpload(file);
