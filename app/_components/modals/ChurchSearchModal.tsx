@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { Input } from "@/app/_components/ui/Input";
 import { Button } from "@/app/_components/ui/Button";
 import { InfoBox } from "@/app/_components/ui/InfoBox";
+import { ModalCloseButton } from "@/app/_components/ui/ModalCloseButton";
 
 export type ChurchSelectResult = {
   church: string;
@@ -71,14 +72,7 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
           <h3 id="church-modal-title" className="text-xl font-bold text-text m-0 flex-1">
             교회 검색
           </h3>
-          <button
-            type="button"
-            onClick={handleClose}
-            aria-label="교회 검색 모달 닫기"
-            className="w-8 h-8 rounded-full bg-subtle flex items-center justify-center text-text-secondary text-[13px] cursor-pointer hover:bg-border-subtle transition-colors duration-fast ease-standard"
-          >
-            ✕
-          </button>
+          <ModalCloseButton onClick={handleClose} aria-label="교회 검색 모달 닫기" />
         </div>
 
         {/* Body */}

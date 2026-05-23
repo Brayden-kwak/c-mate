@@ -2,11 +2,14 @@
 
 import type { ReactNode } from "react";
 import { Button } from "@/app/_components/ui/Button";
+import { ModalCloseButton } from "@/app/_components/ui/ModalCloseButton";
 
 type Props = {
   open: boolean;
   onClose: () => void;
-  title: string;
+  title?: string;
+  /** Visible title이 없을 때 dialog 접근성 라벨 */
+  ariaLabel?: string;
   children: ReactNode;
   confirmLabel?: string;
   cancelLabel?: string | false;
@@ -19,6 +22,7 @@ export function ConfirmModal({
   open,
   onClose,
   title,
+  ariaLabel,
   children,
   confirmLabel = "확인",
   cancelLabel = "취소",
@@ -39,25 +43,25 @@ export function ConfirmModal({
         className={`bg-surface rounded-xl border border-border w-full ${widthClass} overflow-hidden shadow-modal`}
         role="dialog"
         aria-modal="true"
+        aria-label={title ? undefined : ariaLabel}
       >
         {/* Header */}
-        <div className="flex items-center gap-3 px-7 pt-6 pb-4">
-          <h3 className="text-xl font-bold text-text m-0 flex-1">{title}</h3>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="닫기"
-            className="w-8 h-8 rounded-full bg-subtle flex items-center justify-center text-text-secondary text-[13px] cursor-pointer hover:bg-border-subtle transition-colors duration-fast ease-standard"
-          >
-            ✕
-          </button>
+        <div
+          className={
+            title
+              ? "flex items-center gap-3 px-7 pt-6 pb-3"
+              : "flex items-center justify-end px-7 pt-6 pb-0"
+          }
+        >
+          {title ? <h3 className="text-xl font-bold text-text m-0 flex-1">{title}</h3> : null}
+          <ModalCloseButton onClick={onClose} />
         </div>
 
         {/* Body */}
-        <div className="px-7 pb-5 flex flex-col gap-4">{children}</div>
+        <div className="flex flex-col gap-5 px-7 py-10">{children}</div>
 
         {/* Footer */}
-        <div className="px-7 py-4 border-t border-border-subtle">
+        <div className="border-t border-border-subtle px-7 pt-5 pb-6">
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
             {cancelLabel && (
               <Button variant="tertiary" size="lg" type="button" onClick={onClose} className="w-full sm:w-auto">

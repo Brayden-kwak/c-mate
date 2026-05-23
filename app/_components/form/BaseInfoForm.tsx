@@ -131,7 +131,7 @@ const FamilySection = ({
   const desktopContent = (
     <SectionAnchor id={SECTION_FAMILY}>
       <Card>
-      <CardHead tag="SECTION 1" title="가족 &amp; 거주" progress={{ done: complete, total: 2 }} />
+      <CardHead tag="SECTION 1" title="혼인 &amp; 거주" progress={{ done: complete, total: 2 }} />
       <CardBody>
           <Row label="결혼 경험" required helper="사실대로 선택해 주세요. 허위 기재 시 민/형사 책임을 묻습니다.">
             <RadioGroup
@@ -182,7 +182,7 @@ const FamilySection = ({
 
   const mobileContent = (
     <SectionAnchor id={SECTION_FAMILY}>
-    <MobileCard num={1} title="가족 & 거주" progress={{ done: complete, total: 2 }}>
+    <MobileCard num={1} title="혼인 & 거주" progress={{ done: complete, total: 2 }}>
         <MobileField label="결혼 경험" required>
           <RadioGroup
             name="m-marriageExperience"
@@ -774,6 +774,7 @@ const PhotoSection = ({
 
   const isRep = deleteModal?.index === 0;
   const hasReplacementPhoto = isRep && filledCount > 1;
+  const isRepDeleteBlocked = isRep && !hasReplacementPhoto;
 
   const photoGrid = (
     <div className="grid w-max grid-cols-2 gap-3.5">
@@ -796,7 +797,7 @@ const PhotoSection = ({
   const mobilePhotoGuide = <ProfilePhotoGuide className="mb-3 xl:hidden" />;
 
   const mobilePhotoCarousel = (
-    <div className="flex w-full snap-x snap-mandatory gap-2.5 overflow-x-auto overscroll-x-contain pb-1">
+    <div className="flex w-full snap-x snap-mandatory gap-2.5 overflow-x-auto overscroll-x-contain pb-1 scrollbar-none">
       {photos.map((photo, i) => (
         <div key={i} className="flex-none snap-start">
           <PhotoSlot
@@ -854,7 +855,7 @@ const PhotoSection = ({
   );
 
   const mobilePbCarousel = (
-    <div ref={pbCarouselRef} className="flex w-full snap-x snap-mandatory gap-2.5 overflow-x-auto overscroll-x-contain pb-1">
+    <div ref={pbCarouselRef} className="flex w-full snap-x snap-mandatory gap-2.5 overflow-x-auto overscroll-x-contain pb-1 scrollbar-none">
       {pbPhotos.map((photo, i) => (
         <div key={i} className="flex w-photobook-slot-width max-w-full flex-none snap-start flex-col gap-2">
           <PhotobookThumb
@@ -975,12 +976,19 @@ const PhotoSection = ({
       <ConfirmModal
         open={!!deleteModal}
         onClose={() => setDeleteModal(null)}
-        title={isRep ? "대표사진 삭제" : "사진 삭제"}
-        confirmLabel="삭제"
-        cancelLabel="취소"
-        onConfirm={confirmDelete}
-        variant="danger"
-        width="md"
+        title={isRep ? undefined : "사진 삭제"}
+        ariaLabel={
+          isRep
+            ? isRepDeleteBlocked
+              ? "대표 사진 필수 안내"
+              : "대표사진 삭제 확인"
+            : undefined
+        }
+        confirmLabel={isRepDeleteBlocked ? "확인" : "삭제"}
+        cancelLabel={isRepDeleteBlocked ? false : "취소"}
+        onConfirm={isRepDeleteBlocked ? () => setDeleteModal(null) : confirmDelete}
+        variant={isRepDeleteBlocked ? "primary" : "danger"}
+        width={isRepDeleteBlocked ? "sm" : "md"}
       >
         {hasReplacementPhoto && (
           <div className="flex items-start gap-3 bg-danger-light rounded-md p-4">
@@ -991,11 +999,15 @@ const PhotoSection = ({
             </div>
           </div>
         )}
-        {isRep ? (
+        {isRepDeleteBlocked ? (
+          <p className="m-0 text-center text-sm font-semibold text-text">
+            대표 사진은 필수 입니다. 반드시 등록해주세요
+          </p>
+        ) : isRep && hasReplacementPhoto ? (
           <div className="flex items-center gap-3 justify-center">
             <PhotoTile badge="★ 대표" faded />
-            {hasReplacementPhoto && <span className="text-text-secondary text-lg">→</span>}
-            {hasReplacementPhoto && <PhotoTile badge="★ 대표" />}
+            <span className="text-text-secondary text-lg">→</span>
+            <PhotoTile badge="★ 대표" />
           </div>
         ) : (
           <p className="m-0 text-center text-sm font-semibold text-text">정말 삭제하시겠습니까?</p>
@@ -1086,7 +1098,7 @@ const DFooter = ({ autoSave }: { autoSave: AutoSaveState }) => {
       {/* Mobile sticky footer */}
       <div className="xl:hidden fixed inset-x-0 bottom-0 z-(--z-footer) border-t border-border bg-surface shadow-footer">
         <div className="mx-auto flex w-full max-w-[430px] gap-2 px-4 pt-3 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-          <Button variant="secondary" size="md" type="button" className="w-[110px] shrink-0" onClick={handleManualSave}>
+          <Button variant="secondary" size="md" type="button" layout="fill" onClick={handleManualSave}>
             저장하기
           </Button>
           <Button variant="primary" size="md" type="submit" layout="fill">
