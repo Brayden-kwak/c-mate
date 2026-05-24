@@ -7,6 +7,7 @@ import {
   useEffect,
   useMemo,
   type CSSProperties,
+  type ReactNode,
 } from "react";
 import { Card, CardHead, CardBody } from "@/app/_components/ui/Card";
 import { Row } from "@/app/_components/ui/Row";
@@ -1117,7 +1118,7 @@ const PhotoSection = ({
           className="aspect-4/3 w-full rounded-lg border border-dashed border-border-strong bg-surface text-text-tertiary flex items-center justify-center hover:border-primary hover:text-primary hover:bg-primary-bg transition-colors duration-fast ease-standard"
         >
           <span
-            className="text-[32px] font-light leading-none"
+            className="text-display font-light leading-none"
             aria-hidden="true"
           >
             ＋
@@ -1179,7 +1180,7 @@ const PhotoSection = ({
           className="aspect-4/3 w-photobook-slot-width max-w-full flex-none snap-start rounded-lg border border-dashed border-border-strong bg-surface text-text-tertiary hidden narrow:flex items-center justify-center hover:border-primary hover:text-primary hover:bg-primary-bg transition-colors duration-fast ease-standard"
         >
           <span
-            className="text-[32px] font-light leading-none"
+            className="text-display font-light leading-none"
             aria-hidden="true"
           >
             ＋
@@ -1448,7 +1449,7 @@ const ProgressHero = ({ progress }: { progress: ProgressSection }) => {
 };
 
 /* ===== Root ===== */
-export const BaseInfoForm = () => {
+export const BaseInfoForm = (): ReactNode => {
   const [autoSave, setAutoSave] = useState<AutoSaveState>("idle");
   const [validationModalOpen, setValidationModalOpen] = useState(false);
   const [missingBySection, setMissingBySection] = useState<
@@ -1472,7 +1473,7 @@ export const BaseInfoForm = () => {
   );
 
   const updateProgress = useCallback(
-    (key: keyof ProgressMap, section: ProgressSection) => {
+    (key: keyof ProgressMap, section: ProgressSection): void => {
       setProgressMap((current) => {
         const prev = current[key];
         if (prev.done === section.done && prev.total === section.total)
@@ -1484,7 +1485,7 @@ export const BaseInfoForm = () => {
   );
 
   const registerMissingFields = useCallback(
-    (section: BaseInfoSectionKey, missing: MissingRequiredField[]) => {
+    (section: BaseInfoSectionKey, missing: MissingRequiredField[]): void => {
       setMissingBySection((current) => {
         const prev = current[section];
         if (

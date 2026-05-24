@@ -38,11 +38,15 @@ const MOCK_CHURCHES: ChurchSelectResult[] = [
   },
 ];
 
-function normalize(value: string) {
+function normalize(value: string): string {
   return value.replace(/\s+/g, "").toLowerCase();
 }
 
-export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
+export function ChurchSearchModal({
+  open,
+  onClose,
+  onSelect,
+}: Props): ReactNode {
   const [step, setStep] = useState<Step>("search");
   const [query, setQuery] = useState("");
   const [regName, setRegName] = useState("");
@@ -72,7 +76,7 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
     regReason.trim().length > 0;
   const title = step === "search" ? "교회 검색" : "교회 등록 신청하기";
 
-  function handleClose() {
+  function handleClose(): void {
     setStep("search");
     setQuery("");
     setRegName("");
@@ -84,17 +88,17 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
     onClose();
   }
 
-  function handleGoToForm() {
+  function handleGoToForm(): void {
     setRegName(query);
     setStep("form");
   }
 
-  function handleSubmitReg() {
+  function handleSubmitReg(): void {
     if (!canSubmitReg) return;
     setStep("submitted");
   }
 
-  function handleSelectMatch(match: ChurchSelectResult) {
+  function handleSelectMatch(match: ChurchSelectResult): void {
     onSelect?.(match);
     handleClose();
   }
@@ -128,7 +132,7 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
       onClick={(e) => e.target === e.currentTarget && handleClose()}
     >
       <div
-        className="bg-surface rounded-xl border border-border w-full max-w-[560px] overflow-hidden shadow-modal"
+        className="bg-surface rounded-xl border border-border w-full max-w-(--spacing-modal-lg) overflow-hidden shadow-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="church-modal-title"
@@ -318,7 +322,7 @@ function RegField({
   label: string;
   required?: boolean;
   children: ReactNode;
-}) {
+}): ReactNode {
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center gap-1 text-xs font-semibold text-text">

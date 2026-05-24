@@ -1,5 +1,7 @@
 "use client";
 
+import type { ReactNode } from "react";
+
 import { Button } from "@/app/_components/ui/Button";
 
 export default function GlobalError({
@@ -7,7 +9,7 @@ export default function GlobalError({
 }: {
   error: Error & { digest?: string };
   unstable_retry: () => void;
-}) {
+}): ReactNode {
   return (
     <html lang="ko">
       <body className="min-h-screen flex items-center justify-center bg-page font-sans">

@@ -30,13 +30,13 @@ export function ConfirmModal({
   confirmDisabled,
   variant = "primary",
   width = "md",
-}: Props) {
+}: Props): ReactNode {
   if (!open) return null;
 
   const widthClass = {
-    sm: "max-w-[440px]",
-    md: "max-w-[480px]",
-    lg: "max-w-[560px]",
+    sm: "max-w-(--spacing-modal-sm)",
+    md: "max-w-(--spacing-modal-md)",
+    lg: "max-w-(--spacing-modal-lg)",
   }[width];
   const titleId = title ? "confirm-modal-title" : undefined;
 

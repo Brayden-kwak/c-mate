@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import type { ReactNode } from "react";
 
 type PhotoSlotProps = {
   variant: "rep" | "normal";
@@ -24,7 +25,7 @@ type PhotobookThumbProps = {
   onMoveRight?: () => void;
 };
 
-function RepresentativeBadge() {
+function RepresentativeBadge(): ReactNode {
   return (
     <span
       className="absolute top-2 left-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-primary text-white shadow-sm"
@@ -42,7 +43,7 @@ function RepresentativeBadge() {
   );
 }
 
-function ChevronLeft() {
+function ChevronLeft(): ReactNode {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -59,7 +60,7 @@ function ChevronLeft() {
   );
 }
 
-function ChevronRight() {
+function ChevronRight(): ReactNode {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -86,7 +87,7 @@ export function PhotoSlot({
   onMoveLeft,
   onMoveRight,
   onUpload,
-}: PhotoSlotProps) {
+}: PhotoSlotProps): ReactNode {
   const fileRef = useRef<HTMLInputElement>(null);
   const sizeClass =
     "w-[var(--spacing-photo-slot-width)] h-[var(--spacing-photo-slot-height)]";
@@ -199,7 +200,7 @@ export function PhotoSlot({
           e.target.value = "";
         }}
       />
-      <span className="text-[32px] text-text-tertiary font-light leading-none">
+      <span className="text-display text-text-tertiary font-light leading-none">
         ＋
       </span>
       {isRepresentative && (
@@ -220,7 +221,7 @@ export function PhotobookThumb({
   onUpload,
   onMoveLeft,
   onMoveRight,
-}: PhotobookThumbProps) {
+}: PhotobookThumbProps): ReactNode {
   const fileRef = useRef<HTMLInputElement>(null);
 
   if (filled) {
@@ -343,7 +344,7 @@ export function PhotobookThumb({
           e.target.value = "";
         }}
       />
-      <span className="text-[32px] text-text-tertiary font-light leading-none">
+      <span className="text-display text-text-tertiary font-light leading-none">
         ＋
       </span>
     </div>

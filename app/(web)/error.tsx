@@ -1,5 +1,7 @@
 "use client";
 
+import type { ReactNode } from "react";
+
 import { Button } from "@/app/_components/ui/Button";
 
 export default function WebError({
@@ -7,7 +9,7 @@ export default function WebError({
 }: {
   error: Error & { digest?: string };
   unstable_retry: () => void;
-}) {
+}): ReactNode {
   return (
     <div className="flex flex-col items-center justify-center py-20 px-4">
       <h2 className="text-xl font-bold text-text mb-2">오류가 발생했습니다</h2>

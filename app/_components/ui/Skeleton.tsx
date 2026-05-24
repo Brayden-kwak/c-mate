@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import type { SkeletonVariant } from "./types";
 
 interface SkeletonProps {
@@ -12,7 +14,7 @@ export function Skeleton({
   width = "w-full",
   height = "h-4",
   className = "",
-}: SkeletonProps) {
+}: SkeletonProps): ReactNode {
   const shapeClass =
     variant === "circle"
       ? "rounded-full"
@@ -29,7 +31,7 @@ export function Skeleton({
   );
 }
 
-export function SkeletonRow() {
+export function SkeletonRow(): ReactNode {
   return (
     <div
       role="presentation"
@@ -53,7 +55,7 @@ interface SkeletonCardProps {
   rows?: number;
 }
 
-export function SkeletonCard({ rows = 3 }: SkeletonCardProps) {
+export function SkeletonCard({ rows = 3 }: SkeletonCardProps): ReactNode {
   return (
     <div
       role="presentation"

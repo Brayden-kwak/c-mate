@@ -1,6 +1,7 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 
-export default function WebNotFound() {
+export default function WebNotFound(): ReactNode {
   return (
     <div className="flex flex-col items-center justify-center py-20 px-4">
       <h2 className="text-5xl font-bold text-primary mb-4">404</h2>
@@ -12,7 +13,7 @@ export default function WebNotFound() {
       </p>
       <Link
         href="/"
-        className="inline-flex items-center justify-center font-semibold text-[15px] h-11 px-5 rounded-md bg-primary text-white hover:bg-primary-hover transition-colors duration-base ease-standard"
+        className="inline-flex items-center justify-center font-semibold text-mobile-menu h-11 px-5 rounded-md bg-primary text-white hover:bg-primary-hover transition-colors duration-base ease-standard"
       >
         홈으로 돌아가기
       </Link>
