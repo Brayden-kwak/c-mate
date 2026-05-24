@@ -42,8 +42,12 @@ export function MobileCard({
           {num}
         </span>
         <div className="min-w-0 flex-1">
-          <h3 className="text-[15px] font-bold text-text m-0 leading-tight">{title}</h3>
-          {sub && <div className="text-[11px] text-text-tertiary mt-0.5">{sub}</div>}
+          <h3 className="text-[15px] font-bold text-text m-0 leading-tight">
+            {title}
+          </h3>
+          {sub && (
+            <div className="text-[11px] text-text-tertiary mt-0.5">{sub}</div>
+          )}
         </div>
         {progress && (
           <span
@@ -90,7 +94,13 @@ type FieldProps = {
   children: ReactNode;
 };
 
-export function MobileField({ label, required, desc, labelBadge, children }: FieldProps) {
+export function MobileField({
+  label,
+  required,
+  desc,
+  labelBadge,
+  children,
+}: FieldProps) {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex w-full items-center gap-1.5 flex-wrap">
@@ -102,7 +112,9 @@ export function MobileField({ label, required, desc, labelBadge, children }: Fie
         )}
         {labelBadge && <span className="ml-auto shrink-0">{labelBadge}</span>}
       </div>
-      {desc && <p className="text-xs text-text-secondary leading-normal m-0">{desc}</p>}
+      {desc && (
+        <p className="text-xs text-text-secondary leading-normal m-0">{desc}</p>
+      )}
       {children}
     </div>
   );

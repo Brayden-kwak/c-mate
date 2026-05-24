@@ -1,7 +1,10 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
 import type { FieldState, Size } from "./types";
 
-type Props = Omit<InputHTMLAttributes<HTMLInputElement>, "style" | "size" | "prefix"> & {
+type Props = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "style" | "size" | "prefix"
+> & {
   size?: Size;
   state?: FieldState;
   layout?: "full" | "fill" | "auto";
@@ -77,7 +80,9 @@ export function Input({
         {...rest}
       />
       {suffix && (
-        <span className="shrink-0 text-sm text-text-secondary font-medium">{suffix}</span>
+        <span className="shrink-0 text-sm text-text-secondary font-medium">
+          {suffix}
+        </span>
       )}
     </div>
   );

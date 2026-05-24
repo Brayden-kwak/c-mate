@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { HeaderLogoutButton, HeaderUserProfile } from "@/app/_components/web-shell/HeaderAccount";
+import {
+  HeaderLogoutButton,
+  HeaderUserProfile,
+} from "@/app/_components/web-shell/HeaderAccount";
 import { CmLogo } from "@/app/_components/web-shell/CmLogo";
 
 const NAV_ITEMS = [
@@ -15,12 +18,30 @@ const NAV_ITEMS = [
 ];
 
 const MEGA_COLS = [
-  ["회사 소개", "메이트 뉴스", "동역하는 사람들", "법률 보호 제도", "오시는 길"],
-  ["이용 절차", "매칭 시스템", "서비스 종류", "자녀 결혼 컨설팅", "프로필 컨설팅"],
+  [
+    "회사 소개",
+    "메이트 뉴스",
+    "동역하는 사람들",
+    "법률 보호 제도",
+    "오시는 길",
+  ],
+  [
+    "이용 절차",
+    "매칭 시스템",
+    "서비스 종류",
+    "자녀 결혼 컨설팅",
+    "프로필 컨설팅",
+  ],
   ["남성 메이트", "여성 메이트", "성혼 회원 분석"],
   ["회원 후기", "매니저 후기", "연애 칼럼", "제휴 파트너"],
   ["모임 참석 안내", "모임 공고", "현장 스케치"],
-  ["자주 묻는 질문", "불편/건의 접수", "상담 신청", "제휴/광고 문의", "채용 문의"],
+  [
+    "자주 묻는 질문",
+    "불편/건의 접수",
+    "상담 신청",
+    "제휴/광고 문의",
+    "채용 문의",
+  ],
 ];
 
 /** 상단 nav · mega 하위 메뉴 열 정렬 공통 */
@@ -51,16 +72,19 @@ export function Header() {
       onMouseEnter={() => setMenuOpen(true)}
       onMouseLeave={closeMenu}
     >
-      <header className="h-16 bg-surface grid grid-cols-[210px_minmax(0,1fr)_auto] items-center px-7 gap-5">
+      <header className="h-16 bg-surface grid grid-cols-[var(--spacing-header-logo-col)_minmax(0,1fr)_auto] items-center px-7 gap-5">
         <div className="flex min-w-0 items-center justify-center">
-          <Link href="/" className="inline-flex h-9 min-w-0 items-center no-underline">
+          <Link
+            href="/"
+            className="inline-flex h-9 min-w-0 items-center no-underline"
+          >
             <CmLogo priority className="h-5 w-auto" />
           </Link>
         </div>
 
         <nav aria-label="주요 메뉴" className={MAIN_NAV_GRID_CLASS}>
           {NAV_ITEMS.map((item, i) => (
-            <a
+            <Link
               key={item}
               href="#"
               onMouseEnter={() => highlightCol(i)}
@@ -70,7 +94,7 @@ export function Header() {
               ].join(" ")}
             >
               {item}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -82,7 +106,7 @@ export function Header() {
 
       <div
         className={[
-          "absolute left-0 right-0 top-16 -mt-2 bg-surface grid-cols-[210px_minmax(0,1fr)_auto] gap-5 px-7 pt-6 pb-7 shadow-mega",
+          "absolute left-0 right-0 top-16 -mt-2 bg-surface grid-cols-[var(--spacing-header-logo-col)_minmax(0,1fr)_auto] gap-5 px-7 pt-6 pb-7 shadow-mega",
           menuOpen ? "grid" : "hidden",
         ].join(" ")}
         aria-label="열린 헤더 메뉴"
@@ -97,18 +121,21 @@ export function Header() {
               onMouseEnter={() => highlightCol(i)}
             >
               {col.map((item) => (
-                <a
+                <Link
                   key={item}
                   href="#"
                   className="block w-full px-1 text-sm font-medium text-text-brand whitespace-nowrap hover:text-primary transition-colors duration-fast ease-standard"
                 >
                   {item}
-                </a>
+                </Link>
               ))}
             </div>
           ))}
         </div>
-        <div aria-hidden="true" className="invisible flex items-center gap-5 whitespace-nowrap justify-self-end">
+        <div
+          aria-hidden="true"
+          className="invisible flex items-center gap-5 whitespace-nowrap justify-self-end"
+        >
           <HeaderUserProfile />
           <HeaderLogoutButton />
         </div>

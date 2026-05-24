@@ -114,7 +114,9 @@ export function DropdownSelect({
     const trigger = triggerRef.current;
     if (!trigger) return;
     const rect = trigger.getBoundingClientRect();
-    const remPx = parseFloat(getComputedStyle(document.documentElement).fontSize);
+    const remPx = parseFloat(
+      getComputedStyle(document.documentElement).fontSize,
+    );
     const threshold = computeFlipThresholdRem(options.length) * remPx;
     const gap = LIST_GAP_REM * remPx;
     const spaceBelow = window.innerHeight - rect.bottom;
@@ -192,7 +194,12 @@ export function DropdownSelect({
 
   const onTriggerKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
     if (disabled) return;
-    if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Enter" || e.key === " ") {
+    if (
+      e.key === "ArrowDown" ||
+      e.key === "ArrowUp" ||
+      e.key === "Enter" ||
+      e.key === " "
+    ) {
       e.preventDefault();
       openMenu();
     }
@@ -222,8 +229,11 @@ export function DropdownSelect({
   };
 
   const selected = options.find((o) => o.value === value);
-  const widthClass = fieldWidth ? fieldWidthClass[fieldWidth] : layoutClass[layout];
-  const activeOptionId = activeIndex >= 0 ? `${listboxId}-opt-${activeIndex}` : undefined;
+  const widthClass = fieldWidth
+    ? fieldWidthClass[fieldWidth]
+    : layoutClass[layout];
+  const activeOptionId =
+    activeIndex >= 0 ? `${listboxId}-opt-${activeIndex}` : undefined;
 
   const menuStyle: CSSProperties | undefined = menuRect
     ? {
@@ -241,7 +251,9 @@ export function DropdownSelect({
   return (
     <div
       ref={wrapperRef}
-      className={["relative", widthClass, wrapperClassName].filter(Boolean).join(" ")}
+      className={["relative", widthClass, wrapperClassName]
+        .filter(Boolean)
+        .join(" ")}
     >
       <button
         ref={triggerRef}
@@ -274,7 +286,9 @@ export function DropdownSelect({
         <svg
           className={[
             "pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 transition-transform duration-fast ease-standard",
-            resolvedState === "disabled" ? "text-text-tertiary" : "text-text-secondary",
+            resolvedState === "disabled"
+              ? "text-text-tertiary"
+              : "text-text-secondary",
             open ? "rotate-180" : "rotate-0",
           ].join(" ")}
           viewBox="0 0 24 24"
@@ -291,7 +305,9 @@ export function DropdownSelect({
 
       {name && <input type="hidden" name={name} value={value} />}
 
-      {open && menuRect && canPortal &&
+      {open &&
+        menuRect &&
+        canPortal &&
         createPortal(
           <ul
             ref={listRef}
@@ -319,7 +335,9 @@ export function DropdownSelect({
                   }}
                   className={[
                     "h-10 flex items-center px-3 text-sm cursor-pointer select-none transition-colors duration-fast ease-standard",
-                    isActive ? "bg-primary-50 text-primary" : "text-text hover:bg-subtle",
+                    isActive
+                      ? "bg-primary-50 text-primary"
+                      : "text-text hover:bg-subtle",
                     isSelected ? "font-semibold" : "font-medium",
                   ].join(" ")}
                 >

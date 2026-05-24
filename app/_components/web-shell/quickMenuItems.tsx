@@ -7,9 +7,11 @@ const QUICK_ICON_LG = "w-5 h-5 shrink-0 object-contain";
 function QuickMenuImage({
   src,
   size,
+  priority = false,
 }: {
   src: string;
   size: "sm" | "lg";
+  priority?: boolean;
 }) {
   const dim = size === "lg" ? 20 : 16;
   return (
@@ -19,7 +21,7 @@ function QuickMenuImage({
       width={dim}
       height={dim}
       className={size === "lg" ? QUICK_ICON_LG : QUICK_ICON_SM}
-      priority
+      priority={priority}
       aria-hidden
     />
   );
@@ -52,16 +54,29 @@ export const QUICK_MENU_ITEMS: QuickMenuItem[] = [
   },
   {
     label: "자녀결혼",
-    icon: <QuickMenuImage src="/images/quick-menu/quick-children.png" size="lg" />,
+    icon: (
+      <QuickMenuImage src="/images/quick-menu/quick-children.svg" size="lg" />
+    ),
   },
   {
     label: "업그레이드",
-    icon: <QuickMenuImage src="/images/quick-menu/quick-upgrade.png" size="sm" />,
+    icon: (
+      <QuickMenuImage src="/images/quick-menu/quick-upgrade.svg" size="sm" />
+    ),
   },
   {
     label: "오시는길",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="w-4 h-4 shrink-0"
+        aria-hidden="true"
+      >
         <path d="M12 21s7-5.1 7-11a7 7 0 0 0-14 0c0 5.9 7 11 7 11Z" />
         <circle cx="12" cy="10" r="2.5" />
       </svg>
@@ -70,7 +85,16 @@ export const QUICK_MENU_ITEMS: QuickMenuItem[] = [
   {
     label: "프로필컨설팅",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="w-4 h-4 shrink-0"
+        aria-hidden="true"
+      >
         <rect x="4" y="4" width="16" height="16" rx="2" />
         <circle cx="12" cy="10" r="3" />
         <path d="M7 19c.8-2.4 2.5-3.6 5-3.6s4.2 1.2 5 3.6" />
@@ -79,6 +103,6 @@ export const QUICK_MENU_ITEMS: QuickMenuItem[] = [
   },
   {
     label: "33법칙",
-    icon: <QuickMenuImage src="/images/quick-menu/quick-33.png" size="sm" />,
+    icon: <QuickMenuImage src="/images/quick-menu/quick-33.svg" size="sm" />,
   },
 ];

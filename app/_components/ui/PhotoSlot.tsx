@@ -1,10 +1,12 @@
 "use client";
 
 import { useRef } from "react";
+import type { ReactNode } from "react";
 
 type PhotoSlotProps = {
   variant: "rep" | "normal";
   filled?: boolean;
+  loading?: boolean;
   previewUrl?: string;
   onDelete?: () => void;
   onSetRepresentative?: () => void;
@@ -23,46 +25,93 @@ type PhotobookThumbProps = {
   onMoveRight?: () => void;
 };
 
-function RepresentativeBadge() {
+function RepresentativeBadge(): ReactNode {
   return (
     <span
       className="absolute top-2 left-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-primary text-white shadow-sm"
       aria-label="대표 사진"
     >
-      <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        className="h-3.5 w-3.5"
+        fill="currentColor"
+        aria-hidden="true"
+      >
         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
       </svg>
     </span>
   );
 }
 
-function ChevronLeft() {
+function ChevronLeft(): ReactNode {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="w-3.5 h-3.5"
+      aria-hidden="true"
+    >
       <polyline points="15 18 9 12 15 6" />
     </svg>
   );
 }
 
-function ChevronRight() {
+function ChevronRight(): ReactNode {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="w-3.5 h-3.5"
+      aria-hidden="true"
+    >
       <polyline points="9 18 15 12 9 6" />
     </svg>
   );
 }
 
-export function PhotoSlot({ variant, filled, previewUrl, onDelete, onSetRepresentative, onMoveLeft, onMoveRight, onUpload }: PhotoSlotProps) {
+export function PhotoSlot({
+  variant,
+  filled,
+  loading,
+  previewUrl,
+  onDelete,
+  onSetRepresentative,
+  onMoveLeft,
+  onMoveRight,
+  onUpload,
+}: PhotoSlotProps): ReactNode {
   const fileRef = useRef<HTMLInputElement>(null);
-  const sizeClass = "w-[var(--spacing-photo-slot-width)] h-[var(--spacing-photo-slot-height)]";
+  const sizeClass =
+    "w-[var(--spacing-photo-slot-width)] h-[var(--spacing-photo-slot-height)]";
   const isRepresentative = variant === "rep";
-  const hasBottomRow = !isRepresentative && (onSetRepresentative || onMoveLeft || onMoveRight);
+
+  if (loading) {
+    return (
+      <span
+        aria-hidden="true"
+        role="presentation"
+        className={`${sizeClass} block rounded-lg animate-skeleton`}
+      />
+    );
+  }
+  const hasBottomRow =
+    !isRepresentative && (onSetRepresentative || onMoveLeft || onMoveRight);
 
   if (filled) {
     return (
       <div
         className={`${sizeClass} relative rounded-lg overflow-hidden border bg-center bg-cover bg-no-repeat ${isRepresentative ? "border-primary shadow-md" : "border-transparent"} ${previewUrl ? "" : "bg-photo-gradient"}`}
-        style={previewUrl ? { backgroundImage: `url("${previewUrl}")` } : undefined}
+        style={
+          previewUrl ? { backgroundImage: `url("${previewUrl}")` } : undefined
+        }
       >
         {isRepresentative && <RepresentativeBadge />}
         <div className="absolute top-2 right-2 flex gap-1">
@@ -73,7 +122,15 @@ export function PhotoSlot({ variant, filled, previewUrl, onDelete, onSetRepresen
               aria-label="사진 삭제"
               className="w-7 h-7 rounded-full flex items-center justify-center bg-black/40 text-white"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" className="w-3.5 h-3.5" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                strokeLinecap="round"
+                className="w-3.5 h-3.5"
+                aria-hidden="true"
+              >
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
@@ -91,7 +148,9 @@ export function PhotoSlot({ variant, filled, previewUrl, onDelete, onSetRepresen
               >
                 <ChevronLeft />
               </button>
-            ) : <span className="w-7 h-7 shrink-0" />}
+            ) : (
+              <span className="w-7 h-7 shrink-0" />
+            )}
             {onSetRepresentative && (
               <button
                 type="button"
@@ -110,7 +169,9 @@ export function PhotoSlot({ variant, filled, previewUrl, onDelete, onSetRepresen
               >
                 <ChevronRight />
               </button>
-            ) : <span className="w-7 h-7 shrink-0" />}
+            ) : (
+              <span className="w-7 h-7 shrink-0" />
+            )}
           </div>
         )}
       </div>
@@ -139,10 +200,12 @@ export function PhotoSlot({ variant, filled, previewUrl, onDelete, onSetRepresen
           e.target.value = "";
         }}
       />
-      <span className="text-[32px] text-text-tertiary font-light leading-none">＋</span>
+      <span className="text-display text-text-tertiary font-light leading-none">
+        ＋
+      </span>
       {isRepresentative && (
         <span className="mt-2 max-w-full text-[11px] font-medium leading-snug text-text-secondary">
-          정면 얼굴이 잘 나온 사진 <br/> (타인에게 먼저 노출됩니다.)
+          정면 얼굴이 잘 나온 사진 <br /> (타인에게 먼저 노출됩니다.)
         </span>
       )}
       {isRepresentative && <RepresentativeBadge />}
@@ -150,14 +213,24 @@ export function PhotoSlot({ variant, filled, previewUrl, onDelete, onSetRepresen
   );
 }
 
-export function PhotobookThumb({ filled, previewUrl, onDelete, onRemoveEmpty, onUpload, onMoveLeft, onMoveRight }: PhotobookThumbProps) {
+export function PhotobookThumb({
+  filled,
+  previewUrl,
+  onDelete,
+  onRemoveEmpty,
+  onUpload,
+  onMoveLeft,
+  onMoveRight,
+}: PhotobookThumbProps): ReactNode {
   const fileRef = useRef<HTMLInputElement>(null);
 
   if (filled) {
     return (
       <div
         className={`relative aspect-4/3 w-full rounded-lg overflow-hidden bg-center bg-cover bg-no-repeat ${previewUrl ? "" : "bg-photo-gradient"}`}
-        style={previewUrl ? { backgroundImage: `url("${previewUrl}")` } : undefined}
+        style={
+          previewUrl ? { backgroundImage: `url("${previewUrl}")` } : undefined
+        }
       >
         {onDelete && (
           <button
@@ -166,7 +239,15 @@ export function PhotobookThumb({ filled, previewUrl, onDelete, onRemoveEmpty, on
             aria-label="사진 삭제"
             className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full flex items-center justify-center bg-black/40 text-white"
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" className="w-3 h-3" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              className="w-3 h-3"
+              aria-hidden="true"
+            >
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
@@ -181,11 +262,22 @@ export function PhotobookThumb({ filled, previewUrl, onDelete, onRemoveEmpty, on
                 aria-label="이전으로 이동"
                 className="w-6 h-6 rounded-full flex items-center justify-center bg-black/40 text-white shrink-0"
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-3 h-3"
+                  aria-hidden="true"
+                >
                   <polyline points="15 18 9 12 15 6" />
                 </svg>
               </button>
-            ) : <span className="w-6 h-6 shrink-0" />}
+            ) : (
+              <span className="w-6 h-6 shrink-0" />
+            )}
             {onMoveRight ? (
               <button
                 type="button"
@@ -193,11 +285,22 @@ export function PhotobookThumb({ filled, previewUrl, onDelete, onRemoveEmpty, on
                 aria-label="다음으로 이동"
                 className="w-6 h-6 rounded-full flex items-center justify-center bg-black/40 text-white shrink-0"
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-3 h-3"
+                  aria-hidden="true"
+                >
                   <polyline points="9 18 15 12 9 6" />
                 </svg>
               </button>
-            ) : <span className="w-6 h-6 shrink-0" />}
+            ) : (
+              <span className="w-6 h-6 shrink-0" />
+            )}
           </div>
         )}
       </div>
@@ -223,7 +326,9 @@ export function PhotobookThumb({ filled, previewUrl, onDelete, onRemoveEmpty, on
           aria-label="빈 포토북 슬롯 삭제"
           className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full border border-border bg-surface text-text-secondary flex items-center justify-center hover:bg-border-subtle transition-colors duration-fast ease-standard"
         >
-          <span className="text-base leading-none" aria-hidden="true">−</span>
+          <span className="text-base leading-none" aria-hidden="true">
+            −
+          </span>
         </button>
       )}
       <input
@@ -239,7 +344,9 @@ export function PhotobookThumb({ filled, previewUrl, onDelete, onRemoveEmpty, on
           e.target.value = "";
         }}
       />
-      <span className="text-[32px] text-text-tertiary font-light leading-none">＋</span>
+      <span className="text-display text-text-tertiary font-light leading-none">
+        ＋
+      </span>
     </div>
   );
 }

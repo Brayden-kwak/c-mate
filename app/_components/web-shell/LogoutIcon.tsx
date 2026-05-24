@@ -3,7 +3,9 @@ type LogoutIconProps = {
 };
 
 /** 헤더 로그아웃 — [ ] + → (오른쪽으로 나가는 화살표) */
-export function LogoutIcon({ className = "w-5 h-5 shrink-0" }: LogoutIconProps) {
+export function LogoutIcon({
+  className = "w-5 h-5 shrink-0",
+}: LogoutIconProps) {
   return (
     <svg
       viewBox="0 0 24 24"

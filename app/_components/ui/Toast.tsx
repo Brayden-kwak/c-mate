@@ -52,11 +52,17 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     (message: string, variant: ToastVariant = "success") => {
       clearTimers();
       setToast({ message, variant, phase: "enter" });
-      schedule(() => setToast((t) => (t ? { ...t, phase: "visible" } : null)), ENTER_MS);
-      schedule(() => setToast((t) => (t ? { ...t, phase: "exit" } : null)), ENTER_MS + VISIBLE_MS);
+      schedule(
+        () => setToast((t) => (t ? { ...t, phase: "visible" } : null)),
+        ENTER_MS,
+      );
+      schedule(
+        () => setToast((t) => (t ? { ...t, phase: "exit" } : null)),
+        ENTER_MS + VISIBLE_MS,
+      );
       schedule(() => setToast(null), ENTER_MS + VISIBLE_MS + EXIT_MS);
     },
-    [clearTimers, schedule]
+    [clearTimers, schedule],
   );
 
   useEffect(() => () => clearTimers(), [clearTimers]);
@@ -82,7 +88,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               .join(" ")}
           >
             {toast.variant === "success" && (
-              <span className="text-base leading-none text-toast-success" aria-hidden="true">
+              <span
+                className="text-base leading-none text-toast-success"
+                aria-hidden="true"
+              >
                 ✓
               </span>
             )}
@@ -91,7 +100,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 !
               </span>
             )}
-            <span className={toast.variant === "success" ? "text-toast-success" : undefined}>
+            <span
+              className={
+                toast.variant === "success" ? "text-toast-success" : undefined
+              }
+            >
               {toast.message}
             </span>
           </div>

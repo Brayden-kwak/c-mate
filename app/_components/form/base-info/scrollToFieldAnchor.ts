@@ -1,5 +1,7 @@
 const findVisibleAnchor = (anchorId: string): HTMLElement | null => {
-  const nodes = document.querySelectorAll<HTMLElement>(`#${CSS.escape(anchorId)}`);
+  const nodes = document.querySelectorAll<HTMLElement>(
+    `#${CSS.escape(anchorId)}`,
+  );
   for (const el of nodes) {
     const rect = el.getBoundingClientRect();
     if (rect.width > 0 && rect.height > 0) {
@@ -16,6 +18,8 @@ export const scrollToFieldAnchor = (anchorId: string) => {
 
   el.scrollIntoView({ behavior: "smooth", block: "start" });
 
-  const accordionToggle = el.querySelector<HTMLButtonElement>("button[aria-expanded='false']");
+  const accordionToggle = el.querySelector<HTMLButtonElement>(
+    "button[aria-expanded='false']",
+  );
   accordionToggle?.click();
 };

@@ -1,8 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Button } from "@/app/_components/ui/Button";
-import { DrawerUserProfile, HeaderLogoutButton } from "@/app/_components/web-shell/HeaderAccount";
+import {
+  DrawerUserProfile,
+  HeaderLogoutButton,
+} from "@/app/_components/web-shell/HeaderAccount";
 import { CmLogo } from "@/app/_components/web-shell/CmLogo";
 import { MyPageNavList } from "@/app/_components/web-shell/MyPageNavList";
 
@@ -17,9 +21,12 @@ const STEPS = [
 ];
 
 const MAIN_MENU = [
-  "크리스천메이트", "서비스 안내",
-  "공개 프로필", "커뮤니티",
-  "오프라인 모임", "문의하기",
+  "크리스천메이트",
+  "서비스 안내",
+  "공개 프로필",
+  "커뮤니티",
+  "오프라인 모임",
+  "문의하기",
 ];
 
 export function MobileHeader() {
@@ -52,22 +59,38 @@ export function MobileHeader() {
         >
           ←
         </button>
-        <span className="text-[17px] font-bold">기본정보</span>
+        <span className="text-mobile-title font-bold">기본정보</span>
         <button
           type="button"
           aria-label={drawerOpen ? "전체 메뉴 닫기" : "전체 메뉴 열기"}
           aria-expanded={drawerOpen}
           aria-controls="mobile-drawer"
           onClick={() => setDrawerOpen((open) => !open)}
-          className="ml-auto w-[34px] h-[34px] rounded-full border-0 bg-transparent inline-flex items-center justify-center text-text hover:bg-subtle transition-colors duration-fast ease-standard"
+          className="ml-auto w-mobile-toggle-size h-mobile-toggle-size rounded-full border-0 bg-transparent inline-flex items-center justify-center text-text hover:bg-subtle transition-colors duration-fast ease-standard"
         >
           {drawerOpen ? (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" className="w-[18px] h-[18px]" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              className="w-mobile-toggle-icon h-mobile-toggle-icon"
+              aria-hidden="true"
+            >
               <path d="M6 6l12 12" />
               <path d="M18 6 6 18" />
             </svg>
           ) : (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" className="w-[18px] h-[18px]" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              className="w-mobile-toggle-icon h-mobile-toggle-icon"
+              aria-hidden="true"
+            >
               <path d="M4 7h16" />
               <path d="M4 12h16" />
               <path d="M4 17h16" />
@@ -91,7 +114,7 @@ export function MobileHeader() {
             >
               <span
                 className={[
-                  "w-4 h-4 rounded-full inline-flex items-center justify-center text-[10px] font-bold",
+                  "w-4 h-4 rounded-full inline-flex items-center justify-center text-2xs font-bold",
                   step.current ? "bg-white/25" : "bg-black/5",
                 ].join(" ")}
               >
@@ -103,7 +126,10 @@ export function MobileHeader() {
         </div>
       </div>
 
-      <div className="xl:hidden h-mobile-shell-header shrink-0" aria-hidden="true" />
+      <div
+        className="xl:hidden h-mobile-shell-header shrink-0"
+        aria-hidden="true"
+      />
 
       {drawerOpen && (
         <div
@@ -116,7 +142,7 @@ export function MobileHeader() {
             role="dialog"
             aria-modal="true"
             aria-label="전체 메뉴"
-            className="w-[292px] h-full bg-surface flex flex-col shadow-drawer"
+            className="w-mobile-drawer-width h-full bg-surface flex flex-col shadow-drawer"
             onClick={(e) => e.stopPropagation()}
           >
             {/* 로고 + 프로필 — 스크롤 영역 밖 고정 */}
@@ -128,22 +154,26 @@ export function MobileHeader() {
             {/* 스크롤 가능한 메뉴 영역 */}
             <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-none">
               <div className="px-5 pb-2 border-b border-border-subtle">
-                <h4 className="m-0 pt-4 pb-2 text-xs font-semibold text-text-tertiary tracking-[0.08em]">MAIN MENU</h4>
+                <h4 className="m-0 pt-4 pb-2 text-xs font-semibold text-text-tertiary tracking-[0.08em]">
+                  MAIN MENU
+                </h4>
                 <nav className="flex flex-col">
                   {MAIN_MENU.map((item) => (
-                    <a
+                    <Link
                       key={item}
                       href="#"
-                      className="flex items-center min-h-12 text-[15px] font-bold text-text no-underline hover:text-primary transition-colors duration-fast ease-standard"
+                      className="flex items-center min-h-12 text-mobile-menu font-bold text-text no-underline hover:text-primary transition-colors duration-fast ease-standard"
                     >
                       {item}
-                    </a>
+                    </Link>
                   ))}
                 </nav>
               </div>
 
               <div className="px-5 pb-4">
-                <h4 className="m-0 pt-4 pb-2 text-xs font-semibold text-text-tertiary tracking-[0.08em]">MY PAGE</h4>
+                <h4 className="m-0 pt-4 pb-2 text-xs font-semibold text-text-tertiary tracking-[0.08em]">
+                  MY PAGE
+                </h4>
                 <MyPageNavList variant="drawer" />
               </div>
             </div>
@@ -153,7 +183,7 @@ export function MobileHeader() {
               <Button variant="primary" size="md" layout="full" type="button">
                 업그레이드
               </Button>
-              <HeaderLogoutButton showIcon={false} className="w-full" />
+              <HeaderLogoutButton mode="drawer" />
             </div>
           </div>
         </div>

@@ -11,7 +11,16 @@ type Props = {
   children: ReactNode;
 };
 
-export function Row({ label, required, optional, helper, error, labelAlign, labelBadge, children }: Props) {
+export function Row({
+  label,
+  required,
+  optional,
+  helper,
+  error,
+  labelAlign,
+  labelBadge,
+  children,
+}: Props) {
   const subtext = error ?? helper;
   const isError = !!error;
   const resolvedLabelAlign = labelAlign ?? (subtext ? "start" : "center");
@@ -35,9 +44,13 @@ export function Row({ label, required, optional, helper, error, labelAlign, labe
             </span>
           )}
           {optional && (
-            <span className="text-xs text-text-secondary font-medium">선택</span>
+            <span className="text-xs text-text-secondary font-medium">
+              선택
+            </span>
           )}
-          {labelBadge && <span className="ml-auto shrink-0 xl:hidden">{labelBadge}</span>}
+          {labelBadge && (
+            <span className="ml-auto shrink-0 xl:hidden">{labelBadge}</span>
+          )}
         </div>
         {labelBadge && <div className="hidden xl:block">{labelBadge}</div>}
         {subtext && (

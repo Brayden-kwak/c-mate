@@ -25,7 +25,8 @@ type Props = {
 
 type Step = "search" | "form" | "submitted";
 
-const DEFAULT_REG_REASON = "검색 결과에 출석 교회가 없어 신규 등록을 요청합니다";
+const DEFAULT_REG_REASON =
+  "검색 결과에 출석 교회가 없어 신규 등록을 요청합니다";
 
 // 테스트용 mock 데이터셋. 실제 API 연동 전까지 이 목록과 부분일치(대소문자·공백 무시)되는 쿼리만 매칭된다.
 const MOCK_CHURCHES: ChurchSelectResult[] = [
@@ -37,11 +38,15 @@ const MOCK_CHURCHES: ChurchSelectResult[] = [
   },
 ];
 
-function normalize(value: string) {
+function normalize(value: string): string {
   return value.replace(/\s+/g, "").toLowerCase();
 }
 
-export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
+export function ChurchSearchModal({
+  open,
+  onClose,
+  onSelect,
+}: Props): ReactNode {
   const [step, setStep] = useState<Step>("search");
   const [query, setQuery] = useState("");
   const [regName, setRegName] = useState("");
@@ -59,7 +64,7 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
     ? MOCK_CHURCHES.filter(
         (c) =>
           normalize(c.church).includes(normalizedQuery) ||
-          normalize(c.denom).includes(normalizedQuery)
+          normalize(c.denom).includes(normalizedQuery),
       )
     : [];
   const hasMatches = matches.length > 0;
@@ -71,7 +76,7 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
     regReason.trim().length > 0;
   const title = step === "search" ? "교회 검색" : "교회 등록 신청하기";
 
-  function handleClose() {
+  function handleClose(): void {
     setStep("search");
     setQuery("");
     setRegName("");
@@ -83,17 +88,17 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
     onClose();
   }
 
-  function handleGoToForm() {
+  function handleGoToForm(): void {
     setRegName(query);
     setStep("form");
   }
 
-  function handleSubmitReg() {
+  function handleSubmitReg(): void {
     if (!canSubmitReg) return;
     setStep("submitted");
   }
 
-  function handleSelectMatch(match: ChurchSelectResult) {
+  function handleSelectMatch(match: ChurchSelectResult): void {
     onSelect?.(match);
     handleClose();
   }
@@ -127,14 +132,17 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
       onClick={(e) => e.target === e.currentTarget && handleClose()}
     >
       <div
-        className="bg-surface rounded-xl border border-border w-full max-w-[560px] overflow-hidden shadow-modal"
+        className="bg-surface rounded-xl border border-border w-full max-w-(--spacing-modal-lg) overflow-hidden shadow-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="church-modal-title"
       >
         {/* Header */}
         <div className="flex items-center gap-3 px-7 pt-6 pb-4">
-          <h3 id="church-modal-title" className="text-xl font-bold text-text m-0 flex-1">
+          <h3
+            id="church-modal-title"
+            className="text-xl font-bold text-text m-0 flex-1"
+          >
             {title}
           </h3>
         </div>
@@ -147,7 +155,9 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="교회/교단명 검색"
-                prefix={<span className="text-text-tertiary shrink-0 mr-0.5">🔍</span>}
+                prefix={
+                  <span className="text-text-tertiary shrink-0 mr-0.5">🔍</span>
+                }
                 aria-label="교회 또는 교단명 검색"
                 autoFocus
               />
@@ -188,24 +198,49 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
           )}
 
           {step === "form" && (
-            <div className="bg-surface border border-border rounded-lg p-[18px] flex flex-col gap-2.5">
+            <div className="bg-surface border border-border rounded-lg p-4-5 flex flex-col gap-2.5">
               <div className="text-[13px] font-bold text-text mb-1">
                 교회/교단 신규 등록 신청
               </div>
               <RegField label="교회명" required>
-                <Input size="sm" value={regName} onChange={(e) => setRegName(e.target.value)} aria-label="신규 신청 교회명" />
+                <Input
+                  size="sm"
+                  value={regName}
+                  onChange={(e) => setRegName(e.target.value)}
+                  aria-label="신규 신청 교회명"
+                />
               </RegField>
               <RegField label="교단" required>
-                <Input size="sm" value={regDenom} onChange={(e) => setRegDenom(e.target.value)} aria-label="신규 신청 교단" />
+                <Input
+                  size="sm"
+                  value={regDenom}
+                  onChange={(e) => setRegDenom(e.target.value)}
+                  aria-label="신규 신청 교단"
+                />
               </RegField>
               <RegField label="담임목사" required>
-                <Input size="sm" value={regPastor} onChange={(e) => setRegPastor(e.target.value)} aria-label="신규 신청 담임목사" />
+                <Input
+                  size="sm"
+                  value={regPastor}
+                  onChange={(e) => setRegPastor(e.target.value)}
+                  aria-label="신규 신청 담임목사"
+                />
               </RegField>
               <RegField label="교회 주소" required>
-                <Input size="sm" value={regAddr} onChange={(e) => setRegAddr(e.target.value)} aria-label="신규 신청 교회 주소" />
+                <Input
+                  size="sm"
+                  value={regAddr}
+                  onChange={(e) => setRegAddr(e.target.value)}
+                  aria-label="신규 신청 교회 주소"
+                />
               </RegField>
               <RegField label="연락처">
-                <Input size="sm" value={regContact} onChange={(e) => setRegContact(e.target.value)} aria-label="신규 신청 연락처" />
+                <Input
+                  size="sm"
+                  value={regContact}
+                  onChange={(e) => setRegContact(e.target.value)}
+                  aria-label="신규 신청 연락처"
+                />
               </RegField>
               <RegField label="신청 사유" required>
                 <div className="border border-border rounded-md px-3 py-2.5 focus-within:border-primary focus-within:shadow-[0_0_0_3px_var(--color-primary-50)] transition-all duration-fast ease-standard bg-surface">
@@ -220,7 +255,6 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
               </RegField>
             </div>
           )}
-
         </div>
 
         {/* Footer */}
@@ -233,7 +267,7 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
                   size="lg"
                   type="button"
                   onClick={handleClose}
-                  className="w-full sm:flex-1"
+                  layout="responsive"
                 >
                   취소
                 </Button>
@@ -243,7 +277,7 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
                     size="lg"
                     type="button"
                     onClick={handleGoToForm}
-                    className="w-full sm:flex-1"
+                    layout="responsive"
                   >
                     신청하기
                   </Button>
@@ -257,7 +291,7 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
                   size="lg"
                   type="button"
                   onClick={handleClose}
-                  className="w-full sm:flex-1"
+                  layout="responsive"
                 >
                   취소
                 </Button>
@@ -267,7 +301,7 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
                   type="button"
                   onClick={handleSubmitReg}
                   disabled={!canSubmitReg}
-                  className="w-full sm:flex-1"
+                  layout="responsive"
                 >
                   신청하기
                 </Button>
@@ -280,7 +314,15 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
   );
 }
 
-function RegField({ label, required, children }: { label: string; required?: boolean; children: ReactNode }) {
+function RegField({
+  label,
+  required,
+  children,
+}: {
+  label: string;
+  required?: boolean;
+  children: ReactNode;
+}): ReactNode {
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center gap-1 text-xs font-semibold text-text">

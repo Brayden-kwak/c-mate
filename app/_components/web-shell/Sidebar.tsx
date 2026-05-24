@@ -14,7 +14,9 @@ const useSidebarStickyTop = () => {
         return;
       }
 
-      const stepper = document.querySelector<HTMLElement>("[data-desktop-stepper]");
+      const stepper = document.querySelector<HTMLElement>(
+        "[data-desktop-stepper]",
+      );
       const frame = document.querySelector<HTMLElement>("[data-cmate-frame]");
       if (!stepper && !frame) return;
 

@@ -39,7 +39,10 @@ export function FreeConsultModal({ open, onClose }: Props) {
         aria-labelledby="free-consult-title"
       >
         <div className="flex items-center gap-3 px-7 pt-6 pb-4">
-          <h3 id="free-consult-title" className="text-xl font-bold text-text m-0 flex-1">
+          <h3
+            id="free-consult-title"
+            className="text-xl font-bold text-text m-0 flex-1"
+          >
             무료 상담
           </h3>
         </div>
@@ -61,7 +64,13 @@ export function FreeConsultModal({ open, onClose }: Props) {
           ) : (
             <span className="flex-1" />
           )}
-          <Button variant="primary" size="md" type="button" layout={callMode ? undefined : "fill"} onClick={onClose}>
+          <Button
+            variant="primary"
+            size="md"
+            type="button"
+            layout={callMode ? undefined : "fill"}
+            onClick={onClose}
+          >
             확인
           </Button>
         </div>
