@@ -117,7 +117,7 @@ img { max-width: 100%; height: auto; }
 <tr><td><strong>I-2</strong></td><td>인터랙션</td><td>교회 검색 띄어쓰기 미스매치·미등록 교회 가입 불가</td><td>검색어 정규화 + EmptyState + 모달 내 inline 가입 폼 + 매니저 알림 + 임시값 진행</td><td><span class="pin p1">P1</span></td><td><strong>church_registration 테이블</strong></td><td><span class="ok">●</span> 완료</td><td><code class="token">ChurchSearchModal</code></td></tr>
 <tr><td><strong>I-3</strong></td><td>인터랙션</td><td>학력 행 수동 추가 · placeholder "총신대학교" 노출 버그</td><td>최종학력 변경 시 행 자동 생성/조정 · 다운그레이드 시 affected-list confirm · placeholder 일반화</td><td><span class="pin p1">P1</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td><code class="token">EducationSection</code> · DEGREE_ROWS map</td></tr>
 <tr><td><strong>I-4</strong></td><td>인터랙션</td><td>학교 행 휴지통이 검색 버튼과 인접해 오클릭</td><td>학교 input + 검색 / 전공 input / <strong>휴지통은 우측 끝</strong> 분리 · 첫 행 삭제 불가 · helper text 3개 제거</td><td><span class="pin p1">P1</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td><code class="token">EducationSection</code> edu-row 레이아웃</td></tr>
-<tr><td><strong>I-5</strong></td><td>인터랙션</td><td>대표사진 변경·순서·삭제 분기 안내 부족</td><td>비대표는 "★ 대표 등록" 버튼 · 데스크탑 reorder · 대표 삭제 분기 모달 (CASE A 자동 승격 / CASE B 단독 등록 차단)</td><td><span class="pin p1">P1</span></td><td><strong>+photo.order</strong></td><td><span class="ok">●</span> 완료</td><td><code class="token">PhotoSlot</code> · <code class="token">ConfirmModal</code></td></tr>
+<tr><td><strong>I-5</strong></td><td>인터랙션</td><td>대표사진 변경·순서·삭제 분기 안내 부족</td><td>비대표는 "★ 대표 등록" 버튼 · 데스크탑 reorder · 대표 삭제 분기 모달 (CASE A 자동 변경 / CASE B 단독 등록 차단)</td><td><span class="pin p1">P1</span></td><td><strong>+photo.order</strong></td><td><span class="ok">●</span> 완료</td><td><code class="token">PhotoSlot</code> · <code class="token">ConfirmModal</code></td></tr>
 <tr><td><strong>I-6</strong></td><td>인터랙션</td><td>포토북 + 버튼이 기존 사진을 앞으로 밀어버림</td><td>+ 슬롯은 항상 trailing · 최대 8장 · description input · − 버튼으로 빈 슬롯 삭제 · 모바일 carousel</td><td><span class="pin p1">P1</span></td><td><strong>+photobook.order, description</strong></td><td><span class="ok">●</span> 완료</td><td><code class="token">PhotobookThumb</code></td></tr>
 <tr><td><strong>I-7</strong></td><td>인터랙션</td><td>저장하기·저장 후 다음 두 primary가 인접</td><td>sticky footer 3요소 = 자동저장 chip + 저장(secondary) + 다음(primary). wide desktop은 frame-end dock</td><td><span class="pin p1">P1</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td>BaseInfoForm <code class="token">DFooter</code></td></tr>
 <tr><td><strong>I-8</strong></td><td>인터랙션</td><td>"다음" 클릭 후 미입력 항목이 무엇인지 가독성 낮음</td><td>전용 검증 모달 "입력하지 않은 항목이 있습니다" + 누락 라벨 리스트 + 확인 시 첫 미입력 섹션으로 부드러운 스크롤</td><td><span class="pin p1">P1</span></td><td>없음</td><td><span class="ok">●</span> 완료 (v2 신규)</td><td>validation <code class="token">ConfirmModal</code> + <code class="token">scrollToFieldAnchor</code></td></tr>
@@ -504,9 +504,9 @@ img { max-width: 100%; height: auto; }
 <h4 id="i-5-p1">I-5. 사진 등록 — 대표사진 변경 / 위치 변경 / 삭제 분기 모달 <span class="pin p1">P1</span></h4>
 <p><strong>문제 정의</strong></p>
 <ol>
-<li>대표사진이 아닌 사진을 대표로 승격하려면 사용자가 어떻게 해야 할지 명확하지 않음</li>
+<li>대표사진이 아닌 사진을 대표로 변경하려면 사용자가 어떻게 해야 할지 명확하지 않음</li>
 <li>사진들의 표시 순서를 사용자가 변경할 수 없음 (특히 모바일 슬라이드)</li>
-<li>대표사진 삭제 시 안내가 부족 (다음 사진이 대표로 승격되는지 모름)</li>
+<li>대표사진 삭제 시 안내가 부족 (다음 사진이 대표로 변경되는지 모름)</li>
 </ol>
 <p><strong>개선안 1 — 비대표 사진 중앙 하단에 "★ 대표 등록" 버튼</strong></p>
 <ul>
@@ -524,14 +524,14 @@ img { max-width: 100%; height: auto; }
 <table>
 <thead><tr><th style="width:28%">조건</th><th>모달 형태</th><th>버튼</th></tr></thead>
 <tbody>
-<tr><td><strong>CASE A</strong><br/>다른 사진 ≥ 1장</td><td>🔴 <em>"두 번째 사진이 대표가 됩니다"</em><br/>해당 사진을 삭제하면 두 번째에 등록된 사진이 대표 사진으로 자동 승격됩니다.<br/>(before → after 미리보기 타일)</td><td>[취소] · [삭제 (danger)]</td></tr>
+<tr><td><strong>CASE A</strong><br/>다른 사진 ≥ 1장</td><td>🔴 <em>"두 번째 사진이 대표가 됩니다"</em><br/>해당 사진을 삭제하면 두 번째에 등록된 사진이 대표 사진으로 자동 변경됩니다.<br/>(before → after 미리보기 타일)</td><td>[취소] · [삭제 (danger)]</td></tr>
 <tr><td><strong>CASE B</strong><br/>대표 단독 등록</td><td>🟠 <em>"대표사진은 반드시 등록되어야 합니다"</em><br/>새 사진을 먼저 등록한 뒤 다시 시도해 주세요.</td><td>[확인] 단일 버튼</td></tr>
 </tbody>
 </table>
 <p><strong>엣지 케이스</strong></p>
 <ul>
 <li>drag 중 네트워크 오류 → optimistic UI 후 실패 시 roll back + toast</li>
-<li>대표사진 삭제 후 자동 승격된 사진이 검수 미통과 상태였다면 가장 가까운 통과 사진을 대표로</li>
+<li>대표사진 삭제 후 자동 변경된 사진이 검수 미통과 상태였다면 가장 가까운 통과 사진을 대표로</li>
 <li>업로드 제약 — JPEG/PNG/WebP · 10MB 이하 · 짧은 변 최소 800px</li>
 </ul>
 
@@ -880,7 +880,7 @@ img { max-width: 100%; height: auto; }
 <table>
 <thead><tr><th style="width:25%">조건</th><th>분기</th></tr></thead>
 <tbody>
-<tr><td><strong>다른 사진 ≥ 1장</strong></td><td>🔴 모달 A — <em>"두 번째 사진이 대표가 됩니다"</em> · [취소] · [삭제] → 삭제 시 자동 승격 + 토스트</td></tr>
+<tr><td><strong>다른 사진 ≥ 1장</strong></td><td>🔴 모달 A — <em>"두 번째 사진이 대표가 됩니다"</em> · [취소] · [삭제] → 삭제 시 자동 변경 + 토스트</td></tr>
 <tr><td><strong>대표 단독 등록</strong></td><td>🟠 모달 B — <em>"대표사진은 반드시 등록되어야 합니다"</em> · [확인] 단일 버튼</td></tr>
 </tbody>
 </table>

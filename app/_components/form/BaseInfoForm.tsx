@@ -44,9 +44,9 @@ const MAX_PHOTOBOOK_SLOTS = 8;
 const STYLE_SELECTION_MAX = 5;
 
 const STYLE_GROUPS: StyleGroup[] = [
-  { label: "외모 스타일", options: ["귀여운", "청순한", "세련된", "지적인", "훈훈한", "터프한", "패션에 민감한", "스포티한"] },
-  { label: "성격/기질", options: ["다정한", "유머있는", "차분한", "활발한", "리더십 있는", "대범한", "신중한", "열정적인", "낙천적인", "상냥한", "섬세한", "창의적인"] },
-  { label: "성품", options: ["성실한", "책임감 있는", "정직한", "듬직한", "끈기있는"] },
+  { label: "외모 스타일", options: ["귀여운", "청순한", "세련된", "지적인", "훈훈한", "터프한", "스타일리시한", "스포티한"] },
+  { label: "성격/기질", options: ["다정한", "유머있는", "차분한", "활발한", "대범한", "열정적인", "낙천적인", "섬세한"] },
+  { label: "성품", options: ["성실한", "책임감 있는", "정직한", "듬직한", "끈기있는", "배려심 있는", "겸손한"] },
 ];
 
 /* ===== Auto-save chip ===== */
@@ -229,13 +229,13 @@ const FamilySection = ({
         <Input
           value={addrQuery}
           onChange={(e) => setAddrQuery(e.target.value)}
-          placeholder="임시로 주소를 입력하시면 인풋 박스에 채워집니다."
+          placeholder="임시로 주소를 입력하시면 인풋 박스에 채워집니다"
           autoFocus
           aria-label="주소 검색"
           onKeyDown={(e) => e.key === "Enter" && applyAddress()}
         />
         <p className="text-[13px] text-text-secondary m-0">
-          실제 카카오 주소 검색창이 뜨며, 해당 창은 테스트용입니다.
+          실제 카카오 주소 검색창이 뜨며, 해당 창은 테스트용입니다
         </p>
       </ConfirmModal>
     </>
@@ -970,19 +970,19 @@ const PhotoSection = ({
         }
         confirmLabel={isRepDeleteBlocked ? "확인" : "삭제"}
         cancelLabel={isRepDeleteBlocked ? false : "취소"}
-        onConfirm={isRepDeleteBlocked ? () => setDeleteModal(null) : confirmDelete}
+        onConfirm={confirmDelete}
         variant={isRepDeleteBlocked ? "primary" : "danger"}
         width={isRepDeleteBlocked ? "sm" : "md"}
       >
         {hasReplacementPhoto ? (
           <div className="text-center mt-2 mb-4">
             <div className="mt-1 text-md text-text-secondary">
-              해당 사진을 삭제하면 두 번째에 등록된 사진이<br />대표 사진으로 자동 승격됩니다.
+              해당 사진을 삭제하면 두 번째에 등록된 사진이<br />대표 사진으로 변경됩니다
             </div>
           </div>
         ) : isRepDeleteBlocked ? (
           <p className="m-0 text-center text-md font-semibold text-text">
-            대표 사진은 필수 입니다. 반드시 등록해주세요
+            대표 사진은 필수 입니다<br />반드시 등록해주세요
           </p>
         ) : (
           <p className="text-md text-text-secondary text-center mt-2 mb-4">정말 삭제하시겠습니까?</p>
@@ -1227,7 +1227,7 @@ export const BaseInfoForm = () => {
         onConfirm={handleValidationConfirm}
         width="sm"
       >
-        <p className="text-sm text-text-secondary m-0">다음 항목을 입력해 주세요.</p>
+        <p className="text-sm text-text-secondary m-0">다음 항목을 입력해 주세요</p>
         <ul className="m-0 pl-5 flex flex-col gap-1.5 text-sm text-text list-disc">
           {allMissingFields.map((field) => (
             <li key={`${field.id}-${field.label}`}>{field.label}</li>
