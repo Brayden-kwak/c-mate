@@ -16,7 +16,9 @@ export default function WebLayout({ children }: { children: ReactNode }) {
         data-cmate-web-main
       >
         <Sidebar />
-        <main className="min-w-0 px-4 pt-4 pb-0 xl:px-0 xl:py-0">{children}</main>
+        <main className="min-w-0 px-4 pt-4 pb-0 xl:px-0 xl:py-0">
+          {children}
+        </main>
         {/* 68px column is a placeholder for the fixed QuickRail */}
         <div className="hidden xl:block" />
       </div>

@@ -45,7 +45,15 @@ export function Select({
 }: Props) {
   const resolvedState: FieldState = disabled ? "disabled" : state;
   return (
-    <div className={["relative", fieldWidth ? fieldWidthClass[fieldWidth] : layoutClass[layout], wrapperClassName].filter(Boolean).join(" ")}>
+    <div
+      className={[
+        "relative",
+        fieldWidth ? fieldWidthClass[fieldWidth] : layoutClass[layout],
+        wrapperClassName,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
       <select
         className={[
           "block w-full appearance-none border rounded-md transition-colors duration-fast ease-standard",
@@ -64,7 +72,9 @@ export function Select({
       <svg
         className={[
           "pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2",
-          resolvedState === "disabled" ? "text-text-tertiary" : "text-text-secondary",
+          resolvedState === "disabled"
+            ? "text-text-tertiary"
+            : "text-text-secondary",
         ].join(" ")}
         viewBox="0 0 24 24"
         fill="none"

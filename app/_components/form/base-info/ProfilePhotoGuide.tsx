@@ -67,7 +67,9 @@ export const ProfilePhotoGuide = ({ className = "" }: Props) => {
 
       <div className="flex w-full min-w-0 gap-2 px-3.5 pb-3.5 photo-guide-wide:gap-3 photo-guide-wide:px-3">
         <div className="flex min-w-0 flex-1 flex-col items-center gap-1.5 photo-guide-wide:items-stretch">
-          <p className="w-full shrink-0 text-sm font-bold text-text">좋은 사진</p>
+          <p className="w-full shrink-0 text-sm font-bold text-text">
+            좋은 사진
+          </p>
           <div className="flex w-full min-w-0 flex-col gap-1">
             {GOOD_EXAMPLE_IMAGES.map((image, index) => (
               <ExampleThumb
@@ -80,7 +82,9 @@ export const ProfilePhotoGuide = ({ className = "" }: Props) => {
           </div>
         </div>
         <div className="flex min-w-0 flex-1 flex-col items-center gap-1.5 photo-guide-wide:items-stretch">
-          <p className="w-full shrink-0 text-sm font-bold text-text">나쁜 사진</p>
+          <p className="w-full shrink-0 text-sm font-bold text-text">
+            나쁜 사진
+          </p>
           <div className="flex w-full min-w-0 flex-col gap-1">
             {BAD_EXAMPLE_IMAGES.map((image, index) => (
               <ExampleThumb

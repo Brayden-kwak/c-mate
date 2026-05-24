@@ -51,7 +51,9 @@ export function MobileQuickFab() {
               }}
               className="flex min-h-touch-min items-center gap-2 rounded-md px-2.5 text-left text-[13px] font-semibold text-text-brand whitespace-nowrap hover:bg-subtle transition-colors duration-fast ease-standard"
             >
-              <span className="w-5 h-5 flex items-center justify-center shrink-0">{item.icon}</span>
+              <span className="w-5 h-5 flex items-center justify-center shrink-0">
+                {item.icon}
+              </span>
               <span>{item.label}</span>
             </button>
           ))}
@@ -73,7 +75,10 @@ export function MobileQuickFab() {
         {open ? "✕" : "＋"}
       </button>
 
-      <FreeConsultModal open={consultOpen} onClose={() => setConsultOpen(false)} />
+      <FreeConsultModal
+        open={consultOpen}
+        onClose={() => setConsultOpen(false)}
+      />
     </div>
   );
 }

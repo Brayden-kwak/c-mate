@@ -14,7 +14,9 @@ export function QuickRail() {
   useEffect(() => {
     function syncRail() {
       const frame = document.querySelector<HTMLElement>("[data-cmate-frame]");
-      const webMain = document.querySelector<HTMLElement>("[data-cmate-web-main]");
+      const webMain = document.querySelector<HTMLElement>(
+        "[data-cmate-web-main]",
+      );
 
       if (!frame || !webMain || window.innerWidth < 1280) {
         setRailStyle({
@@ -26,16 +28,27 @@ export function QuickRail() {
 
       const frameRect = frame.getBoundingClientRect();
       const mainStyles = getComputedStyle(webMain);
-      const gap = Number.parseFloat(mainStyles.columnGap || mainStyles.gap) || 28;
+      const gap =
+        Number.parseFloat(mainStyles.columnGap || mainStyles.gap) || 28;
       const railWidth = 56;
       const viewportInset = 12;
       const outsideLeft = frameRect.right + gap;
       const maxVisibleLeft = window.innerWidth - railWidth - viewportInset;
-      const minVisibleLeft = Math.max(viewportInset, frameRect.left + viewportInset);
-      const left = Math.round(Math.max(minVisibleLeft, Math.min(outsideLeft, maxVisibleLeft)));
+      const minVisibleLeft = Math.max(
+        viewportInset,
+        frameRect.left + viewportInset,
+      );
+      const left = Math.round(
+        Math.max(minVisibleLeft, Math.min(outsideLeft, maxVisibleLeft)),
+      );
       const railStopBottom = 24;
-      const dockedBottom = Math.round(window.innerHeight - frameRect.bottom + railStopBottom);
-      const bottom = frameRect.bottom <= window.innerHeight - railStopBottom ? Math.max(railStopBottom, dockedBottom) : railStopBottom;
+      const dockedBottom = Math.round(
+        window.innerHeight - frameRect.bottom + railStopBottom,
+      );
+      const bottom =
+        frameRect.bottom <= window.innerHeight - railStopBottom
+          ? Math.max(railStopBottom, dockedBottom)
+          : railStopBottom;
 
       setRailStyle({
         left: `${left}px`,
@@ -67,14 +80,21 @@ export function QuickRail() {
         <button
           key={btn.label}
           type="button"
-          onClick={btn.action === "consult" ? () => setConsultOpen(true) : undefined}
+          onClick={
+            btn.action === "consult" ? () => setConsultOpen(true) : undefined
+          }
           className="min-h-[54px] border border-border rounded-md bg-surface flex flex-col items-center justify-center gap-1 text-text-brand font-extrabold text-[10px] tracking-tight shadow-rail hover:bg-subtle transition-colors duration-fast ease-standard"
         >
-          <span className="w-5 h-5 flex items-center justify-center">{btn.icon}</span>
+          <span className="w-5 h-5 flex items-center justify-center">
+            {btn.icon}
+          </span>
           <span className="leading-tight text-center">{btn.label}</span>
         </button>
       ))}
-      <FreeConsultModal open={consultOpen} onClose={() => setConsultOpen(false)} />
+      <FreeConsultModal
+        open={consultOpen}
+        onClose={() => setConsultOpen(false)}
+      />
       <button
         type="button"
         onClick={scrollToTop}

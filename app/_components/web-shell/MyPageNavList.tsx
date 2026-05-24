@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   INITIAL_MY_PAGE_EXPANDED,
   MY_PAGE_NAV,
@@ -42,14 +43,20 @@ function NavChevron({ open, variant }: { open: boolean; variant: Variant }) {
 }
 
 export function MyPageNavList({ variant }: { variant: Variant }) {
-  const [expandedSections, setExpandedSections] = useState(INITIAL_MY_PAGE_EXPANDED);
+  const [expandedSections, setExpandedSections] = useState(
+    INITIAL_MY_PAGE_EXPANDED,
+  );
 
   const toggleSection = (id: string) => {
     setExpandedSections((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
-    <div className={variant === "drawer" ? "flex flex-col" : "flex flex-col gap-0.5"}>
+    <div
+      className={
+        variant === "drawer" ? "flex flex-col" : "flex flex-col gap-0.5"
+      }
+    >
       {MY_PAGE_NAV.map((entry) => {
         if (isMyPageNavGroup(entry)) {
           const open = expandedSections[entry.id];
@@ -63,7 +70,9 @@ export function MyPageNavList({ variant }: { variant: Variant }) {
                   onClick={() => toggleSection(entry.id)}
                   className={[
                     "flex w-full items-center justify-between gap-2 min-h-9 px-2 py-1.5 rounded-[6px] text-sm font-semibold text-left",
-                    open ? "text-primary bg-primary-bg" : "text-text-brand-muted",
+                    open
+                      ? "text-primary bg-primary-bg"
+                      : "text-text-brand-muted",
                   ].join(" ")}
                 >
                   <span className="min-w-0">{entry.label}</span>
@@ -72,16 +81,18 @@ export function MyPageNavList({ variant }: { variant: Variant }) {
                 {open && (
                   <div className="mt-0.5 mb-2 ml-3 flex flex-col gap-0.5">
                     {entry.items.map((item) => (
-                      <a
+                      <Link
                         key={item.label}
                         href={item.href}
                         className={[
                           "block px-[7px] py-[5px] text-[13px] font-medium no-underline",
-                          item.active ? "text-primary font-bold" : "text-text-brand-muted",
+                          item.active
+                            ? "text-primary font-bold"
+                            : "text-text-brand-muted",
                         ].join(" ")}
                       >
                         {item.label}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 )}
@@ -106,7 +117,7 @@ export function MyPageNavList({ variant }: { variant: Variant }) {
               {open && (
                 <div className="ml-3 flex flex-col border-b border-border-subtle pb-1">
                   {entry.items.map((item) => (
-                    <a
+                    <Link
                       key={item.label}
                       href={item.href}
                       className={[
@@ -117,7 +128,7 @@ export function MyPageNavList({ variant }: { variant: Variant }) {
                       ].join(" ")}
                     >
                       {item.label}
-                    </a>
+                    </Link>
                   ))}
                 </div>
               )}
@@ -127,24 +138,24 @@ export function MyPageNavList({ variant }: { variant: Variant }) {
 
         if (variant === "sidebar") {
           return (
-            <a
+            <Link
               key={entry.label}
               href={entry.href}
               className="flex min-h-9 items-center px-2 py-1.5 rounded-[6px] text-sm font-semibold text-text-brand-muted no-underline hover:text-primary transition-colors duration-fast ease-standard"
             >
               {entry.label}
-            </a>
+            </Link>
           );
         }
 
         return (
-          <a
+          <Link
             key={entry.label}
             href={entry.href}
             className="flex items-center min-h-12 text-[15px] font-bold text-text no-underline hover:text-primary transition-colors duration-fast ease-standard border-b border-border-subtle"
           >
             {entry.label}
-          </a>
+          </Link>
         );
       })}
     </div>

@@ -1,37 +1,5 @@
 [
   {
-    "sessionId": "edd5c1c1-e2ae-4d1a-9b27-26292e5f8ed8",
-    "reason": "prompt_input_exit",
-    "endedAt": "2026-05-21T06:49:05.090Z",
-    "feature": null,
-    "phase": null,
-    "progress": null
-  },
-  {
-    "sessionId": "fd6afc1e-263e-40e4-97f5-6cc89e9928c3",
-    "reason": "prompt_input_exit",
-    "endedAt": "2026-05-21T08:36:14.832Z",
-    "feature": null,
-    "phase": null,
-    "progress": null
-  },
-  {
-    "sessionId": "baeccb87-b64a-4f68-bccd-82ebff262a2c",
-    "reason": "clear",
-    "endedAt": "2026-05-21T11:18:18.161Z",
-    "feature": null,
-    "phase": null,
-    "progress": null
-  },
-  {
-    "sessionId": "5fff78fc-b25e-458e-a495-119432ad491b",
-    "reason": "clear",
-    "endedAt": "2026-05-21T11:35:40.540Z",
-    "feature": null,
-    "phase": null,
-    "progress": null
-  },
-  {
     "sessionId": "dd4dc201-660f-4df2-a5ef-121eb50aa25e",
     "reason": "clear",
     "endedAt": "2026-05-21T12:13:05.787Z",
@@ -147,6 +115,46 @@
     "sessionId": "08794c97-4e7e-4a76-ac82-69af4afb6ce3",
     "reason": "clear",
     "endedAt": "2026-05-24T12:55:46.450Z",
+    "feature": null,
+    "phase": null,
+    "progress": null
+  },
+  {
+    "sessionId": "f640e6eb-1127-48e5-978e-01ab22940402",
+    "reason": "clear",
+    "endedAt": "2026-05-24T13:16:12.116Z",
+    "feature": null,
+    "phase": null,
+    "progress": null
+  },
+  {
+    "sessionId": "b7ec06ce-7d24-4c55-afc3-770db95b0526",
+    "reason": "clear",
+    "endedAt": "2026-05-24T13:29:33.035Z",
+    "feature": null,
+    "phase": null,
+    "progress": null
+  },
+  {
+    "sessionId": "a2de6fdd-b0bf-4a63-91f2-648114f52cc9",
+    "reason": "clear",
+    "endedAt": "2026-05-24T14:15:57.241Z",
+    "feature": null,
+    "phase": null,
+    "progress": null
+  },
+  {
+    "sessionId": "4260fb47-e394-454f-b22e-9f729fb9d57d",
+    "reason": "clear",
+    "endedAt": "2026-05-24T14:38:09.219Z",
+    "feature": null,
+    "phase": null,
+    "progress": null
+  },
+  {
+    "sessionId": "315abb2a-b436-4973-a162-9e440b6195d7",
+    "reason": "prompt_input_exit",
+    "endedAt": "2026-05-24T15:12:24.461Z",
     "feature": null,
     "phase": null,
     "progress": null

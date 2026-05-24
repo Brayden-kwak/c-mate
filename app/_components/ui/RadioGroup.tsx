@@ -16,7 +16,11 @@ export function RadioGroup({
   "aria-required": ariaRequired,
 }: Props) {
   return (
-    <div role="radiogroup" aria-required={ariaRequired} className="flex flex-wrap gap-2">
+    <div
+      role="radiogroup"
+      aria-required={ariaRequired}
+      className="flex flex-wrap gap-2"
+    >
       {options.map((opt) => {
         const selected = value === opt;
         return (

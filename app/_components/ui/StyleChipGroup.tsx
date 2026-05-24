@@ -14,7 +14,12 @@ type Props = {
   onChange?: (value: Record<string, string[]>) => void;
 };
 
-export function StyleChipGroup({ groups, maxTotal = 5, value = {}, onChange }: Props) {
+export function StyleChipGroup({
+  groups,
+  maxTotal = 5,
+  value = {},
+  onChange,
+}: Props) {
   const [local, setLocal] = useState<Record<string, string[]>>(value);
 
   const selected = value ?? local;
@@ -44,7 +49,9 @@ export function StyleChipGroup({ groups, maxTotal = 5, value = {}, onChange }: P
         const groupSelected = selected[group.label] ?? [];
         return (
           <div key={group.label} className="flex flex-col gap-2">
-            <span className="text-xs font-semibold text-primary">{group.label}</span>
+            <span className="text-xs font-semibold text-primary">
+              {group.label}
+            </span>
             <div className="flex flex-wrap gap-1.5">
               {group.options.map((opt) => {
                 const isSelected = groupSelected.includes(opt);
@@ -59,7 +66,9 @@ export function StyleChipGroup({ groups, maxTotal = 5, value = {}, onChange }: P
                       isSelected
                         ? "bg-primary border-primary text-white font-semibold"
                         : "bg-surface border-border text-text font-medium hover:bg-subtle hover:border-border-strong",
-                      !isSelected && atMax ? "opacity-40 cursor-not-allowed" : "cursor-pointer",
+                      !isSelected && atMax
+                        ? "opacity-40 cursor-not-allowed"
+                        : "cursor-pointer",
                     ]
                       .filter(Boolean)
                       .join(" ")}

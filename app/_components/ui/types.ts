@@ -8,3 +8,5 @@ export type ButtonVariant =
   | "icon";
 
 export type FieldState = "default" | "error" | "disabled";
+
+export type SkeletonVariant = "line" | "rect" | "circle";

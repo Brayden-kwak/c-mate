@@ -1,14 +1,13 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
+import prettier from "eslint-config-prettier";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
     rules: {
-      // cmate rule 1: tokens only. Block hex literals inside JSX `style={{}}`.
-      // Tokens live in app/globals.css @theme. Use Tailwind utilities instead.
       "no-restricted-syntax": [
         "error",
         {
@@ -17,9 +16,16 @@ const eslintConfig = defineConfig([
           message:
             "No hex colors in JSX style. Use a Tailwind token utility (bg-primary, text-text, ...). Tokens are defined in app/globals.css @theme.",
         },
+        {
+          selector: "JSXOpeningElement[name.name='img']",
+          message:
+            "Use next/image <Image> instead of <img>. Set width/height or fill prop.",
+        },
       ],
+      "@typescript-eslint/no-explicit-any": "error",
     },
   },
+  prettier,
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

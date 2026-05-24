@@ -4,7 +4,15 @@ type Props = Omit<InputHTMLAttributes<HTMLInputElement>, "style" | "type"> & {
   label: string;
 };
 
-export function Checkbox({ label, id, className, checked, disabled, onChange, ...rest }: Props) {
+export function Checkbox({
+  label,
+  id,
+  className,
+  checked,
+  disabled,
+  onChange,
+  ...rest
+}: Props) {
   const inputId = id ?? label;
   return (
     <label

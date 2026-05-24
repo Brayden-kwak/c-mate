@@ -22,11 +22,11 @@ Port the cmate mockup into Next.js 16 components. Concise reference — do not d
 
 ## Source files
 
-| File | Lines | Role |
-|------|-------|------|
-| `docs/cmate-redesign-mockup.html` | 4891 | Visual source. Contains 4 view sections (see table below). |
-| `docs/cmate-base-info-plan.html` | 959 | Product/UX spec for Step 1 form behavior. Consult for validation, auto-save, modal flows. |
-| `AGENTS.md` | — | Next.js 16 caveat. Read the relevant section of `node_modules/next/dist/docs/` before writing JSX. |
+| File                              | Lines | Role                                                                                               |
+| --------------------------------- | ----- | -------------------------------------------------------------------------------------------------- |
+| `docs/cmate-redesign-mockup.html` | 4891  | Visual source. Contains 4 view sections (see table below).                                         |
+| `docs/cmate-base-info-plan.html`  | 959   | Product/UX spec for Step 1 form behavior. Consult for validation, auto-save, modal flows.          |
+| `AGENTS.md`                       | —     | Next.js 16 caveat. Read the relevant section of `node_modules/next/dist/docs/` before writing JSX. |
 
 ## Tech stack (pinned)
 
@@ -34,12 +34,12 @@ Next 16.2.6 (App Router, RSC default) · React 19.2.4 · Tailwind v4 via `@tailw
 
 ## Mockup views
 
-| View id | Lines | Role | Port priority |
-|---------|-------|------|---------------|
-| `view-desktop` (`.cm-web-shell`) | 2187–2891 | Desktop shell: header, sidebar, main, footer | P0 |
-| `view-mobile` | 2894–3356 | 375px mobile frame: app header, drawer, chip stepper, FAB, accordion cards | P0 (responsive) |
-| `view-modals` | 3357–3495 | Search / confirmation / church-registration modal states | P1 |
-| `view-design` | 3496–4650 | Design-system doc (tokens, components, changelog) | Reference only |
+| View id                          | Lines     | Role                                                                       | Port priority   |
+| -------------------------------- | --------- | -------------------------------------------------------------------------- | --------------- |
+| `view-desktop` (`.cm-web-shell`) | 2187–2891 | Desktop shell: header, sidebar, main, footer                               | P0              |
+| `view-mobile`                    | 2894–3356 | 375px mobile frame: app header, drawer, chip stepper, FAB, accordion cards | P0 (responsive) |
+| `view-modals`                    | 3357–3495 | Search / confirmation / church-registration modal states                   | P1              |
+| `view-design`                    | 3496–4650 | Design-system doc (tokens, components, changelog)                          | Reference only  |
 
 `.cm-web-shell` CSS is defined at lines 169–178; the DOM instance opens at line 2189.
 
@@ -78,18 +78,18 @@ Define once as Tailwind v4 `@theme` in `app/globals.css`. Never hardcode hex/px 
 
 ## Interactions to port
 
-| Behavior | Trigger | Effect |
-|----------|---------|--------|
-| Viewer-nav tab switch | click `.viewer-nav .tab` | swap visible `view-*` section + scroll top |
-| Desktop footer sync | load / resize / scroll | dock `.d-footer` to viewport when frame is in view, fix otherwise |
-| Quick-rail compact | resize ≤1023 | toggle `.quick-rail.compact`, auto-close FAB |
-| Quick-FAB toggle | click `.quick-fab-toggle` | toggle `.quick-rail.open` + aria-expanded + icon `＋ ↔ ✕` |
-| Mega menu | hover/focus on `.site-header-area` | add/remove `.is-mega-open` |
-| Mobile card accordion | click `.m-card-head` | toggle `.m-card.open` + aria-expanded |
-| Drawer | click `[data-drawer-toggle]` / `[data-drawer-close]` | toggle `hidden` on `aria-controls` target |
-| Church registration | click `[data-reg-toggle]` | show/hide `.reg-form` inside modal |
-| Footer company info | click `[data-company-toggle]` | show/hide company details |
-| Style-group counter | select `.style-chips` chip | update `.style-sub-count` + total badge (max 5) |
+| Behavior              | Trigger                                              | Effect                                                            |
+| --------------------- | ---------------------------------------------------- | ----------------------------------------------------------------- |
+| Viewer-nav tab switch | click `.viewer-nav .tab`                             | swap visible `view-*` section + scroll top                        |
+| Desktop footer sync   | load / resize / scroll                               | dock `.d-footer` to viewport when frame is in view, fix otherwise |
+| Quick-rail compact    | resize ≤1023                                         | toggle `.quick-rail.compact`, auto-close FAB                      |
+| Quick-FAB toggle      | click `.quick-fab-toggle`                            | toggle `.quick-rail.open` + aria-expanded + icon `＋ ↔ ✕`         |
+| Mega menu             | hover/focus on `.site-header-area`                   | add/remove `.is-mega-open`                                        |
+| Mobile card accordion | click `.m-card-head`                                 | toggle `.m-card.open` + aria-expanded                             |
+| Drawer                | click `[data-drawer-toggle]` / `[data-drawer-close]` | toggle `hidden` on `aria-controls` target                         |
+| Church registration   | click `[data-reg-toggle]`                            | show/hide `.reg-form` inside modal                                |
+| Footer company info   | click `[data-company-toggle]`                        | show/hide company details                                         |
+| Style-group counter   | select `.style-chips` chip                           | update `.style-sub-count` + total badge (max 5)                   |
 
 ## Form behavior (from base-info-plan)
 
@@ -117,33 +117,33 @@ Define once as Tailwind v4 `@theme` in `app/globals.css`. Never hardcode hex/px 
 
 ## In / Out of scope
 
-| In scope | Out of scope |
-|----------|--------------|
+| In scope                                | Out of scope                                  |
+| --------------------------------------- | --------------------------------------------- |
 | Desktop shell + responsive mobile shell | Backend (church reg, auto-save, photo upload) |
-| Step 1 form (6 cards) | i18n / multi-language |
-| Modals (search, confirm, registration) | Steps 2–5 |
-| Design tokens + Tailwind theme | Header/sidebar simplification S-4 |
-| Sticky footer + quick rail | Marketing pages, auth |
+| Step 1 form (6 cards)                   | i18n / multi-language                         |
+| Modals (search, confirm, registration)  | Steps 2–5                                     |
+| Design tokens + Tailwind theme          | Header/sidebar simplification S-4             |
+| Sticky footer + quick rail              | Marketing pages, auth                         |
 
 ## Korean ↔ English glossary
 
-| KO | EN | Where |
-|----|----|-------|
-| 기본정보 | Base Info | Page title, Step 1 |
-| 마이페이지 | My Page | Left sidebar title |
-| 결혼경험 | Marriage Experience | Card 1 |
-| 주소 / 상세주소 | Address / Detail | Card 1 |
-| 신앙 / 교회 / 교단 | Faith / Church / Denomination | Card 2 |
-| 모태신앙 | Native Faith | Card 2 |
-| 학력 / 전공 | Education / Major | Card 3 |
-| 직장 / 직무 / 연봉 | Workplace / Job / Salary | Card 3 |
-| 신장 / 체형 / 혈액형 | Height / Body Type / Blood Type | Card 4 |
-| 스타일 | Style | Card 4 (max 5 across 3 groups) |
-| 음주 / 흡연 / 자녀계획 | Drinking / Smoking / Children Plans | Card 5 |
-| 대표사진 / 포토북 | Representative Photo / Photobook | Card 6 |
-| 저장하기 / 다음 | Save / Next | d-footer buttons |
-| 무료 상담 받기 | Free Consultation | Header CTA |
-| 로그아웃 | Logout | Header action |
+| KO                     | EN                                  | Where                          |
+| ---------------------- | ----------------------------------- | ------------------------------ |
+| 기본정보               | Base Info                           | Page title, Step 1             |
+| 마이페이지             | My Page                             | Left sidebar title             |
+| 결혼경험               | Marriage Experience                 | Card 1                         |
+| 주소 / 상세주소        | Address / Detail                    | Card 1                         |
+| 신앙 / 교회 / 교단     | Faith / Church / Denomination       | Card 2                         |
+| 모태신앙               | Native Faith                        | Card 2                         |
+| 학력 / 전공            | Education / Major                   | Card 3                         |
+| 직장 / 직무 / 연봉     | Workplace / Job / Salary            | Card 3                         |
+| 신장 / 체형 / 혈액형   | Height / Body Type / Blood Type     | Card 4                         |
+| 스타일                 | Style                               | Card 4 (max 5 across 3 groups) |
+| 음주 / 흡연 / 자녀계획 | Drinking / Smoking / Children Plans | Card 5                         |
+| 대표사진 / 포토북      | Representative Photo / Photobook    | Card 6                         |
+| 저장하기 / 다음        | Save / Next                         | d-footer buttons               |
+| 무료 상담 받기         | Free Consultation                   | Header CTA                     |
+| 로그아웃               | Logout                              | Header action                  |
 
 ## Verification
 

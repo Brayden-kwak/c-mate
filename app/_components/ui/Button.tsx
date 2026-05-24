@@ -4,7 +4,7 @@ import type { ButtonVariant, Size } from "./types";
 type Props = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "style"> & {
   variant?: ButtonVariant;
   size?: Size;
-  layout?: "auto" | "full" | "fill";
+  layout?: "auto" | "full" | "fill" | "responsive";
   children: ReactNode;
 };
 
@@ -30,6 +30,7 @@ const layoutClass: Record<NonNullable<Props["layout"]>, string | undefined> = {
   auto: undefined,
   full: "w-full",
   fill: "flex-1",
+  responsive: "w-full sm:flex-1",
 };
 
 export function Button({
@@ -44,7 +45,13 @@ export function Button({
     "inline-flex items-center justify-center font-semibold transition-colors duration-base ease-standard focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 disabled:cursor-not-allowed";
   return (
     <button
-      className={[base, variantClass[variant], sizeClass[size], layoutClass[layout], className]
+      className={[
+        base,
+        variantClass[variant],
+        sizeClass[size],
+        layoutClass[layout],
+        className,
+      ]
         .filter(Boolean)
         .join(" ")}
       {...rest}

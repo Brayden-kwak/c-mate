@@ -33,7 +33,12 @@ export function ConfirmModal({
 }: Props) {
   if (!open) return null;
 
-  const widthClass = { sm: "max-w-[440px]", md: "max-w-[480px]", lg: "max-w-[560px]" }[width];
+  const widthClass = {
+    sm: "max-w-[440px]",
+    md: "max-w-[480px]",
+    lg: "max-w-[560px]",
+  }[width];
+  const titleId = title ? "confirm-modal-title" : undefined;
 
   return (
     <div
@@ -44,12 +49,15 @@ export function ConfirmModal({
         className={`bg-surface rounded-xl border border-border w-full ${widthClass} overflow-hidden shadow-modal`}
         role="dialog"
         aria-modal="true"
-        aria-label={title ? undefined : ariaLabel}
+        aria-labelledby={titleId}
+        aria-label={title ? undefined : (ariaLabel ?? "확인 모달")}
       >
         {/* Header */}
         {title ? (
           <div className="flex items-center gap-3 px-7 pt-6 pb-3">
-            <h3 className="text-xl font-bold text-text m-0 flex-1">{title}</h3>
+            <h3 id={titleId} className="text-xl font-bold text-text m-0 flex-1">
+              {title}
+            </h3>
           </div>
         ) : null}
 
@@ -60,7 +68,13 @@ export function ConfirmModal({
         <div className="px-7 pb-6">
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
             {cancelLabel && (
-              <Button variant="tertiary" size="lg" type="button" onClick={onClose} className="w-full sm:flex-1">
+              <Button
+                variant="tertiary"
+                size="lg"
+                type="button"
+                onClick={onClose}
+                layout="responsive"
+              >
                 {cancelLabel}
               </Button>
             )}
@@ -71,7 +85,7 @@ export function ConfirmModal({
                 type="button"
                 onClick={onConfirm}
                 disabled={confirmDisabled}
-                className="w-full sm:flex-1"
+                layout="responsive"
               >
                 {confirmLabel}
               </Button>

@@ -26,11 +26,7 @@ Step 1 (기본정보) 6개 카드를 같은 코드 패턴으로 만든다. 이 �
 <Card>
   <CardHead tag="SECTION 1" title="가족 · 거주" meta="3 / 3" />
   <CardBody>
-    <Row
-      label="결혼경험"
-      required
-      helper="현재 결혼 상태를 선택해 주세요."
-    >
+    <Row label="결혼경험" required helper="현재 결혼 상태를 선택해 주세요.">
       <RadioGroup name="marriageExperience" options={["초혼", "재혼"]} />
     </Row>
     {/* ... */}
@@ -42,13 +38,14 @@ Step 1 (기본정보) 6개 카드를 같은 코드 패턴으로 만든다. 이 �
 
 ## Validation 타이밍
 
-| 입력 종류 | 트리거 | 비고 |
-|----------|--------|------|
-| 텍스트 / 숫자 | onBlur | focus 중에는 에러 표시 안 함 |
-| 라디오 / 체크박스 / 셀렉트 | onChange | 즉시 |
-| 전체 | onSubmit (다음 클릭) | 첫 에러 필드로 scroll + 토스트 |
+| 입력 종류                  | 트리거               | 비고                           |
+| -------------------------- | -------------------- | ------------------------------ |
+| 텍스트 / 숫자              | onBlur               | focus 중에는 에러 표시 안 함   |
+| 라디오 / 체크박스 / 셀렉트 | onChange             | 즉시                           |
+| 전체                       | onSubmit (다음 클릭) | 첫 에러 필드로 scroll + 토스트 |
 
 에러 표시:
+
 - 필드 아래 인라인 메시지
 - 빨간 outline (Input `state="error"` 또는 `aria-invalid`)
 - `aria-describedby` 로 에러 메시지 id 연결
@@ -72,6 +69,7 @@ error  ──retryCount>=5──▶ blocked ("저장 실패. 직접 저장하세
 ```
 
 상태 → d-footer 칩 표시:
+
 - `idle`: 칩 숨김
 - `saving`: 스피너 + "저장 중..."
 - `saved`: 체크 + "방금 자동 저장됨" (2s 뒤 idle 복귀)
@@ -82,12 +80,12 @@ draft 복구: 페이지 진입 시 localStorage + 서버 draft 비교, 더 최�
 
 ## 도메인 특수 흐름 (요약)
 
-| 영역 | 흐름 | 위치 |
-|------|------|------|
+| 영역                  | 흐름                                                                                                   | 위치        |
+| --------------------- | ------------------------------------------------------------------------------------------------------ | ----------- |
 | 교회 검색 zero-result | EmptyState → "교회/교단 가입 신청" 인라인 폼 → "24시간 내 매니저 확인" 안내. 임시값으로 다음 진행 허용 | Card 2 신앙 |
-| 학력 다운그레이드 | 박사→석사→학사 방향 변경 시 해당 row들 삭제 경고 모달 + 영향 리스트 + [취소][계속 (danger)] | Card 3 학력 |
-| 대표사진 삭제 | 다른 사진 있을 때: "두 번째가 대표가 됩니다" 경고; 대표만 있을 때: blocking "대표는 반드시" | Card 6 사진 |
-| 사진 재정렬 | desktop DnD · mobile carousel long-press · keyboard Shift+←/→ | Card 6 사진 |
+| 학력 다운그레이드     | 박사→석사→학사 방향 변경 시 해당 row들 삭제 경고 모달 + 영향 리스트 + [취소][계속 (danger)]            | Card 3 학력 |
+| 대표사진 삭제         | 다른 사진 있을 때: "두 번째가 대표가 됩니다" 경고; 대표만 있을 때: blocking "대표는 반드시"            | Card 6 사진 |
+| 사진 재정렬           | desktop DnD · mobile carousel long-press · keyboard Shift+←/→                                          | Card 6 사진 |
 
 상세 사양은 `docs/cmate-base-info-plan.html` 의 해당 섹션 참조 (이 SKILL.md 는 컨벤션 요약, plan 문서가 사양 진본).
 

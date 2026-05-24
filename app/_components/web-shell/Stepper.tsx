@@ -25,16 +25,22 @@ export function Stepper() {
           <div
             key={step.num}
             className={[
-              "flex-1 min-w-0 pt-[18px] flex flex-col items-center gap-3 cursor-pointer",
-              isCurrent ? "text-text font-semibold" : "text-text-tertiary font-medium",
+              "flex-1 min-w-0 pt-4-5 flex flex-col items-center gap-3 cursor-pointer",
+              isCurrent
+                ? "text-text font-semibold"
+                : "text-text-tertiary font-medium",
               "text-sm",
             ].join(" ")}
           >
             <div className="flex items-center gap-2.5">
               <span
                 className={[
-                  "w-[22px] h-[22px] rounded-full inline-flex items-center justify-center text-[11px] font-bold",
-                  isCurrent ? "bg-primary text-white" : isDone ? "bg-success text-white" : "bg-subtle text-text-tertiary",
+                  "w-5-5 h-5-5 rounded-full inline-flex items-center justify-center text-[11px] font-bold",
+                  isCurrent
+                    ? "bg-primary text-white"
+                    : isDone
+                      ? "bg-success text-white"
+                      : "bg-subtle text-text-tertiary",
                 ].join(" ")}
               >
                 {isDone ? "✓" : step.num}

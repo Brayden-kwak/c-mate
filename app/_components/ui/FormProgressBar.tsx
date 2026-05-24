@@ -6,7 +6,8 @@ type Props = {
 };
 
 export function FormProgressBar({ progress, size = "md" }: Props) {
-  const percent = progress.total === 0 ? 0 : (progress.done / progress.total) * 100;
+  const percent =
+    progress.total === 0 ? 0 : (progress.done / progress.total) * 100;
   const trackClass = size === "sm" ? "h-[5px]" : "h-1.5";
   const countClass = size === "sm" ? "text-[11px]" : "text-[13px]";
 
@@ -25,7 +26,9 @@ export function FormProgressBar({ progress, size = "md" }: Props) {
           style={{ width: `${percent}%` }}
         />
       </div>
-      <span className={`${countClass} font-semibold text-text-secondary shrink-0`}>
+      <span
+        className={`${countClass} font-semibold text-text-secondary shrink-0`}
+      >
         {progress.done} / {progress.total} 항목
       </span>
     </div>

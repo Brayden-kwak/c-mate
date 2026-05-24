@@ -41,11 +41,15 @@ export const MY_PAGE_NAV: MyPageNavEntry[] = [
   { label: "문의하기", href: "#" },
 ];
 
-export const INITIAL_MY_PAGE_EXPANDED = MY_PAGE_NAV.reduce<Record<string, boolean>>((acc, entry) => {
+export const INITIAL_MY_PAGE_EXPANDED = MY_PAGE_NAV.reduce<
+  Record<string, boolean>
+>((acc, entry) => {
   if ("items" in entry) acc[entry.id] = entry.defaultOpen ?? false;
   return acc;
 }, {});
 
-export function isMyPageNavGroup(entry: MyPageNavEntry): entry is MyPageNavGroup {
+export function isMyPageNavGroup(
+  entry: MyPageNavEntry,
+): entry is MyPageNavGroup {
   return "items" in entry;
 }
