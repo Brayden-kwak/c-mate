@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 import { Input } from "@/app/_components/ui/Input";
 import { Button } from "@/app/_components/ui/Button";
+import { ConfirmModal } from "@/app/_components/modals/ConfirmModal";
 
 export type ChurchSelectResult = {
   church: string;
@@ -24,7 +25,7 @@ type Props = {
 
 type Step = "search" | "form" | "submitted";
 
-const DEFAULT_REG_REASON = "검색 결과에 출석 교회가 없어 신규 등록을 요청합니다.";
+const DEFAULT_REG_REASON = "검색 결과에 출석 교회가 없어 신규 등록을 요청합니다";
 
 // 테스트용 mock 데이터셋. 실제 API 연동 전까지 이 목록과 부분일치(대소문자·공백 무시)되는 쿼리만 매칭된다.
 const MOCK_CHURCHES: ChurchSelectResult[] = [
@@ -97,6 +98,29 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
     handleClose();
   }
 
+  if (step === "submitted") {
+    return (
+      <ConfirmModal
+        open={open}
+        onClose={handleClose}
+        ariaLabel="교회 등록 신청 완료"
+        confirmLabel="확인"
+        cancelLabel={false}
+        onConfirm={handleClose}
+        width="sm"
+      >
+        <div className="text-center mt-2 mb-4">
+          <p className="m-0 text-md font-semibold text-text">
+            신청이 완료되었습니다
+          </p>
+          <p className="mt-2 mb-0 text-md leading-relaxed text-text-secondary">
+            검토 후 연락드리겠습니다
+          </p>
+        </div>
+      </ConfirmModal>
+    );
+  }
+
   return (
     <div
       className="fixed inset-0 z-(--z-modal) flex items-center justify-center bg-backdrop-modal p-4"
@@ -156,7 +180,7 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
                     &lsquo;{query}&rsquo; 검색 결과가 없어요
                   </div>
                   <p className="mt-2 mb-0 text-md leading-relaxed text-text-secondary">
-                    하단의 신청하기를 누르면 신규 등록 신청을 진행할 수 있어요.
+                    하단의 신청하기를 누르면 신규 등록 신청을 진행할 수 있어요
                   </p>
                 </div>
               )}
@@ -197,16 +221,6 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
             </div>
           )}
 
-          {step === "submitted" && (
-            <div className="bg-subtle rounded-lg p-6 text-center">
-              <div className="text-md font-semibold text-text">
-                신청이 완료되었습니다.
-              </div>
-              <p className="mt-2 mb-0 text-md leading-relaxed text-text-secondary">
-                검토 후 연락드리겠습니다.
-              </p>
-            </div>
-          )}
         </div>
 
         {/* Footer */}
@@ -215,7 +229,7 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
             {step === "search" && (
               <>
                 <Button
-                  variant={hasQuery && !hasMatches ? "tertiary" : "primary"}
+                  variant="tertiary"
                   size="lg"
                   type="button"
                   onClick={handleClose}
@@ -258,17 +272,6 @@ export function ChurchSearchModal({ open, onClose, onSelect }: Props) {
                   신청하기
                 </Button>
               </>
-            )}
-            {step === "submitted" && (
-              <Button
-                variant="primary"
-                size="lg"
-                type="button"
-                onClick={handleClose}
-                className="w-full sm:flex-1"
-              >
-                확인
-              </Button>
             )}
           </div>
         </div>

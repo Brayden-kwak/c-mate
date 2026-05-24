@@ -14,7 +14,7 @@ const variantClass: Record<ButtonVariant, string> = {
   secondary:
     "bg-surface text-text border border-border-strong hover:bg-subtle hover:border-border-strong disabled:bg-disabled disabled:text-text-tertiary",
   tertiary:
-    "bg-transparent text-text-secondary hover:bg-subtle hover:text-text disabled:text-text-tertiary",
+    "bg-subtle text-text-secondary hover:bg-disabled hover:text-text disabled:bg-disabled disabled:text-text-tertiary",
   danger:
     "bg-danger text-white hover:bg-danger-hover disabled:bg-disabled disabled:text-text-tertiary",
   icon: "bg-surface border border-border w-9 h-9 p-0 rounded-[6px] hover:bg-subtle hover:border-border-strong",

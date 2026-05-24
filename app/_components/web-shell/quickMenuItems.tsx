@@ -19,6 +19,7 @@ function QuickMenuImage({
       width={dim}
       height={dim}
       className={size === "lg" ? QUICK_ICON_LG : QUICK_ICON_SM}
+      priority
       aria-hidden
     />
   );

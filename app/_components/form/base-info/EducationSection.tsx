@@ -372,7 +372,9 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
               {education} → {pendingEduChange?.newDegree}으로 변경
             </div>
             <div className="text-[13px] text-text-secondary mt-1">
-              입력하신 학력 정보가 모두 삭제됩니다. 계속하시겠어요?
+              입력하신 학력 정보가 모두 삭제됩니다
+              <br />
+              계속하시겠어요?
             </div>
           </div>
         </div>
@@ -417,7 +419,7 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
                 &lsquo;{trimmedJobQuery}&rsquo; 검색 결과가 없어요
               </div>
               <p className="mt-2 mb-0 text-md leading-relaxed text-text-secondary">
-                하단의 등록하기를 누르면 입력한 직업/직무로 등록됩니다.
+                하단의 등록하기를 누르면 입력한 직업/직무로 등록됩니다
               </p>
             </div>
           ) : null}
@@ -448,7 +450,7 @@ export const EducationSection = ({ onSave, onProgressChange, onMissingFieldsChan
                 &lsquo;{trimmedSchoolQuery}&rsquo; 검색 결과가 없어요
               </div>
               <p className="mt-2 mb-0 text-md leading-relaxed text-text-secondary">
-                하단의 등록하기를 누르면 입력한 학교명으로 등록됩니다.
+                하단의 등록하기를 누르면 입력한 학교명으로 등록됩니다
               </p>
             </div>
           ) : null}
