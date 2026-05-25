@@ -11,6 +11,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import type { FieldState, Size } from "./types";
+import { ChevronDown } from "@/app/_components/ui/icons";
 
 export type DropdownOption = {
   value: string;
@@ -283,7 +284,7 @@ export function DropdownSelect({
         >
           {selected ? selected.label : placeholder}
         </span>
-        <svg
+        <ChevronDown
           className={[
             "pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 transition-transform duration-fast ease-standard",
             resolvedState === "disabled"
@@ -291,16 +292,7 @@ export function DropdownSelect({
               : "text-text-secondary",
             open ? "rotate-180" : "rotate-0",
           ].join(" ")}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
+        />
       </button>
 
       {name && <input type="hidden" name={name} value={value} />}

@@ -7,15 +7,7 @@ import {
   HeaderUserProfile,
 } from "@/app/_components/web-shell/HeaderAccount";
 import { CmLogo } from "@/app/_components/web-shell/CmLogo";
-
-const NAV_ITEMS = [
-  "크리스천메이트",
-  "서비스 안내",
-  "공개 프로필",
-  "커뮤니티",
-  "오프라인 모임",
-  "문의하기",
-];
+import { NAV_ITEMS } from "@/app/_components/web-shell/navItems";
 
 const MEGA_COLS = [
   [

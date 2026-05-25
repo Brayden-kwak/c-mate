@@ -80,16 +80,16 @@ img { max-width: 100%; height: auto; }
 <h1 id="ux-v2">크리스천메이트 · 기본정보 작성 페이지 UX 개선 기획서</h1>
 <blockquote>
 <strong>기획 범위</strong>: 프로필 작성 5단계 중 1단계 "기본정보" (base-info 페이지)<br/>
-<strong>최초 작성일</strong>: 2026년 05월 21일 &nbsp;·&nbsp; <strong>최종 갱신일</strong>: 2026년 05월 26일<br/>
-<strong>버전</strong>: v3 (운영 As-Is ↔ Next.js To-Be 비교 반영본)<br/>
+<strong>최초 작성일</strong>: 2026년 05월 21일 &nbsp;·&nbsp; <strong>최종 갱신일</strong>: 2026년 05월 22일<br/>
+<strong>버전</strong>: v2 (Next.js 16 구현 반영본)<br/>
 <strong>작성자</strong>: 곽지훈<br/>
-<strong>분석 방법</strong>: 운영 서비스(<code class="token">https://c-mate.co.kr/personal-info/base-info</code>)에 seunglee89 계정으로 직접 로그인 후, 운영 As-Is와 로컬 Next.js 구현을 데스크탑 1440px·모바일 375px에서 병렬 비교<br/>
+<strong>분석 방법</strong>: seunglee89 계정으로 직접 로그인 후 데스크탑·모바일 양 뷰포트에서 인터랙션 검증<br/>
 <strong>구현 기준</strong>: Next.js 16 (App Router · RSC) · Tailwind v4 (@theme 토큰) · Pretendard variable
 </blockquote>
 <hr />
 
 <h2 id="0-at-a-glance">0. 한눈에 보기 — 문제 정의 · 해결 방법 마스터 표</h2>
-<p>본 페이지에서 식별된 <strong>전체 27개 이슈</strong>를 한 표로 통합. 운영 서비스의 문제 정의와 Next.js 구현의 해결 방법, 우선순위, 데이터 영향, <strong>v3 구현 상태</strong>를 한 줄에 표시한다. 자세한 사양은 본문 3.2장(화면별 반영 스펙)과 4장(개선안)을 참고.</p>
+<p>본 페이지에서 식별된 <strong>전체 24개 이슈</strong>를 한 표로 통합. ID, 분류, 문제 정의, 해결 방법, 우선순위, 데이터 영향, <strong>v2 구현 상태</strong>를 한 줄에 표시한다. 자세한 사양은 본문 4장(개선안)을 참고.</p>
 
 <table>
 <thead>
@@ -120,8 +120,8 @@ img { max-width: 100%; height: auto; }
 <tr><td><strong>I-5</strong></td><td>인터랙션</td><td>대표사진 변경·순서·삭제 분기 안내 부족</td><td>비대표는 "★ 대표 등록" 버튼 · 데스크탑 reorder · 대표 삭제 분기 모달 (CASE A 자동 변경 / CASE B 단독 등록 차단)</td><td><span class="pin p1">P1</span></td><td><strong>+photo.order</strong></td><td><span class="ok">●</span> 완료</td><td><code class="token">PhotoSlot</code> · <code class="token">ConfirmModal</code></td></tr>
 <tr><td><strong>I-6</strong></td><td>인터랙션</td><td>포토북 + 버튼이 기존 사진을 앞으로 밀어버림</td><td>+ 슬롯은 항상 trailing · 최대 8장 · description input · − 버튼으로 빈 슬롯 삭제 · 모바일 carousel</td><td><span class="pin p1">P1</span></td><td><strong>+photobook.order, description</strong></td><td><span class="ok">●</span> 완료</td><td><code class="token">PhotobookThumb</code></td></tr>
 <tr><td><strong>I-7</strong></td><td>인터랙션</td><td>저장하기·저장 후 다음 두 primary가 인접</td><td>sticky footer 3요소 = 자동저장 chip + 저장(secondary) + 다음(primary). wide desktop은 frame-end dock</td><td><span class="pin p1">P1</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td>BaseInfoForm <code class="token">DFooter</code></td></tr>
-<tr><td><strong>I-8</strong></td><td>인터랙션</td><td>"다음" 클릭 후 미입력 항목이 무엇인지 가독성 낮음</td><td>전용 검증 모달 "입력하지 않은 항목이 있습니다" + 누락 라벨 리스트 + 확인 시 첫 미입력 섹션으로 부드러운 스크롤</td><td><span class="pin p1">P1</span></td><td>없음</td><td><span class="ok">●</span> 완료 (Next.js 신규)</td><td>validation <code class="token">ConfirmModal</code> + <code class="token">scrollToFieldAnchor</code></td></tr>
-<tr><td><strong>I-9</strong></td><td>인터랙션</td><td>프로필 사진 가이드(좋은/나쁜 예시)가 본문에 강제 노출</td><td>전용 <code class="token">ProfilePhotoGuide</code> aside — 좋은 사진 3장·나쁜 사진 3장 썸네일. 1430px+에서 사진 슬롯 옆, 그 이하/모바일에서 상단</td><td><span class="pin p2">P2</span></td><td>없음</td><td><span class="ok">●</span> 완료 (Next.js 신규)</td><td><code class="token">ProfilePhotoGuide</code></td></tr>
+<tr><td><strong>I-8</strong></td><td>인터랙션</td><td>"다음" 클릭 후 미입력 항목이 무엇인지 가독성 낮음</td><td>전용 검증 모달 "입력하지 않은 항목이 있습니다" + 누락 라벨 리스트 + 확인 시 첫 미입력 섹션으로 부드러운 스크롤</td><td><span class="pin p1">P1</span></td><td>없음</td><td><span class="ok">●</span> 완료 (v2 신규)</td><td>validation <code class="token">ConfirmModal</code> + <code class="token">scrollToFieldAnchor</code></td></tr>
+<tr><td><strong>I-9</strong></td><td>인터랙션</td><td>프로필 사진 가이드(좋은/나쁜 예시)가 본문에 강제 노출</td><td>전용 <code class="token">ProfilePhotoGuide</code> aside — 좋은 사진 3장·나쁜 사진 3장 썸네일. 1430px+에서 사진 슬롯 옆, 그 이하/모바일에서 상단</td><td><span class="pin p2">P2</span></td><td>없음</td><td><span class="ok">●</span> 완료 (v2 신규)</td><td><code class="token">ProfilePhotoGuide</code></td></tr>
 <tr><td><strong>C-1</strong></td><td>콘텐츠</td><td>옵션 라벨 모호 (모태신앙·음주·자녀계획)</td><td>모태신앙 제3옵션 제거 · 음주 "전혀 하지 않음" · 자녀계획 4종 단순화</td><td><span class="pin p2">P2</span></td><td>label/options</td><td><span class="ok">●</span> 완료</td><td>RadioGroup options 상수</td></tr>
 <tr><td><strong>C-2</strong></td><td>콘텐츠</td><td>연봉이 강제 공개·민감 정보</td><td>Select + "연봉 비공개" Checkbox 추가 · 비공개 시 다른 회원에게 미노출, 매니저 매칭에만 활용</td><td><span class="pin p2">P2</span></td><td><strong>+salary.is_private</strong></td><td><span class="ok">●</span> 완료</td><td><code class="token">EducationSection</code> 연봉 Row</td></tr>
 <tr><td><strong>C-3</strong></td><td>콘텐츠</td><td>helper text 11개가 산재해 가독성 저하</td><td>중복 · 직접 입력으로 대체 가능한 항목 제거 · 핵심 안내만 유지 (warning 위계)</td><td><span class="pin p2">P2</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td>각 Row · InfoBox</td></tr>
@@ -131,7 +131,7 @@ img { max-width: 100%; height: auto; }
 <tr><td><strong>B-3</strong></td><td>보조</td><td>체형 옵션 정의 모호</td><td>체형 6단(슬림·슬림탄탄·보통·통통·근육질·글래머) 라디오 chip · 추가 가이드(툴팁)는 차후</td><td><span class="pin p3">P3</span></td><td>없음</td><td><span class="warn">◐</span> 라디오만 완료</td><td><code class="token">AppearanceSection</code></td></tr>
 <tr><td><strong>B-4</strong></td><td>보조</td><td>신장 input에 cm 단위 미표시</td><td>Input <code class="token">suffix="cm"</code> 고정 · 폭 10rem 제한 · type=number · 140~220 제약</td><td><span class="pin p3">P3</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td><code class="token">Input fieldWidth="height"</code></td></tr>
 <tr><td><strong>B-5</strong></td><td>보조</td><td>자동저장 상태 표현 모호</td><td>4 state chip (idle/saving/saved/error) · 500ms debounce · 성공 후 3초 idle 복귀</td><td><span class="pin p2">P2</span></td><td>없음</td><td><span class="ok">●</span> 완료</td><td>BaseInfoForm <code class="token">AutoSaveChip</code></td></tr>
-<tr><td><strong>X-1</strong></td><td>신규</td><td>퀵 메뉴 "무료상담"을 어디서 트리거하든 동일한 경험 필요</td><td>QuickRail · MobileQuickFab 모두 클릭 시 <code class="token">FreeConsultModal</code> 오픈 · 모바일은 통화하기 CTA 추가</td><td><span class="pin p2">P2</span></td><td>없음</td><td><span class="ok">●</span> 완료 (Next.js 신규)</td><td><code class="token">FreeConsultModal</code></td></tr>
+<tr><td><strong>X-1</strong></td><td>신규</td><td>퀵 메뉴 "무료상담"을 어디서 트리거하든 동일한 경험 필요</td><td>QuickRail · MobileQuickFab 모두 클릭 시 <code class="token">FreeConsultModal</code> 오픈 · 모바일은 통화하기 CTA 추가</td><td><span class="pin p2">P2</span></td><td>없음</td><td><span class="ok">●</span> 완료 (v2 신규)</td><td><code class="token">FreeConsultModal</code></td></tr>
 </tbody>
 </table>
 
@@ -139,10 +139,10 @@ img { max-width: 100%; height: auto; }
 <hr />
 
 <h2 id="1-executive-summary">1. Executive Summary</h2>
-<p>본 문서는 크리스천메이트 "기본정보" 페이지를 UX 관점에서 직접 사용·검증한 결과를 바탕으로, 발견된 문제점을 정의하고 시각화된 구현 기준을 함께 제시한다. v3는 운영 서비스의 As-Is 문제와 Next.js 16 App Router + Tailwind v4 구현 결과를 Desktop 1440 · Mobile 375 · Modal &amp; States · Design System 기준으로 재정렬한다.</p>
+<p>본 문서는 크리스천메이트 "기본정보" 페이지를 UX 관점에서 직접 사용·검증한 결과를 바탕으로, 발견된 문제점을 정의하고 시각화된 구현 기준을 함께 제시한다. v2는 Next.js 16 App Router + Tailwind v4 환경에서 위 27개 항목을 모두 코드로 구현한 결과를 함께 기술한다.</p>
 
 <h3 id="11">1.1 진단 요약</h3>
-<p>시각·구조·인터랙션·콘텐츠 4개 축과 Next.js 신규 분류(신규/검증) 포함 총 <strong>27개 이슈</strong>가 식별되었다.</p>
+<p>시각·구조·인터랙션·콘텐츠 4개 축과 v2 신규 분류(신규/검증) 포함 총 <strong>27개 이슈</strong>가 식별되었다.</p>
 <table>
 <thead>
 <tr><th style="width:22%">축</th><th style="width:10%">이슈 수</th><th>핵심</th></tr>
@@ -150,7 +150,7 @@ img { max-width: 100%; height: auto; }
 <tbody>
 <tr><td><strong>구조 (Structure)</strong></td><td style="text-align:center">5</td><td>질문 그룹화, 5단계 라벨링, 진행률, 버튼 일관성, 헤더/사이드/푸터 단순화</td></tr>
 <tr><td><strong>반응형 (Responsive)</strong></td><td style="text-align:center">3</td><td>모바일 레이아웃 깨짐, 퀵메뉴+TOP 분리 오류, 모바일→데스크탑 리사이즈 버그</td></tr>
-<tr><td><strong>인터랙션 (Interaction)</strong></td><td style="text-align:center">9</td><td>주소 상세입력, 교회 검색 띄어쓰기/가입신청, 학력 자동 행 생성, 학교 행 휴지통, 사진 대표/순서/삭제, 포토북 + 동작 오류, 저장 액션 단순화, <strong>Next.js 신규: 검증 모달 · 사진 가이드</strong></td></tr>
+<tr><td><strong>인터랙션 (Interaction)</strong></td><td style="text-align:center">9</td><td>주소 상세입력, 교회 검색 띄어쓰기/가입신청, 학력 자동 행 생성, 학교 행 휴지통, 사진 대표/순서/삭제, 포토북 + 동작 오류, 저장 액션 단순화, <strong>v2 신규: 검증 모달 · 사진 가이드</strong></td></tr>
 <tr><td><strong>콘텐츠 (Content)</strong></td><td style="text-align:center">4</td><td>옵션 라벨 정정(모태신앙·음주·자녀계획), placeholder 오류, 불필요 helper text 제거, 연봉 비공개, 타이포 스케일</td></tr>
 <tr><td><strong>보조 (Secondary)</strong></td><td style="text-align:center">5</td><td>검색 모달 통일, 스타일 카운터, 체형 가이드, 신장 suffix, 자동저장 chip</td></tr>
 <tr><td><strong>신규 (X)</strong></td><td style="text-align:center">1</td><td>무료 상담 통합 모달 (헤더·퀵·푸터 일원화)</td></tr>
@@ -163,9 +163,9 @@ img { max-width: 100%; height: auto; }
 <tr><th style="width:18%">우선순위</th><th>핵심 항목</th></tr>
 </thead>
 <tbody>
-<tr><td><span class="pin p0">P0</span> 1순위</td><td>모바일 레이아웃 깨짐, 5단계 라벨링, 저장 액션 단순화, 버튼 일관성, 그룹화, 외곽 UI 단순화 — <strong>Next.js에서 구현 완료</strong></td></tr>
-<tr><td><span class="pin p1">P1</span> 2순위</td><td>주소 상세입력, 교회 가입신청 플로우, 학력 자동 행, 사진 대표/위치 분기 모달, 포토북 + 버그, 검증 모달(I-8) — <strong>Next.js에서 구현 완료</strong></td></tr>
-<tr><td><span class="pin p2">P2</span> 3순위</td><td>콘텐츠 라벨 정정, 글자 크기 조정, 연봉 비공개, helper text 정리, 사진 가이드(I-9), 무료상담 모달(X-1) — <strong>Next.js에서 구현 완료</strong></td></tr>
+<tr><td><span class="pin p0">P0</span> 1순위</td><td>모바일 레이아웃 깨짐, 5단계 라벨링, 저장 액션 단순화, 버튼 일관성, 그룹화, 외곽 UI 단순화 — <strong>전부 v2에서 구현 완료</strong></td></tr>
+<tr><td><span class="pin p1">P1</span> 2순위</td><td>주소 상세입력, 교회 가입신청 플로우, 학력 자동 행, 사진 대표/위치 분기 모달, 포토북 + 버그, 검증 모달(I-8) — <strong>v2에서 구현 완료</strong></td></tr>
+<tr><td><span class="pin p2">P2</span> 3순위</td><td>콘텐츠 라벨 정정, 글자 크기 조정, 연봉 비공개, helper text 정리, 사진 가이드(I-9), 무료상담 모달(X-1) — <strong>v2에서 구현 완료</strong></td></tr>
 <tr><td><span class="pin p3">P3</span> 4순위</td><td>스타일 다중 선택 UX(B-2), 체형 옵션 보조 가이드(B-3 부분), 신장 단위 표시(B-4)</td></tr>
 </tbody>
 </table>
@@ -203,7 +203,7 @@ img { max-width: 100%; height: auto; }
 </tbody>
 </table>
 
-<h3 id="3-to-be">3.1 To-Be 페이지 구조 (Next.js 구현)</h3>
+<h3 id="3-to-be">3.1 To-Be 페이지 구조 (v2 구현)</h3>
 <p>의미 단위 <strong>6개 카드</strong>로 재구성. <strong>모태신앙은 신앙 그룹(Section 2)으로 이동</strong>. 데스크탑은 카드 스택 + sticky stepper/progress, 모바일은 accordion + sticky chip stepper + FAB로 전환한다.</p>
 <table>
 <thead><tr><th style="width:5%">#</th><th style="width:22%">그룹</th><th style="width:10%">진행률 단위</th><th>실제 필드 (Next.js)</th></tr></thead>
@@ -221,66 +221,6 @@ img { max-width: 100%; height: auto; }
 <div class="note info"><span class="ic">ⓘ</span><span><strong>전체 진행률</strong> · 5개 그룹의 필드 합계 18 + Section 6 체크포인트 2 = <strong>20 항목</strong>. 상단 sticky FormProgressBar에 <code class="token">{done} / 20 항목</code>으로 노출.</span></div>
 <hr />
 
-<h3 id="32-view-spec">3.2 화면별 반영 스펙 — Desktop 1440 · Mobile 375 · Modal &amp; States · Design System</h3>
-<p>v3 업데이트의 목적은 "해결 방법을 먼저 보여준 Next.js 결과물"을 다시 기획 문서 언어로 정리하는 것이다. 따라서 각 화면은 <strong>운영 서비스에서 확인한 문제</strong>를 먼저 정의하고, 곧바로 <strong>Next.js 구현에서 적용된 해결 방법</strong>을 연결한다.</p>
-
-<h4 id="321-desktop-1440">3.2.1 Desktop 1440</h4>
-<table>
-<thead><tr><th style="width:22%">영역</th><th style="width:34%">운영 As-Is 문제 정의</th><th>Next.js To-Be 반영 내용</th></tr></thead>
-<tbody>
-<tr><td><strong>페이지 프레임</strong></td><td>본문이 넓은 회색 배경 위에 긴 단일 폼으로 배치되어, 사용자가 현재 섹션 경계를 파악하기 어렵다.</td><td><code class="token">data-cmate-frame</code>가 있는 1개 폼 프레임으로 감싸고, 좌측 마이페이지 nav · 중앙 카드 스택 · 우측 QuickRail이 1440px 기준 안정적으로 정렬된다.</td></tr>
-<tr><td><strong>상단 단계</strong></td><td>5개 분홍 막대만 있어 단계명과 현재 위치를 텍스트로 재확인해야 한다.</td><td><code class="token">Stepper</code>가 1~5 단계 번호·라벨·상태색을 표시한다. 현재 단계는 primary underline, 미완료 단계는 muted chip으로 구분한다.</td></tr>
-<tr><td><strong>진행률</strong></td><td>기본정보 안에서 몇 개 항목을 완료했는지 알 수 없다.</td><td><code class="token">FormProgressBar</code>를 sticky로 두고 <strong>0 / 20 항목</strong>처럼 전체 완료율을 수치와 막대로 동시에 표시한다.</td></tr>
-<tr><td><strong>폼 구조</strong></td><td>결혼경험부터 포토북까지 20개 항목이 같은 위계로 이어져 스크롤 피로가 크다.</td><td>6개 카드(혼인&amp;거주, 신앙, 학력&amp;직장, 신체&amp;스타일, 생활습관&amp;가치관, 프로필 사진)로 재구성하고 각 카드 헤더에 <code class="token">SECTION n</code>과 <code class="token">done/total</code> pill을 붙인다.</td></tr>
-<tr><td><strong>필드 밀도</strong></td><td>도움말 문장이 필드 사이에 길게 노출되어 입력 컨트롤보다 설명이 더 강하게 보인다.</td><td><code class="token">Row</code>, <code class="token">InfoBox</code>, <code class="token">HighlightBox</code>로 필수 안내만 남기고, 상세주소·연봉 비공개처럼 행동 가능한 보조 입력을 별도 박스로 분리한다.</td></tr>
-<tr><td><strong>하단 액션</strong></td><td>"저장하기"와 "저장 후 다음"의 위계가 비슷하고, 스크롤 하단에 도달하기 전까지 액션 위치가 흐려진다.</td><td>프레임 하단에 동기화되는 <code class="token">DFooter</code>를 고정한다. 저장하기는 secondary, 다음은 primary로 구분하고 자동저장 chip이 같은 줄에 붙는다.</td></tr>
-<tr><td><strong>퀵 메뉴</strong></td><td>우측 퀵 메뉴가 운영 페이지의 모든 영역에서 같은 무게로 떠 있어 본문과 경쟁한다.</td><td><code class="token">QuickRail</code>은 54px 카드형 6개 + 맨위로로 정돈하고, 무료상담은 전용 <code class="token">FreeConsultModal</code>로 연결한다.</td></tr>
-</tbody>
-</table>
-
-<h4 id="322-mobile-375">3.2.2 Mobile 375</h4>
-<table>
-<thead><tr><th style="width:22%">영역</th><th style="width:34%">운영 As-Is 문제 정의</th><th>Next.js To-Be 반영 내용</th></tr></thead>
-<tbody>
-<tr><td><strong>앱 헤더</strong></td><td>운영 모바일은 "프로필작성 / 기본정보" 타이틀, 햄버거, 하단탭, 퀵 버튼, 저장 버튼이 동시에 보여 작은 화면의 시선 분산이 크다.</td><td><code class="token">MobileHeader</code>는 56px topbar에 뒤로가기·타이틀·햄버거만 둔다. 메뉴는 우측 drawer로 열고, 1280px 이상 resize 시 자동 닫힘 처리한다.</td></tr>
-<tr><td><strong>단계 인지</strong></td><td>데스크탑용 5단 막대가 모바일에도 그대로 축소되어 단계명이 부족하다.</td><td>topbar 아래에 가로 스크롤 chip stepper를 고정한다. 현재 chip은 primary fill, 나머지는 subtle chip으로 표시한다.</td></tr>
-<tr><td><strong>섹션 구조</strong></td><td>긴 단일 폼이 모바일에서 계속 이어져 사용자가 섹션 시작과 끝을 놓치기 쉽다.</td><td><code class="token">MobileCard</code> accordion으로 6개 그룹을 나누고, 헤더에 번호·그룹명·완료율·chevron을 넣는다. 기본은 펼침 상태로 두되 사용자가 접을 수 있다.</td></tr>
-<tr><td><strong>입력 컨트롤</strong></td><td>라디오·검색 버튼·사진 슬롯이 좁은 폭에서 줄바꿈과 간격 문제를 만든다.</td><td>라디오는 wrap chip, 검색 버튼은 full-width에 가까운 stacked layout, 사진은 horizontal carousel과 compact guide로 전환한다.</td></tr>
-<tr><td><strong>사진 영역</strong></td><td>프로필 사진 TIP과 업로드 카드가 세로로 길게 이어지고, 포토북 empty state가 본문과 구분되지 않는다.</td><td><code class="token">ProfilePhotoGuide</code>를 사진 필드 안에 compact하게 넣고, 프로필 사진 슬롯은 가로 스크롤, 포토북은 "+ 추가" 버튼과 최대 8장 안내를 분리한다.</td></tr>
-<tr><td><strong>하단 액션</strong></td><td>운영 모바일은 저장/다음 액션과 하단탭이 겹쳐 보이며, FAB와 TOP 버튼이 같은 영역에서 경쟁한다.</td><td>하단에는 저장하기/다음 2버튼 sticky footer만 고정한다. <code class="token">MobileQuickFab</code>은 +/X 토글과 메뉴 stack으로 분리하고 모바일 TOP 버튼은 제거한다.</td></tr>
-</tbody>
-</table>
-
-<h4 id="323-modal-states">3.2.3 Modal &amp; States</h4>
-<table>
-<thead><tr><th style="width:22%">상태</th><th style="width:34%">운영 As-Is 문제 정의</th><th>Next.js To-Be 반영 내용</th></tr></thead>
-<tbody>
-<tr><td><strong>주소 검색</strong></td><td>주소 찾기 이후 상세 주소 입력이 별도 정보 구조로 분리되지 않는다.</td><td>주소 검색은 <code class="token">ConfirmModal</code> 패턴으로 열고, 선택 결과 아래에 <code class="token">HighlightBox</code> "상세 주소(선택)" input을 추가한다.</td></tr>
-<tr><td><strong>교회 검색</strong></td><td>검색되지 않는 교회는 담당 매니저 문의 안내만 있어 사용자가 즉시 해결할 행동을 갖기 어렵다.</td><td><code class="token">ChurchSearchModal</code>은 검색어 정규화, empty state, inline 가입신청 폼, 제출 완료 상태까지 한 모달 안에서 처리한다.</td></tr>
-<tr><td><strong>필수값 검증</strong></td><td>다음 이동 실패 시 어떤 항목을 보완해야 하는지 한눈에 파악하기 어렵다.</td><td>전용 검증 모달 "입력하지 않은 항목이 있습니다"에서 누락 라벨 리스트를 보여주고, 확인 시 <code class="token">scrollToFieldAnchor()</code>로 첫 누락 섹션에 이동한다.</td></tr>
-<tr><td><strong>학력 다운그레이드</strong></td><td>최종학력 변경으로 기존 학교 행이 사라지는 경우 손실 범위가 명확하지 않다.</td><td><code class="token">EducationSection</code>이 degree row를 자동 조정하고, 삭제될 행이 있으면 danger confirm + affected-list를 표시한다.</td></tr>
-<tr><td><strong>대표사진 삭제</strong></td><td>대표사진을 삭제할 때 다음 대표가 무엇인지, 단독 대표 삭제가 가능한지 안내가 부족하다.</td><td><code class="token">PhotoSlot</code> 삭제는 CASE A(다음 사진 대표 자동 지정)와 CASE B(대표 단독 등록 삭제 차단) confirm으로 분기한다.</td></tr>
-<tr><td><strong>저장 상태</strong></td><td>저장 완료/진행/실패 상태가 버튼 문구 안에 섞여 흐릿하다.</td><td><code class="token">AutoSaveChip</code>은 idle/saving/saved/error 4상태를 info/success/danger 색상과 spinner로 표시한다. 수동 저장은 toast로 보강한다.</td></tr>
-<tr><td><strong>무료상담</strong></td><td>헤더·퀵·푸터 상담 진입점의 경험이 서로 다르다.</td><td><code class="token">FreeConsultModal</code>로 진입점을 통합한다. 모바일에서는 전화 CTA(<code class="token">tel:</code>)를 추가하고 데스크탑은 확인 단일 액션으로 닫는다.</td></tr>
-</tbody>
-</table>
-
-<h4 id="324-design-system-summary">3.2.4 Design System</h4>
-<table>
-<thead><tr><th style="width:22%">토큰/컴포넌트</th><th style="width:34%">운영 As-Is 문제 정의</th><th>Next.js To-Be 반영 내용</th></tr></thead>
-<tbody>
-<tr><td><strong>Color</strong></td><td>primary pink는 일관되지만 상태·비활성·보조 배경의 체계가 문서화되어 있지 않다.</td><td><code class="token">--color-primary #ff6b7e</code>, hover <code class="token">#ff4f66</code>, success/warning/danger/info와 light background를 <code class="token">@theme</code>에 정의한다.</td></tr>
-<tr><td><strong>Spacing</strong></td><td>운영 폼의 field width, 사진 슬롯, 하단 버튼 위치가 화면별로 개별 조정된 느낌이 강하다.</td><td><code class="token">--spacing-form-content-width</code>(70rem), <code class="token">--spacing-photo-slot-*</code>, <code class="token">--spacing-mobile-action-footer-*</code> 등 화면별 토큰을 단일 출처로 둔다.</td></tr>
-<tr><td><strong>Radius &amp; Shadow</strong></td><td>카드·버튼·퀵메뉴의 입체감이 섹션 구조를 설명하기보다 장식처럼 보인다.</td><td>카드는 8px radius + subtle shadow, modal은 12px radius + <code class="token">--shadow-modal</code>, FAB는 primary shadow로 계층을 구분한다.</td></tr>
-<tr><td><strong>Typography</strong></td><td>운영 모바일에서 큰 타이틀과 폼 라벨이 가까운 위계로 보이며, 본문 helper가 길어질 때 밀도가 높다.</td><td>Pretendard variable 기반 display/title/body/caption/micro scale을 사용하고, 모바일 title은 17px, 필드 라벨은 14px로 제한한다.</td></tr>
-<tr><td><strong>Buttons</strong></td><td>검정 검색 버튼, 분홍 CTA, 흰색 저장 버튼이 목적별 체계로 설명되지 않는다.</td><td><code class="token">ButtonVariant</code>를 primary/secondary/tertiary/danger/icon으로 고정하고, 검색·저장·다음·삭제에 각각 매핑한다.</td></tr>
-<tr><td><strong>Accessibility</strong></td><td>모바일 drawer, accordion, 모달, 진행률의 상태 전달 규칙이 명확하지 않다.</td><td>progressbar aria, accordion <code class="token">aria-expanded</code>, modal <code class="token">role="dialog"</code>/<code class="token">aria-modal</code>, 아이콘 버튼 aria-label, 터치 영역 44px 이상을 정책화한다.</td></tr>
-</tbody>
-</table>
-
-<div class="note success"><span class="ic">✓</span><span><strong>v3 문서화 원칙</strong> · Desktop 1440과 Mobile 375는 화면 구조, Modal &amp; States는 인터랙션 분기, Design System은 토큰·컴포넌트·접근성의 단일 출처를 설명한다. 즉, "운영에서 확인된 문제"와 "Next.js에서 구현된 해결"이 같은 행에서 대응되도록 문서 구조를 재정렬했다.</span></div>
-<hr />
-
 <h2 id="4">4. 개선안</h2>
 <hr />
 
@@ -289,7 +229,7 @@ img { max-width: 100%; height: auto; }
 <h4 id="s-1-p0">S-1. 질문 성격별 섹션 그룹화 <span class="pin p0">P0</span></h4>
 <p><strong>문제 정의</strong> &nbsp;·&nbsp; 20개 섹션이 평면 리스트로 나열되어 사용자가 "어디쯤 작성 중인지" 가늠하기 어렵다.</p>
 <p><strong>검증 결과</strong> &nbsp;·&nbsp; 결혼경험·주소·교회·학력·신체·생활습관·사진이 모두 동일한 비중·간격으로 나열되고, 모바일에서는 스크롤 깊이가 매우 길어져 인지부하가 가중된다.</p>
-<p><strong>개선안 — 6개 의미 그룹화 (Next.js 구현)</strong></p>
+<p><strong>개선안 — 6개 의미 그룹화 (v2 구현)</strong></p>
 <table>
 <thead><tr><th style="width:6%">#</th><th style="width:24%">그룹명</th><th style="width:10%">항목 수</th><th>포함 항목</th></tr></thead>
 <tbody>
@@ -640,7 +580,7 @@ img { max-width: 100%; height: auto; }
 <tr><td>아직 생각이 정리되지 않음</td><td><strong>고민중</strong></td><td>길이 단순화</td></tr>
 </tbody>
 </table>
-<div class="note info"><span class="ic">ⓘ</span><span><strong>데이터 마이그레이션 주의</strong> — 음주·자녀계획은 value 키를 유지하고 label만 변경한다. 모태신앙은 질문 의도에 맞지 않는 제3옵션을 제거하되, Next.js 개선안에서 제거되는 옵션이므로 기존 운영 데이터 영향은 별도 확인이 필요하다.</span></div>
+<div class="note info"><span class="ic">ⓘ</span><span><strong>데이터 마이그레이션 주의</strong> — 음주·자녀계획은 value 키를 유지하고 label만 변경한다. 모태신앙은 질문 의도에 맞지 않는 제3옵션을 제거하되, v2 미출시 옵션이므로 기존 사용자 데이터 영향은 없다.</span></div>
 
 <h4 id="c-2-p2">C-2. 연봉 비공개 체크박스 <span class="pin p2">P2</span></h4>
 <p><strong>문제 정의</strong> &nbsp;·&nbsp; 연봉은 매우 민감한 정보. 현재 셀렉트로 강제 선택해야 하며, 다른 회원에게 공개되는지 모호하다.</p>
@@ -743,8 +683,8 @@ img { max-width: 100%; height: auto; }
 </table>
 <hr />
 
-<h2 id="5-design-system">5. 디자인 시스템 (v3 구현 반영)</h2>
-<p>모킹 파일 <em>05 · Design System</em> 뷰의 20개 항목을 본 기획서 컨텍스트에 맞춰 요약한다. 모든 컴포넌트는 <strong>토큰 → 레이아웃 → 컴포넌트 → 상태 → 접근성</strong> 순으로 적용한다. <strong>v3 구현 기준</strong>: Tailwind v4의 <code class="token">@theme</code> 블록을 단일 출처로 두고, <code class="token">app/globals.css</code> 한 파일에서만 토큰을 정의·확장한다.</p>
+<h2 id="5-design-system">5. 디자인 시스템 (v2 구현 반영)</h2>
+<p>모킹 파일 <em>05 · Design System</em> 뷰의 20개 항목을 본 기획서 컨텍스트에 맞춰 요약한다. 모든 컴포넌트는 <strong>토큰 → 레이아웃 → 컴포넌트 → 상태 → 접근성</strong> 순으로 적용한다. <strong>v2 구현 기준</strong>: Tailwind v4의 <code class="token">@theme</code> 블록을 단일 출처로 두고, <code class="token">app/globals.css</code> 한 파일에서만 토큰을 정의·확장한다.</p>
 
 <h3 id="51-source-of-truth">5.1 Source of Truth (토큰) — <code class="token">app/globals.css</code></h3>
 <p>색상·radius·shadow·spacing·z-index·motion·typography는 모두 <code class="token">@theme</code> 변수로 관리. JSX/CSS에서 리터럴 hex/px 사용 금지. Tailwind 유틸 (<code class="token">bg-primary</code>, <code class="token">rounded-lg</code>, <code class="token">shadow-md</code>) 만 사용.</p>
@@ -760,7 +700,7 @@ img { max-width: 100%; height: auto; }
 <tr><td>Avatar accent</td><td>avatar-accent #25CDA2 (헤더 프로필 이니셜)</td></tr>
 </tbody>
 </table>
-<div class="note info"><span class="ic">ⓘ</span><span><strong>v3 핵심 토큰</strong> · <code class="token">--spacing-photo-slot-*</code> · <code class="token">--spacing-photo-guide-*</code> · <code class="token">--spacing-photobook-slot-*</code> · <code class="token">--spacing-mobile-fab-*</code> · <code class="token">--spacing-form-content-width</code>(70rem) · <code class="token">--spacing-mobile-action-footer-*</code> 등 폼/사진/모바일 전용 spacing 토큰을 추가해 매직넘버를 제거.</span></div>
+<div class="note info"><span class="ic">ⓘ</span><span><strong>v2 추가 토큰</strong> · <code class="token">--spacing-photo-slot-*</code> · <code class="token">--spacing-photo-guide-*</code> · <code class="token">--spacing-photobook-slot-*</code> · <code class="token">--spacing-mobile-fab-*</code> · <code class="token">--spacing-form-content-width</code>(70rem) · <code class="token">--spacing-mobile-action-footer-*</code> 등 폼/사진/모바일 전용 spacing 토큰을 추가해 매직넘버를 제거.</span></div>
 
 <h3 id="52-spacing-radius">5.2 Spacing &amp; Radius</h3>
 <table>
@@ -808,11 +748,11 @@ img { max-width: 100%; height: auto; }
 <tr><td><strong>HighlightBox</strong></td><td><code class="token">app/_components/ui/HighlightBox.tsx</code></td><td>"상세 주소"(선택) 같은 보조 영역 panel · 색상 강조 없음</td></tr>
 <tr><td><strong>InfoBox · InfoBoxIcon</strong></td><td><code class="token">app/_components/ui/InfoBox.tsx</code></td><td>variant info/warning/success/danger · 인라인 안내 메시지</td></tr>
 <tr><td><strong>PhotoSlot / PhotobookThumb</strong></td><td><code class="token">app/_components/ui/PhotoSlot.tsx</code></td><td>variant rep/normal · filled+preview/empty+upload · 대표 badge · ★ 대표 등록 CTA · 포토북 4:3 + − remove on empty</td></tr>
-<tr><td><strong>ProfilePhotoGuide</strong></td><td><code class="token">app/_components/form/base-info/ProfilePhotoGuide.tsx</code></td><td><strong>Next.js 신규</strong> · TIP 박스 + 좋은 사진 3 / 나쁜 사진 3 · 1430px+ 사진 슬롯 옆, 그 이하 상단</td></tr>
+<tr><td><strong>ProfilePhotoGuide</strong></td><td><code class="token">app/_components/form/base-info/ProfilePhotoGuide.tsx</code></td><td><strong>v2 신규</strong> · TIP 박스 + 좋은 사진 3 / 나쁜 사진 3 · 1430px+ 사진 슬롯 옆, 그 이하 상단</td></tr>
 <tr><td><strong>SectionAnchor</strong></td><td><code class="token">app/_components/form/base-info/SectionAnchor.tsx</code></td><td>섹션 카드 시작 anchor (scroll-margin) · 검증 모달의 scroll target</td></tr>
 <tr><td><strong>ConfirmModal</strong></td><td><code class="token">app/_components/modals/ConfirmModal.tsx</code></td><td>width sm(440)/md(480)/lg(560) · variant primary/danger · cancelLabel false 시 단일 버튼</td></tr>
 <tr><td><strong>ChurchSearchModal</strong></td><td><code class="token">app/_components/modals/ChurchSearchModal.tsx</code></td><td>560px · 검색 → EmptyState → inline 가입 폼 → submitted success</td></tr>
-<tr><td><strong>FreeConsultModal</strong></td><td><code class="token">app/_components/web-shell/FreeConsultModal.tsx</code></td><td><strong>Next.js 신규</strong> · 1280px 미만에서 통화하기 CTA(<code class="token">tel:</code>) 추가, 그 이상에서는 확인 단일 버튼</td></tr>
+<tr><td><strong>FreeConsultModal</strong></td><td><code class="token">app/_components/web-shell/FreeConsultModal.tsx</code></td><td><strong>v2 신규</strong> · 1280px 미만에서 통화하기 CTA(<code class="token">tel:</code>) 추가, 그 이상에서는 확인 단일 버튼</td></tr>
 <tr><td><strong>QuickRail</strong></td><td><code class="token">app/_components/web-shell/QuickRail.tsx</code></td><td>데스크탑 우측 fixed rail · 6개 항목(무료상담·자녀결혼·업그레이드·오시는길·프로필컨설팅·33법칙) + 맨위로 · frame-end dock</td></tr>
 <tr><td><strong>MobileQuickFab</strong></td><td><code class="token">app/_components/web-shell/MobileQuickFab.tsx</code></td><td>+↔✕ 토글 · 메뉴 항목 6개 stack (위쪽) · ESC/리사이즈로 닫힘</td></tr>
 <tr><td><strong>Footer</strong></td><td><code class="token">app/_components/web-shell/Footer.tsx</code></td><td>desktop 2 col + mobile single column · 상담 전화 직접 노출 · 회사 정보</td></tr>
@@ -870,7 +810,7 @@ img { max-width: 100%; height: auto; }
 
 <h3 id="59-layout-contract">5.8 Layout Contract</h3>
 <table>
-<thead><tr><th style="width:22%">영역</th><th>규칙 (v3 구현)</th></tr></thead>
+<thead><tr><th style="width:22%">영역</th><th>규칙 (v2 구현)</th></tr></thead>
 <tbody>
 <tr><td>Shell breakpoint</td><td><strong>1280px (xl)</strong>이 핵심 전환점. xl 이상 = wide desktop, xl 미만 = mobile-like shell (앱 헤더 / 햄버거 드로어 / chip stepper / FAB)</td></tr>
 <tr><td>Desktop wide (xl+)</td><td>max-width 1440px · 3열 grid <code class="token">172px(sidebar) + 1fr(content) + 68px(rail placeholder)</code> · 본문 폼은 <code class="token">--spacing-form-content-width</code>(70rem) cap</td></tr>
@@ -945,7 +885,7 @@ img { max-width: 100%; height: auto; }
 </tbody>
 </table>
 
-<h3 id="64">6.4 "다음" 클릭 (검증 모달 플로우 — I-8)</h3>
+<h3 id="64">6.4 "다음" 클릭 (v2 검증 모달 플로우 — I-8)</h3>
 <table>
 <thead><tr><th style="width:25%">분기</th><th>처리</th></tr></thead>
 <tbody>
@@ -1039,8 +979,8 @@ img { max-width: 100%; height: auto; }
 </table>
 <hr />
 
-<h2 id="8-impl">8.1 구현 현황 (v3 Next.js 16)</h2>
-<p>본 페이지에 정의된 27개 항목 중 Next.js 구현 완료된 컴포넌트 및 파일을 한 표로 정리. <strong>모든 변경은 docs/cmate-redesign-mockup.html과 동일한 토큰·레이아웃·인터랙션 규칙</strong>을 따른다.</p>
+<h2 id="8-impl">8.1 구현 현황 (v2 Next.js 16)</h2>
+<p>본 페이지에 정의된 27개 항목 중 v2 구현 완료된 컴포넌트 및 파일을 한 표로 정리. <strong>모든 변경은 docs/cmate-redesign-mockup.html과 동일한 토큰·레이아웃·인터랙션 규칙</strong>을 따른다.</p>
 <table>
 <thead><tr><th style="width:10%">레이어</th><th style="width:36%">실제 코드</th><th>요약</th></tr></thead>
 <tbody>
@@ -1055,7 +995,7 @@ img { max-width: 100%; height: auto; }
 </tbody>
 </table>
 
-<h3 id="8-2-key-derivations">8.2 Next.js에서 새로 도입된 컨벤션</h3>
+<h3 id="8-2-key-derivations">8.2 v2에서 새로 도입된 컨벤션</h3>
 <ul>
 <li><strong>RSC 기본</strong> — 모든 페이지/레이아웃은 Server Component. 인터랙션이 필요한 leaf 컴포넌트에만 <code class="token">'use client'</code> (예: BaseInfoForm, Header mega menu, ConfirmModal)</li>
 <li><strong>Korean labels in JSX</strong> — i18n key extraction 미적용. 라벨 변경은 PR로 직접</li>
@@ -1094,9 +1034,9 @@ img { max-width: 100%; height: auto; }
 <tr><td><strong>B-3</strong></td><td>체형 가이드</td><td><span class="pin p3">P3</span></td><td>작음</td><td>없음</td></tr>
 <tr><td><strong>B-4</strong></td><td>신장 suffix</td><td><span class="pin p3">P3</span></td><td>작음</td><td>없음</td></tr>
 <tr><td><strong>B-5</strong></td><td>자동저장 chip</td><td><span class="pin p2">P2</span></td><td>작음</td><td>없음</td></tr>
-<tr><td><strong>I-8</strong></td><td>검증 모달 (Next.js 신규)</td><td><span class="pin p1">P1</span></td><td>중</td><td>없음</td></tr>
-<tr><td><strong>I-9</strong></td><td>사진 가이드 aside (Next.js 신규)</td><td><span class="pin p2">P2</span></td><td>중</td><td>없음</td></tr>
-<tr><td><strong>X-1</strong></td><td>무료상담 통합 모달 (Next.js 신규)</td><td><span class="pin p2">P2</span></td><td>작음</td><td>없음</td></tr>
+<tr><td><strong>I-8</strong></td><td>검증 모달 (v2 신규)</td><td><span class="pin p1">P1</span></td><td>중</td><td>없음</td></tr>
+<tr><td><strong>I-9</strong></td><td>사진 가이드 aside (v2 신규)</td><td><span class="pin p2">P2</span></td><td>중</td><td>없음</td></tr>
+<tr><td><strong>X-1</strong></td><td>무료상담 통합 모달 (v2 신규)</td><td><span class="pin p2">P2</span></td><td>작음</td><td>없음</td></tr>
 </tbody>
 </table>
 <hr />
@@ -1122,12 +1062,12 @@ img { max-width: 100%; height: auto; }
 </table>
 <hr />
 
-<h2 id="11-appendix-method">11. 부록 — 사용한 도구 및 분석 방법</h2>
+<h2 id="11">11. 부록 — 사용한 도구 및 분석 방법</h2>
 <ul>
 <li><strong>직접 사용 분석1</strong> — claude.ai를 활용한(opus4.7) Playwright 자동화로 c-mate.co.kr/personal-info/base-info 에 <code class="token">seunglee89</code> 계정으로 로그인 후 데스크탑(1440×900) · 모바일(375×812) 양 뷰포트에서 전 섹션 스크롤·클릭·입력 검토</li>
 <li><strong>직접 사용 분석2</strong> — 직접 사이트를 사용해보며 문제점 및 개선점을 작성함. 이후에 claude.ai(opus4.7)를 통해 "직접 사용 분석1"에서 분석한 결과와 비교 분석함.</li>
 <li><strong>DOM 인스펙션</strong> — 53개 input/textarea/select, 11개 helper text, 20개 섹션 헤딩, 6개 fab, 5단계 stepper 식별</li>
-<li><strong>재설계 모킹</strong> — <code class="token">cmate-redesign-mockup.html</code> · Desktop 1440 · Mobile 375 · Modal &amp; States · Design System 4개 뷰로 본 기획서의 모든 항목을 시각화</li>
+<li><strong>재설계 모킹</strong> — <code class="token">cmate-redesign-mockup.html</code> · Desktop 1440 · Mobile 375 · Modals &amp; States · Design System 4개 뷰로 본 기획서의 모든 항목을 시각화</li>
 <li><strong>외부 레퍼런스</strong> — Nielsen Norman <em>Form Design Best Practices</em> (2024), Baymard <em>Form Usability Report</em> (2024), WCAG 2.2 AA, Apple HIG, Linear/Notion 디자인 패턴</li>
 </ul>
 <hr />

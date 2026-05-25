@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import type { ReactNode } from "react";
+import { ChevronLeft, ChevronRight, XIcon } from "@/app/_components/ui/icons";
 
 type PhotoSlotProps = {
   variant: "rep" | "normal";
@@ -40,40 +41,6 @@ function RepresentativeBadge(): ReactNode {
         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
       </svg>
     </span>
-  );
-}
-
-function ChevronLeft(): ReactNode {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2.5}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="w-3.5 h-3.5"
-      aria-hidden="true"
-    >
-      <polyline points="15 18 9 12 15 6" />
-    </svg>
-  );
-}
-
-function ChevronRight(): ReactNode {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2.5}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="w-3.5 h-3.5"
-      aria-hidden="true"
-    >
-      <polyline points="9 18 15 12 9 6" />
-    </svg>
   );
 }
 
@@ -122,18 +89,7 @@ export function PhotoSlot({
               aria-label="사진 삭제"
               className="w-7 h-7 rounded-full flex items-center justify-center bg-black/40 text-white"
             >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
-                className="w-3.5 h-3.5"
-                aria-hidden="true"
-              >
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
+              <XIcon />
             </button>
           )}
         </div>
@@ -239,18 +195,7 @@ export function PhotobookThumb({
             aria-label="사진 삭제"
             className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full flex items-center justify-center bg-black/40 text-white"
           >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              className="w-3 h-3"
-              aria-hidden="true"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <XIcon className="w-3 h-3" />
           </button>
         )}
         {(onMoveLeft || onMoveRight) && (
@@ -262,18 +207,7 @@ export function PhotobookThumb({
                 aria-label="이전으로 이동"
                 className="w-6 h-6 rounded-full flex items-center justify-center bg-black/40 text-white shrink-0"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-3 h-3"
-                  aria-hidden="true"
-                >
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
+                <ChevronLeft className="w-3 h-3" />
               </button>
             ) : (
               <span className="w-6 h-6 shrink-0" />
@@ -285,18 +219,7 @@ export function PhotobookThumb({
                 aria-label="다음으로 이동"
                 className="w-6 h-6 rounded-full flex items-center justify-center bg-black/40 text-white shrink-0"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-3 h-3"
-                  aria-hidden="true"
-                >
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
+                <ChevronRight className="w-3 h-3" />
               </button>
             ) : (
               <span className="w-6 h-6 shrink-0" />

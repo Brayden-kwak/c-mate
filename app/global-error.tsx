@@ -20,7 +20,7 @@ export default function GlobalError({
           <p className="text-text-secondary mb-6">
             예상치 못한 문제가 발생했습니다. 다시 시도해 주세요.
           </p>
-          <Button variant="primary" size="lg" onClick={() => unstable_retry()}>
+          <Button variant="primary" size="lg" onClick={unstable_retry}>
             다시 시도
           </Button>
         </div>

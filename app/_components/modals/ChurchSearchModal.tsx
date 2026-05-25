@@ -154,7 +154,7 @@ export function ChurchSearchModal({
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="교회/교단명 검색"
+                placeholder="교회/교단명 검색 ('온누리 교회' 입력 시 임시 검색됩니다)"
                 prefix={
                   <span className="text-text-tertiary shrink-0 mr-0.5">🔍</span>
                 }

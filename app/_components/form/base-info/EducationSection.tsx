@@ -14,6 +14,7 @@ import {
   type DropdownOption,
 } from "@/app/_components/ui/DropdownSelect";
 import { Checkbox } from "@/app/_components/ui/Checkbox";
+import { TrashIcon } from "@/app/_components/ui/icons";
 
 const SALARY_OPTIONS: DropdownOption[] = [
   { value: "3000-under", label: "3,000만원 미만" },
@@ -30,15 +31,16 @@ import {
   type MissingRequiredField,
   type ProgressSection,
 } from "./types";
+import type { EduRow, EducationSectionData } from "@/app/_lib/base-info";
 
 const SECTION_EDUCATION = BASE_INFO_SECTION_ANCHOR_ID.education;
-
-type EduRow = { id: number; degree: string; school: string; major: string };
 
 type Props = {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
+  onDataChange?: (data: EducationSectionData) => void;
+  initialData?: EducationSectionData;
 };
 
 const DEGREE_ROWS: Record<string, string[]> = {
@@ -54,21 +56,25 @@ export const EducationSection = ({
   onSave,
   onProgressChange,
   onMissingFieldsChange,
+  onDataChange,
+  initialData,
 }: Props) => {
-  const [education, setEducation] = useState("");
-  const [eduRows, setEduRows] = useState<EduRow[]>([]);
+  const [education, setEducation] = useState(initialData?.education ?? "");
+  const [eduRows, setEduRows] = useState<EduRow[]>(initialData?.eduRows ?? []);
   const [pendingEduChange, setPendingEduChange] = useState<{
     newDegree: string;
     affected: EduRow[];
   } | null>(null);
-  const [job, setJob] = useState("");
+  const [job, setJob] = useState(initialData?.job ?? "");
   const [jobModalOpen, setJobModalOpen] = useState(false);
   const [jobQuery, setJobQuery] = useState("");
-  const [workplace, setWorkplace] = useState("");
+  const [workplace, setWorkplace] = useState(initialData?.workplace ?? "");
   const [schoolModalRowId, setSchoolModalRowId] = useState<number | null>(null);
   const [schoolQuery, setSchoolQuery] = useState("");
-  const [salary, setSalary] = useState("");
-  const [salaryHidden, setSalaryHidden] = useState(false);
+  const [salary, setSalary] = useState(initialData?.salary ?? "");
+  const [salaryHidden, setSalaryHidden] = useState(
+    initialData?.salaryHidden ?? false,
+  );
   const nextId = useRef(10);
   const trimmedSchoolQuery = schoolQuery.trim();
   const trimmedJobQuery = jobQuery.trim();
@@ -112,6 +118,17 @@ export const EducationSection = ({
     salaryHidden,
     onMissingFieldsChange,
   ]);
+
+  useEffect(() => {
+    onDataChange?.({
+      education,
+      eduRows,
+      job,
+      workplace,
+      salary,
+      salaryHidden,
+    });
+  }, [education, eduRows, job, workplace, salary, salaryHidden, onDataChange]);
 
   const applyDegreeChange = (newDegree: string) => {
     const newTags = DEGREE_ROWS[newDegree] ?? [];
@@ -216,18 +233,7 @@ export const EducationSection = ({
               aria-label={`${row.degree} 학력 삭제`}
               className="w-9 h-9 border border-border rounded-[6px] bg-surface flex items-center justify-center hover:bg-subtle shrink-0 transition-colors duration-fast ease-standard"
             >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="w-4 h-4 text-danger"
-                aria-hidden="true"
-              >
-                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-              </svg>
+              <TrashIcon className="w-4 h-4 text-danger" />
             </button>
           ) : (
             <div className="w-9 h-9 shrink-0" />
@@ -439,6 +445,14 @@ export const EducationSection = ({
           />
         </MobileField>
         <MobileField label="연봉" required>
+          <Checkbox
+            label="연봉 비공개"
+            checked={salaryHidden}
+            onChange={(e) => {
+              setSalaryHidden(e.target.checked);
+              onSave();
+            }}
+          />
           <DropdownSelect
             value={salary}
             onChange={(v) => {
@@ -449,17 +463,8 @@ export const EducationSection = ({
             placeholder="연봉 구간 선택"
             aria-label="연봉 구간"
             aria-required
+            disabled={salaryHidden}
           />
-          <div className="py-2">
-            <Checkbox
-              label="연봉 비공개"
-              checked={salaryHidden}
-              onChange={(e) => {
-                setSalaryHidden(e.target.checked);
-                onSave();
-              }}
-            />
-          </div>
           <InfoBox>
             비공개 시 다른 회원에게 노출되지 않으며, 매니저 매칭에만 활용됩니다.
           </InfoBox>
@@ -500,18 +505,7 @@ export const EducationSection = ({
         <div className="flex flex-col gap-2">
           {pendingEduChange?.affected.map((row) => (
             <div key={row.id} className="flex items-center gap-2 text-[13px]">
-              <svg
-                viewBox="0 0 24 24"
-                className="w-3.5 h-3.5 text-danger shrink-0"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-              </svg>
+              <TrashIcon className="w-3.5 h-3.5 text-danger shrink-0" />
               <span className="bg-subtle border border-border rounded-[4px] px-1.5 py-0.5 text-[11px] font-bold shrink-0">
                 {row.degree}
               </span>

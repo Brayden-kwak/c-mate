@@ -40,16 +40,46 @@ import {
   type ProgressMap,
   type ProgressSection,
 } from "@/app/_components/form/base-info/types";
+import { apiFetch } from "@/app/_lib/api";
+import { presignAndUpload } from "@/app/_lib/upload";
+import type {
+  AppearanceSectionData,
+  BaseInfoPayload,
+  FaithSectionData,
+  FamilySectionData,
+  LifestyleSectionData,
+  PhotoSectionData,
+} from "@/app/_lib/base-info";
 
 const SECTION_FAMILY = BASE_INFO_SECTION_ANCHOR_ID.family;
 const SECTION_FAITH = BASE_INFO_SECTION_ANCHOR_ID.faith;
 const SECTION_APPEARANCE = BASE_INFO_SECTION_ANCHOR_ID.appearance;
 const SECTION_LIFESTYLE = BASE_INFO_SECTION_ANCHOR_ID.lifestyle;
 const SECTION_PHOTO = BASE_INFO_SECTION_ANCHOR_ID.photo;
-type PhotoItem = { filled: boolean; previewUrl?: string; description?: string };
+type PhotoItem = {
+  filled: boolean;
+  previewUrl?: string;
+  key?: string;
+  description?: string;
+};
 const REQUIRED_PROFILE_PHOTOS = 2;
 const PHOTO_SECTION_PROGRESS_TOTAL = 2;
 const MAX_PHOTOBOOK_SLOTS = 8;
+
+function ResponsiveView({
+  desktop,
+  mobile,
+}: {
+  desktop: ReactNode;
+  mobile: ReactNode;
+}): ReactNode {
+  return (
+    <>
+      <div className="hidden xl:block">{desktop}</div>
+      <div className="xl:hidden">{mobile}</div>
+    </>
+  );
+}
 
 /* ===== Style groups ===== */
 const STYLE_SELECTION_MAX = 5;
@@ -100,13 +130,14 @@ const AutoSaveChip = ({ state }: { state: AutoSaveState }) => {
   if (state === "saved") {
     return (
       <span className="inline-flex items-center gap-1.5 bg-success-light text-success px-3 py-1.5 rounded-pill text-[13px] font-medium before:content-[''] before:w-[7px] before:h-[7px] before:rounded-full before:bg-success shrink-0">
-        방금 자동 저장됨
+        저장됨
       </span>
     );
   }
   if (state === "saving") {
     return (
-      <span className="inline-flex items-center gap-1.5 bg-subtle text-text-secondary px-3 py-1.5 rounded-pill text-[13px] font-medium shrink-0">
+      <span className="inline-flex items-center gap-1.5 bg-info-light text-info px-3 py-1.5 rounded-pill text-[13px] font-medium shrink-0">
+        <span className="chip-spinner" />
         저장 중…
       </span>
     );
@@ -126,15 +157,23 @@ const FamilySection = ({
   onSave,
   onProgressChange,
   onMissingFieldsChange,
+  onDataChange,
+  initialData,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
+  onDataChange?: (data: FamilySectionData) => void;
+  initialData?: FamilySectionData;
 }) => {
-  const [marriageExp, setMarriageExp] = useState("");
-  const [region, setRegion] = useState("");
-  const [address, setAddress] = useState("");
-  const [addressDetail, setAddressDetail] = useState("");
+  const [marriageExp, setMarriageExp] = useState(
+    initialData?.marriageExp ?? "",
+  );
+  const [region, setRegion] = useState(initialData?.region ?? "");
+  const [address, setAddress] = useState(initialData?.address ?? "");
+  const [addressDetail, setAddressDetail] = useState(
+    initialData?.addressDetail ?? "",
+  );
   const [addrModalOpen, setAddrModalOpen] = useState(false);
   const [addrQuery, setAddrQuery] = useState("");
   const complete =
@@ -150,6 +189,10 @@ const FamilySection = ({
     if (!address.trim()) missing.push({ id: SECTION_FAMILY, label: "주소" });
     onMissingFieldsChange(missing);
   }, [marriageExp, address, onMissingFieldsChange]);
+
+  useEffect(() => {
+    onDataChange?.({ marriageExp, region, address, addressDetail });
+  }, [marriageExp, region, address, addressDetail, onDataChange]);
 
   const applyAddress = () => {
     if (addrQuery.trim()) {
@@ -299,8 +342,7 @@ const FamilySection = ({
 
   return (
     <>
-      <div className="hidden xl:block">{desktopContent}</div>
-      <div className="xl:hidden">{mobileContent}</div>
+      <ResponsiveView desktop={desktopContent} mobile={mobileContent} />
 
       {/* Address search modal */}
       <ConfirmModal
@@ -338,16 +380,22 @@ const FaithSection = ({
   onSave,
   onProgressChange,
   onMissingFieldsChange,
+  onDataChange,
+  initialData,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
+  onDataChange?: (data: FaithSectionData) => void;
+  initialData?: FaithSectionData;
 }) => {
-  const [church, setChurch] = useState("");
-  const [denom, setDenom] = useState("");
-  const [pastor, setPastor] = useState("");
-  const [churchAddr, setChurchAddr] = useState("");
-  const [nativeFaith, setNativeFaith] = useState("");
+  const [church, setChurch] = useState(initialData?.church ?? "");
+  const [denom, setDenom] = useState(initialData?.denom ?? "");
+  const [pastor, setPastor] = useState(initialData?.pastor ?? "");
+  const [churchAddr, setChurchAddr] = useState(initialData?.churchAddr ?? "");
+  const [nativeFaith, setNativeFaith] = useState(
+    initialData?.nativeFaith ?? "",
+  );
   const [churchSearchOpen, setChurchSearchOpen] = useState(false);
   const complete =
     Number(Boolean(church.trim() && denom.trim())) +
@@ -371,6 +419,10 @@ const FaithSection = ({
       missing.push({ id: SECTION_FAITH, label: "모태신앙 여부" });
     onMissingFieldsChange(missing);
   }, [church, denom, pastor, churchAddr, nativeFaith, onMissingFieldsChange]);
+
+  useEffect(() => {
+    onDataChange?.({ church, denom, pastor, churchAddr, nativeFaith });
+  }, [church, denom, pastor, churchAddr, nativeFaith, onDataChange]);
 
   const desktopContent = (
     <SectionAnchor id={SECTION_FAITH}>
@@ -478,8 +530,7 @@ const FaithSection = ({
 
   return (
     <>
-      <div className="hidden xl:block">{desktopContent}</div>
-      <div className="xl:hidden">{mobileContent}</div>
+      <ResponsiveView desktop={desktopContent} mobile={mobileContent} />
 
       <ChurchSearchModal
         open={churchSearchOpen}
@@ -501,18 +552,31 @@ const AppearanceSection = ({
   onSave,
   onProgressChange,
   onMissingFieldsChange,
+  onDataChange,
+  initialData,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
+  onDataChange?: (data: AppearanceSectionData) => void;
+  initialData?: AppearanceSectionData;
 }) => {
-  const [height, setHeight] = useState("");
-  const [bloodType, setBloodType] = useState("");
-  const [bodyType, setBodyType] = useState("");
+  const [height, setHeight] = useState(initialData?.height ?? "");
+  const [bloodType, setBloodType] = useState(initialData?.bloodType ?? "");
+  const [bodyType, setBodyType] = useState(initialData?.bodyType ?? "");
   const [styleValue, setStyleValue] = useState<Record<string, string[]>>({
-    "외모 스타일": [],
-    "성격/기질": [],
-    성품: [],
+    "외모 스타일":
+      initialData?.styles.filter((style) =>
+        STYLE_GROUPS[0]?.options.includes(style),
+      ) ?? [],
+    "성격/기질":
+      initialData?.styles.filter((style) =>
+        STYLE_GROUPS[1]?.options.includes(style),
+      ) ?? [],
+    성품:
+      initialData?.styles.filter((style) =>
+        STYLE_GROUPS[2]?.options.includes(style),
+      ) ?? [],
   });
   const selectedStyles = Object.values(styleValue).reduce(
     (sum, values) => sum + values.length,
@@ -537,6 +601,11 @@ const AppearanceSection = ({
       missing.push({ id: SECTION_APPEARANCE, label: "스타일" });
     onMissingFieldsChange(missing);
   }, [height, bloodType, bodyType, selectedStyles, onMissingFieldsChange]);
+
+  useEffect(() => {
+    const styles = Object.values(styleValue).flat();
+    onDataChange?.({ height, bloodType, bodyType, styles });
+  }, [height, bloodType, bodyType, styleValue, onDataChange]);
 
   const styleCountBadge = (
     <CountPill done={selectedStyles} total={STYLE_SELECTION_MAX} />
@@ -680,12 +749,7 @@ const AppearanceSection = ({
     </SectionAnchor>
   );
 
-  return (
-    <>
-      <div className="hidden xl:block">{desktopContent}</div>
-      <div className="xl:hidden">{mobileContent}</div>
-    </>
-  );
+  return <ResponsiveView desktop={desktopContent} mobile={mobileContent} />;
 };
 
 /* ===== Section 5 ===== */
@@ -693,14 +757,20 @@ const LifestyleSection = ({
   onSave,
   onProgressChange,
   onMissingFieldsChange,
+  onDataChange,
+  initialData,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
+  onDataChange?: (data: LifestyleSectionData) => void;
+  initialData?: LifestyleSectionData;
 }) => {
-  const [drinking, setDrinking] = useState("");
-  const [smoking, setSmoking] = useState("");
-  const [childrenPlan, setChildrenPlan] = useState("");
+  const [drinking, setDrinking] = useState(initialData?.drinking ?? "");
+  const [smoking, setSmoking] = useState(initialData?.smoking ?? "");
+  const [childrenPlan, setChildrenPlan] = useState(
+    initialData?.childrenPlan ?? "",
+  );
   const complete =
     Number(Boolean(drinking)) +
     Number(Boolean(smoking)) +
@@ -718,6 +788,10 @@ const LifestyleSection = ({
       missing.push({ id: SECTION_LIFESTYLE, label: "자녀 계획" });
     onMissingFieldsChange(missing);
   }, [drinking, smoking, childrenPlan, onMissingFieldsChange]);
+
+  useEffect(() => {
+    onDataChange?.({ drinking, smoking, childrenPlan });
+  }, [drinking, smoking, childrenPlan, onDataChange]);
 
   const desktopContent = (
     <SectionAnchor id={SECTION_LIFESTYLE}>
@@ -826,12 +900,7 @@ const LifestyleSection = ({
     </SectionAnchor>
   );
 
-  return (
-    <>
-      <div className="hidden xl:block">{desktopContent}</div>
-      <div className="xl:hidden">{mobileContent}</div>
-    </>
-  );
+  return <ResponsiveView desktop={desktopContent} mobile={mobileContent} />;
 };
 
 /* ===== Section 6 ===== */
@@ -839,24 +908,70 @@ const PhotoSection = ({
   onSave,
   onProgressChange,
   onMissingFieldsChange,
+  onDataChange,
+  initialData,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
+  onDataChange?: (data: PhotoSectionData) => void;
+  initialData?: PhotoSectionData;
 }) => {
-  const [photos, setPhotos] = useState<PhotoItem[]>([
-    { filled: false },
-    { filled: false },
-    { filled: false },
-    { filled: false },
-  ]);
-  const [pbPhotos, setPbPhotos] = useState<PhotoItem[]>([{ filled: false }]);
+  const [photos, setPhotos] = useState<PhotoItem[]>(() => {
+    const saved =
+      initialData?.photos.map((photo) => ({
+        filled: true,
+        key: photo.key,
+        description: photo.description,
+      })) ?? [];
+    return [...saved, ...Array<PhotoItem>(4).fill({ filled: false })].slice(
+      0,
+      4,
+    );
+  });
+  const [pbPhotos, setPbPhotos] = useState<PhotoItem[]>(() => {
+    const saved =
+      initialData?.pbPhotos.map((photo) => ({
+        filled: true,
+        key: photo.key,
+        description: photo.description,
+      })) ?? [];
+    return saved.length > 0 ? saved : [{ filled: false }];
+  });
+  const blobUrlsRef = useRef<Set<string>>(new Set());
+  const photoUploadSeqRef = useRef<number[]>([0, 0, 0, 0]);
+  const pbUploadSeqRef = useRef<Record<number, number>>({});
+
+  const createBlobUrl = (file: File): string => {
+    const url = URL.createObjectURL(file);
+    blobUrlsRef.current.add(url);
+    return url;
+  };
+
+  const revokeBlobUrl = (url: string | undefined) => {
+    if (!url?.startsWith("blob:")) return;
+    URL.revokeObjectURL(url);
+    blobUrlsRef.current.delete(url);
+  };
+
+  useEffect(() => {
+    const urls = blobUrlsRef.current;
+    return () => {
+      urls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
   const [deleteModal, setDeleteModal] = useState<{ index: number } | null>(
     null,
   );
   const [pbDeleteModal, setPbDeleteModal] = useState<{ index: number } | null>(
     null,
   );
+  const [uploading, setUploading] = useState<boolean[]>([
+    false,
+    false,
+    false,
+    false,
+  ]);
   const pbCarouselRef = useRef<HTMLDivElement>(null);
   const prevPbLengthRef = useRef(1);
 
@@ -887,6 +1002,16 @@ const PhotoSection = ({
   }, [filledCount, onMissingFieldsChange]);
 
   useEffect(() => {
+    const photoData = photos
+      .filter((p) => p.filled && p.key)
+      .map((p) => ({ key: p.key!, description: p.description }));
+    const pbData = pbPhotos
+      .filter((p) => p.filled && p.key)
+      .map((p) => ({ key: p.key!, description: p.description }));
+    onDataChange?.({ photos: photoData, pbPhotos: pbData });
+  }, [photos, pbPhotos, onDataChange]);
+
+  useEffect(() => {
     if (pbPhotos.length > prevPbLengthRef.current) {
       const el = pbCarouselRef.current;
       if (el) el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
@@ -900,6 +1025,9 @@ const PhotoSection = ({
 
   const confirmDelete = () => {
     if (!deleteModal) return;
+    photoUploadSeqRef.current[deleteModal.index] =
+      (photoUploadSeqRef.current[deleteModal.index] ?? 0) + 1;
+    revokeBlobUrl(photos[deleteModal.index]?.previewUrl);
     setPhotos((prev) => {
       const next = prev.map((photo, i) =>
         i === deleteModal.index ? { filled: false } : photo,
@@ -918,6 +1046,9 @@ const PhotoSection = ({
 
   const confirmPbDelete = () => {
     if (!pbDeleteModal) return;
+    pbUploadSeqRef.current[pbDeleteModal.index] =
+      (pbUploadSeqRef.current[pbDeleteModal.index] ?? 0) + 1;
+    revokeBlobUrl(pbPhotos[pbDeleteModal.index]?.previewUrl);
     setPbPhotos((prev) =>
       prev.map((photo, i) =>
         i === pbDeleteModal.index ? { filled: false } : photo,
@@ -927,24 +1058,71 @@ const PhotoSection = ({
     onSave();
   };
 
-  const handleUpload = (index: number, file: File) => {
-    const previewUrl = URL.createObjectURL(file);
+  const handleUpload = async (index: number, file: File) => {
+    const requestId = (photoUploadSeqRef.current[index] ?? 0) + 1;
+    photoUploadSeqRef.current[index] = requestId;
+    const previousPhoto = photos[index] ?? { filled: false };
+    const previewUrl = createBlobUrl(file);
     setPhotos((prev) =>
-      prev.map((photo, i) =>
-        i === index ? { ...photo, filled: true, previewUrl } : photo,
-      ),
+      prev.map((photo, i) => (i === index ? { ...photo, previewUrl } : photo)),
     );
-    onSave();
+    setUploading((prev) => prev.map((v, i) => (i === index ? true : v)));
+    try {
+      const key = await presignAndUpload(file);
+      if (photoUploadSeqRef.current[index] !== requestId) {
+        revokeBlobUrl(previewUrl);
+        return;
+      }
+      revokeBlobUrl(previousPhoto.previewUrl);
+      setPhotos((prev) =>
+        prev.map((photo, i) =>
+          i === index ? { ...photo, filled: true, key } : photo,
+        ),
+      );
+      onSave();
+    } catch {
+      revokeBlobUrl(previewUrl);
+      if (photoUploadSeqRef.current[index] === requestId) {
+        setPhotos((prev) =>
+          prev.map((photo, i) => (i === index ? previousPhoto : photo)),
+        );
+      }
+    } finally {
+      if (photoUploadSeqRef.current[index] === requestId) {
+        setUploading((prev) => prev.map((v, i) => (i === index ? false : v)));
+      }
+    }
   };
 
-  const handlePbUpload = (index: number, file: File) => {
-    const previewUrl = URL.createObjectURL(file);
+  const handlePbUpload = async (index: number, file: File) => {
+    const requestId = (pbUploadSeqRef.current[index] ?? 0) + 1;
+    pbUploadSeqRef.current[index] = requestId;
+    const previousPhoto = pbPhotos[index] ?? { filled: false };
+    const previewUrl = createBlobUrl(file);
     setPbPhotos((prev) =>
-      prev.map((photo, i) =>
-        i === index ? { ...photo, filled: true, previewUrl } : photo,
-      ),
+      prev.map((photo, i) => (i === index ? { ...photo, previewUrl } : photo)),
     );
-    onSave();
+    try {
+      const key = await presignAndUpload(file);
+      if (pbUploadSeqRef.current[index] !== requestId) {
+        revokeBlobUrl(previewUrl);
+        return;
+      }
+      revokeBlobUrl(previousPhoto.previewUrl);
+      setPbPhotos((prev) =>
+        prev.map((photo, i) =>
+          i === index ? { ...photo, filled: true, key } : photo,
+        ),
+      );
+      onSave();
+    } catch {
+      revokeBlobUrl(previewUrl);
+      if (pbUploadSeqRef.current[index] === requestId) {
+        setPbPhotos((prev) =>
+          prev.map((photo, i) => (i === index ? previousPhoto : photo)),
+        );
+      }
+    }
   };
 
   const updatePbDescription = (index: number, description: string) => {
@@ -1012,6 +1190,7 @@ const PhotoSection = ({
           key={i}
           variant={i === 0 ? "rep" : "normal"}
           filled={photo.filled}
+          loading={uploading[i]}
           previewUrl={photo.previewUrl}
           onDelete={photo.filled ? () => requestDelete(i) : undefined}
           onSetRepresentative={
@@ -1045,6 +1224,7 @@ const PhotoSection = ({
           <PhotoSlot
             variant={i === 0 ? "rep" : "normal"}
             filled={photo.filled}
+            loading={uploading[i]}
             previewUrl={photo.previewUrl}
             onDelete={photo.filled ? () => requestDelete(i) : undefined}
             onSetRepresentative={
@@ -1246,7 +1426,17 @@ const PhotoSection = ({
         progress={photoSectionProgress}
         bodyClassName="pb-mobile-photo-card-bottom"
       >
-        <MobileField label="프로필 사진" required>
+        <MobileField
+          label="프로필 사진"
+          required
+          desc={
+            <>
+              <span className="font-semibold text-primary">2장 필수 등록</span>
+              <br />
+              나를 잘 표현할 수 있는 사진을 업로드 해주세요.
+            </>
+          }
+        >
           {mobilePhotoGuide}
           {mobilePhotoCarousel}
         </MobileField>
@@ -1281,8 +1471,7 @@ const PhotoSection = ({
 
   return (
     <>
-      <div className="hidden xl:block">{desktopContent}</div>
-      <div className="xl:hidden">{mobileContent}</div>
+      <ResponsiveView desktop={desktopContent} mobile={mobileContent} />
 
       <ConfirmModal
         open={!!deleteModal}
@@ -1340,14 +1529,36 @@ const PhotoSection = ({
 };
 
 /* ===== d-footer ===== */
-const DFooter = ({ autoSave }: { autoSave: AutoSaveState }) => {
+const DFooter = ({
+  autoSave,
+  onManualSave,
+}: {
+  autoSave: AutoSaveState;
+  onManualSave: () => Promise<boolean>;
+}) => {
   const { showToast } = useToast();
   const [desktopStyle, setDesktopStyle] = useState<CSSProperties>({});
   const [synced, setSynced] = useState(false);
 
-  const handleManualSave = () => {
-    showToast("저장되었습니다.");
+  const handleManualSave = async () => {
+    const saved = await onManualSave();
+    showToast(
+      saved ? "저장되었습니다." : "저장에 실패했습니다. 다시 시도해 주세요.",
+      saved ? "success" : "danger",
+    );
   };
+
+  const prevAutoSave = useRef<AutoSaveState>("idle");
+  useEffect(() => {
+    if (
+      prevAutoSave.current === "saved" &&
+      autoSave === "idle" &&
+      window.innerWidth < 1280
+    ) {
+      showToast("저장되었습니다.");
+    }
+    prevAutoSave.current = autoSave;
+  }, [autoSave, showToast]);
 
   useEffect(() => {
     const syncFooter = () => {
@@ -1419,6 +1630,7 @@ const DFooter = ({ autoSave }: { autoSave: AutoSaveState }) => {
             size="md"
             type="button"
             layout="fill"
+            loading={autoSave === "saving"}
             onClick={handleManualSave}
           >
             저장하기
@@ -1464,6 +1676,11 @@ export const BaseInfoForm = (): ReactNode => {
     photo: { done: 0, total: 2 },
   });
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const saveIdleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const saveInFlight = useRef(false);
+  const saveQueued = useRef(false);
+  const formDataRef = useRef<BaseInfoPayload>({});
+  const [initialData, setInitialData] = useState<BaseInfoPayload | null>(null);
   const progress = Object.values(progressMap).reduce<ProgressSection>(
     (acc, section) => ({
       done: acc.done + section.done,
@@ -1513,15 +1730,95 @@ export const BaseInfoForm = (): ReactNode => {
     [missingBySection],
   );
 
-  const triggerAutoSave = useCallback(() => {
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    setAutoSave("idle");
-    saveTimer.current = setTimeout(async () => {
-      setAutoSave("saving");
-      await new Promise<void>((r) => setTimeout(r, 700));
+  const updateFormData = useCallback(
+    <K extends keyof BaseInfoPayload>(key: K, data: BaseInfoPayload[K]) => {
+      formDataRef.current = { ...formDataRef.current, [key]: data };
+    },
+    [],
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadInitialData = async () => {
+      try {
+        const result = await apiFetch<BaseInfoPayload>(
+          "/api/profile/base-info",
+        );
+        const data = result.ok ? result.data : {};
+        if (cancelled) return;
+        formDataRef.current = data;
+        setInitialData(data);
+      } catch {
+        if (!cancelled) setInitialData({});
+      }
+    };
+
+    void loadInitialData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function persistFormData(): Promise<boolean> {
+    if (saveInFlight.current) {
+      saveQueued.current = true;
+      return true;
+    }
+
+    saveInFlight.current = true;
+    setAutoSave("saving");
+    if (saveIdleTimer.current) clearTimeout(saveIdleTimer.current);
+
+    // UI Spinner 데모용도입니다.
+    const minDelay = new Promise<void>((r) => setTimeout(r, 2000));
+
+    try {
+      const [result] = await Promise.all([
+        apiFetch<{ ok: boolean }>("/api/profile/base-info", {
+          method: "PATCH",
+          body: JSON.stringify(formDataRef.current),
+        }),
+        minDelay,
+      ]);
+      if (!result.ok) {
+        setAutoSave("error");
+        return false;
+      }
+
       setAutoSave("saved");
-      setTimeout(() => setAutoSave("idle"), 3000);
+      saveIdleTimer.current = setTimeout(() => setAutoSave("idle"), 2000);
+      return true;
+    } catch {
+      setAutoSave("error");
+      return false;
+    } finally {
+      saveInFlight.current = false;
+      if (saveQueued.current) {
+        saveQueued.current = false;
+        void persistFormData();
+      }
+    }
+  }
+
+  const triggerAutoSave = () => {
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      void persistFormData();
     }, 500);
+  };
+
+  const handleManualSave = async (): Promise<boolean> => {
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    return persistFormData();
+  };
+
+  useEffect(() => {
+    return () => {
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+      if (saveIdleTimer.current) clearTimeout(saveIdleTimer.current);
+    };
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -1541,6 +1838,10 @@ export const BaseInfoForm = (): ReactNode => {
     }, 0);
   };
 
+  if (initialData === null) {
+    return null;
+  }
+
   return (
     <ToastProvider>
       <form
@@ -1550,48 +1851,60 @@ export const BaseInfoForm = (): ReactNode => {
       >
         <ProgressHero progress={progress} />
         <FamilySection
+          initialData={initialData.family}
           onSave={triggerAutoSave}
           onProgressChange={(section) => updateProgress("family", section)}
           onMissingFieldsChange={(missing) =>
             registerMissingFields("family", missing)
           }
+          onDataChange={(data) => updateFormData("family", data)}
         />
         <FaithSection
+          initialData={initialData.faith}
           onSave={triggerAutoSave}
           onProgressChange={(section) => updateProgress("faith", section)}
           onMissingFieldsChange={(missing) =>
             registerMissingFields("faith", missing)
           }
+          onDataChange={(data) => updateFormData("faith", data)}
         />
         <EducationSection
+          initialData={initialData.education}
           onSave={triggerAutoSave}
           onProgressChange={(section) => updateProgress("education", section)}
           onMissingFieldsChange={(missing) =>
             registerMissingFields("education", missing)
           }
+          onDataChange={(data) => updateFormData("education", data)}
         />
         <AppearanceSection
+          initialData={initialData.appearance}
           onSave={triggerAutoSave}
           onProgressChange={(section) => updateProgress("appearance", section)}
           onMissingFieldsChange={(missing) =>
             registerMissingFields("appearance", missing)
           }
+          onDataChange={(data) => updateFormData("appearance", data)}
         />
         <LifestyleSection
+          initialData={initialData.lifestyle}
           onSave={triggerAutoSave}
           onProgressChange={(section) => updateProgress("lifestyle", section)}
           onMissingFieldsChange={(missing) =>
             registerMissingFields("lifestyle", missing)
           }
+          onDataChange={(data) => updateFormData("lifestyle", data)}
         />
         <PhotoSection
+          initialData={initialData.photos}
           onSave={triggerAutoSave}
           onProgressChange={(section) => updateProgress("photo", section)}
           onMissingFieldsChange={(missing) =>
             registerMissingFields("photo", missing)
           }
+          onDataChange={(data) => updateFormData("photos", data)}
         />
-        <DFooter autoSave={autoSave} />
+        <DFooter autoSave={autoSave} onManualSave={handleManualSave} />
       </form>
 
       <ConfirmModal
@@ -1608,7 +1921,11 @@ export const BaseInfoForm = (): ReactNode => {
         </p>
         <ul className="m-0 pl-5 flex flex-col gap-1.5 text-sm text-text list-disc">
           {allMissingFields.map((field) => (
-            <li key={`${field.id}-${field.label}`}>{field.label}</li>
+            <li key={`${field.id}-${field.label}`}>
+              {field.label === "프로필 사진"
+                ? "프로필 사진 (2장 이상)"
+                : field.label}
+            </li>
           ))}
         </ul>
       </ConfirmModal>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/app/_components/ui/Button";
 import {
@@ -9,6 +10,7 @@ import {
 } from "@/app/_components/web-shell/HeaderAccount";
 import { CmLogo } from "@/app/_components/web-shell/CmLogo";
 import { MyPageNavList } from "@/app/_components/web-shell/MyPageNavList";
+import { NAV_ITEMS } from "@/app/_components/web-shell/navItems";
 
 const XL_BREAKPOINT = 1280;
 
@@ -18,15 +20,6 @@ const STEPS = [
   { num: 3, label: "매력어필" },
   { num: 4, label: "라이프" },
   { num: 5, label: "이상형" },
-];
-
-const MAIN_MENU = [
-  "크리스천메이트",
-  "서비스 안내",
-  "공개 프로필",
-  "커뮤니티",
-  "오프라인 모임",
-  "문의하기",
 ];
 
 export function MobileHeader() {
@@ -55,9 +48,15 @@ export function MobileHeader() {
         <button
           type="button"
           aria-label="이전 화면으로"
-          className="w-11 h-11 min-w-11 -ml-2.5 flex items-center justify-center text-text text-lg font-semibold rounded-md hover:bg-subtle transition-colors duration-fast ease-standard"
+          className="w-11 h-11 min-w-11 -ml-2.5 flex items-center justify-center rounded-md hover:bg-subtle transition-colors duration-fast ease-standard"
         >
-          ←
+          <Image
+            src="/images/button/button-back.svg"
+            alt=""
+            width={16}
+            height={14}
+            aria-hidden
+          />
         </button>
         <span className="text-mobile-title font-bold">기본정보</span>
         <button
@@ -69,32 +68,21 @@ export function MobileHeader() {
           className="ml-auto w-mobile-toggle-size h-mobile-toggle-size rounded-full border-0 bg-transparent inline-flex items-center justify-center text-text hover:bg-subtle transition-colors duration-fast ease-standard"
         >
           {drawerOpen ? (
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              className="w-mobile-toggle-icon h-mobile-toggle-icon"
-              aria-hidden="true"
-            >
-              <path d="M6 6l12 12" />
-              <path d="M18 6 6 18" />
-            </svg>
+            <Image
+              src="/images/button/button-close.svg"
+              alt=""
+              width={14}
+              height={14}
+              aria-hidden
+            />
           ) : (
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              className="w-mobile-toggle-icon h-mobile-toggle-icon"
-              aria-hidden="true"
-            >
-              <path d="M4 7h16" />
-              <path d="M4 12h16" />
-              <path d="M4 17h16" />
-            </svg>
+            <Image
+              src="/images/button/button-menu.svg"
+              alt=""
+              width={24}
+              height={16}
+              aria-hidden
+            />
           )}
         </button>
       </div>
@@ -158,7 +146,7 @@ export function MobileHeader() {
                   MAIN MENU
                 </h4>
                 <nav className="flex flex-col">
-                  {MAIN_MENU.map((item) => (
+                  {NAV_ITEMS.map((item) => (
                     <Link
                       key={item}
                       href="#"
