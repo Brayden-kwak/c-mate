@@ -1246,7 +1246,17 @@ const PhotoSection = ({
         progress={photoSectionProgress}
         bodyClassName="pb-mobile-photo-card-bottom"
       >
-        <MobileField label="프로필 사진" required>
+        <MobileField
+          label="프로필 사진"
+          required
+          desc={
+            <>
+              <span className="font-semibold text-primary">2장 필수 등록</span>
+              <br />
+              나를 잘 표현할 수 있는 사진을 업로드 해주세요.
+            </>
+          }
+        >
           {mobilePhotoGuide}
           {mobilePhotoCarousel}
         </MobileField>
@@ -1608,7 +1618,11 @@ export const BaseInfoForm = (): ReactNode => {
         </p>
         <ul className="m-0 pl-5 flex flex-col gap-1.5 text-sm text-text list-disc">
           {allMissingFields.map((field) => (
-            <li key={`${field.id}-${field.label}`}>{field.label}</li>
+            <li key={`${field.id}-${field.label}`}>
+              {field.label === "프로필 사진"
+                ? "프로필 사진 (2장 이상)"
+                : field.label}
+            </li>
           ))}
         </ul>
       </ConfirmModal>

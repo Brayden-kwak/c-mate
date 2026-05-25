@@ -439,6 +439,14 @@ export const EducationSection = ({
           />
         </MobileField>
         <MobileField label="연봉" required>
+          <Checkbox
+            label="연봉 비공개"
+            checked={salaryHidden}
+            onChange={(e) => {
+              setSalaryHidden(e.target.checked);
+              onSave();
+            }}
+          />
           <DropdownSelect
             value={salary}
             onChange={(v) => {
@@ -449,17 +457,8 @@ export const EducationSection = ({
             placeholder="연봉 구간 선택"
             aria-label="연봉 구간"
             aria-required
+            disabled={salaryHidden}
           />
-          <div className="py-2">
-            <Checkbox
-              label="연봉 비공개"
-              checked={salaryHidden}
-              onChange={(e) => {
-                setSalaryHidden(e.target.checked);
-                onSave();
-              }}
-            />
-          </div>
           <InfoBox>
             비공개 시 다른 회원에게 노출되지 않으며, 매니저 매칭에만 활용됩니다.
           </InfoBox>

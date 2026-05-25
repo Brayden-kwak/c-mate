@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/app/_components/ui/Button";
 import {
@@ -55,9 +56,15 @@ export function MobileHeader() {
         <button
           type="button"
           aria-label="이전 화면으로"
-          className="w-11 h-11 min-w-11 -ml-2.5 flex items-center justify-center text-text text-lg font-semibold rounded-md hover:bg-subtle transition-colors duration-fast ease-standard"
+          className="w-11 h-11 min-w-11 -ml-2.5 flex items-center justify-center rounded-md hover:bg-subtle transition-colors duration-fast ease-standard"
         >
-          ←
+          <Image
+            src="/images/button/button-back.png"
+            alt=""
+            width={24}
+            height={24}
+            aria-hidden
+          />
         </button>
         <span className="text-mobile-title font-bold">기본정보</span>
         <button
@@ -69,32 +76,21 @@ export function MobileHeader() {
           className="ml-auto w-mobile-toggle-size h-mobile-toggle-size rounded-full border-0 bg-transparent inline-flex items-center justify-center text-text hover:bg-subtle transition-colors duration-fast ease-standard"
         >
           {drawerOpen ? (
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              className="w-mobile-toggle-icon h-mobile-toggle-icon"
-              aria-hidden="true"
-            >
-              <path d="M6 6l12 12" />
-              <path d="M18 6 6 18" />
-            </svg>
+            <Image
+              src="/images/button/button-close.png"
+              alt=""
+              width={24}
+              height={24}
+              aria-hidden
+            />
           ) : (
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              className="w-mobile-toggle-icon h-mobile-toggle-icon"
-              aria-hidden="true"
-            >
-              <path d="M4 7h16" />
-              <path d="M4 12h16" />
-              <path d="M4 17h16" />
-            </svg>
+            <Image
+              src="/images/button/button-menu.png"
+              alt=""
+              width={24}
+              height={16}
+              aria-hidden
+            />
           )}
         </button>
       </div>
