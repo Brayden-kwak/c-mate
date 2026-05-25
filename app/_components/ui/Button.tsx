@@ -5,6 +5,7 @@ type Props = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "style"> & {
   variant?: ButtonVariant;
   size?: Size;
   layout?: "auto" | "full" | "fill" | "responsive";
+  loading?: boolean;
   children: ReactNode;
 };
 
@@ -37,25 +38,32 @@ export function Button({
   variant = "primary",
   size = "md",
   layout = "auto",
+  loading,
   className,
   children,
   ...rest
 }: Props) {
   const base =
     "inline-flex items-center justify-center font-semibold transition-colors duration-base ease-standard focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 disabled:cursor-not-allowed";
+  const isLight = variant === "primary" || variant === "danger";
   return (
     <button
+      {...rest}
+      disabled={loading || rest.disabled}
       className={[
         base,
         variantClass[variant],
         sizeClass[size],
         layoutClass[layout],
+        loading ? "gap-2 opacity-85" : "",
         className,
       ]
         .filter(Boolean)
         .join(" ")}
-      {...rest}
     >
+      {loading && (
+        <span className={isLight ? "btn-spinner" : "btn-spinner-dark"} />
+      )}
       {children}
     </button>
   );

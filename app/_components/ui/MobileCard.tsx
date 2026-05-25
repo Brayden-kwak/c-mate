@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import type { SectionProgressBadge } from "@/app/_components/form/base-info/types";
+import { ChevronDown } from "@/app/_components/ui/icons";
 
 type CardProps = {
   num: number;
@@ -57,18 +58,9 @@ export function MobileCard({
             {progress.done}/{progress.total}
           </span>
         )}
-        <svg
+        <ChevronDown
           className={`w-4 h-4 text-text-tertiary shrink-0 transition-transform duration-fast ease-standard ${open ? "rotate-180" : ""}`}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
+        />
       </button>
       {open && (
         <div

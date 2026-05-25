@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import { Button } from "@/app/_components/ui/Button";
 
 type Props = {
@@ -31,6 +31,7 @@ export function ConfirmModal({
   variant = "primary",
   width = "md",
 }: Props): ReactNode {
+  const uid = useId();
   if (!open) return null;
 
   const widthClass = {
@@ -38,7 +39,7 @@ export function ConfirmModal({
     md: "max-w-(--spacing-modal-md)",
     lg: "max-w-(--spacing-modal-lg)",
   }[width];
-  const titleId = title ? "confirm-modal-title" : undefined;
+  const titleId = title ? `${uid}-title` : undefined;
 
   return (
     <div

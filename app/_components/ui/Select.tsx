@@ -1,5 +1,6 @@
 import type { SelectHTMLAttributes } from "react";
 import type { FieldState, Size } from "./types";
+import { ChevronDown } from "@/app/_components/ui/icons";
 
 type Props = Omit<SelectHTMLAttributes<HTMLSelectElement>, "style" | "size"> & {
   size?: Size;
@@ -69,23 +70,14 @@ export function Select({
       >
         {children}
       </select>
-      <svg
+      <ChevronDown
         className={[
           "pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2",
           resolvedState === "disabled"
             ? "text-text-tertiary"
             : "text-text-secondary",
         ].join(" ")}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <polyline points="6 9 12 15 18 9" />
-      </svg>
+      />
     </div>
   );
 }

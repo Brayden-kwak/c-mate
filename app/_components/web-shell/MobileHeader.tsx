@@ -10,6 +10,7 @@ import {
 } from "@/app/_components/web-shell/HeaderAccount";
 import { CmLogo } from "@/app/_components/web-shell/CmLogo";
 import { MyPageNavList } from "@/app/_components/web-shell/MyPageNavList";
+import { NAV_ITEMS } from "@/app/_components/web-shell/navItems";
 
 const XL_BREAKPOINT = 1280;
 
@@ -19,15 +20,6 @@ const STEPS = [
   { num: 3, label: "매력어필" },
   { num: 4, label: "라이프" },
   { num: 5, label: "이상형" },
-];
-
-const MAIN_MENU = [
-  "크리스천메이트",
-  "서비스 안내",
-  "공개 프로필",
-  "커뮤니티",
-  "오프라인 모임",
-  "문의하기",
 ];
 
 export function MobileHeader() {
@@ -154,7 +146,7 @@ export function MobileHeader() {
                   MAIN MENU
                 </h4>
                 <nav className="flex flex-col">
-                  {MAIN_MENU.map((item) => (
+                  {NAV_ITEMS.map((item) => (
                     <Link
                       key={item}
                       href="#"

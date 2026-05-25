@@ -5,10 +5,10 @@ import type { ReactNode } from "react";
 import { Button } from "@/app/_components/ui/Button";
 
 export default function GlobalError({
-  unstable_retry,
+  reset,
 }: {
   error: Error & { digest?: string };
-  unstable_retry: () => void;
+  reset: () => void;
 }): ReactNode {
   return (
     <html lang="ko">
@@ -20,7 +20,7 @@ export default function GlobalError({
           <p className="text-text-secondary mb-6">
             예상치 못한 문제가 발생했습니다. 다시 시도해 주세요.
           </p>
-          <Button variant="primary" size="lg" onClick={() => unstable_retry()}>
+          <Button variant="primary" size="lg" onClick={reset}>
             다시 시도
           </Button>
         </div>

@@ -66,6 +66,21 @@ const REQUIRED_PROFILE_PHOTOS = 2;
 const PHOTO_SECTION_PROGRESS_TOTAL = 2;
 const MAX_PHOTOBOOK_SLOTS = 8;
 
+function ResponsiveView({
+  desktop,
+  mobile,
+}: {
+  desktop: ReactNode;
+  mobile: ReactNode;
+}): ReactNode {
+  return (
+    <>
+      <div className="hidden xl:block">{desktop}</div>
+      <div className="xl:hidden">{mobile}</div>
+    </>
+  );
+}
+
 /* ===== Style groups ===== */
 const STYLE_SELECTION_MAX = 5;
 
@@ -121,7 +136,8 @@ const AutoSaveChip = ({ state }: { state: AutoSaveState }) => {
   }
   if (state === "saving") {
     return (
-      <span className="inline-flex items-center gap-1.5 bg-subtle text-text-secondary px-3 py-1.5 rounded-pill text-[13px] font-medium shrink-0">
+      <span className="inline-flex items-center gap-1.5 bg-info-light text-info px-3 py-1.5 rounded-pill text-[13px] font-medium shrink-0">
+        <span className="chip-spinner" />
         저장 중…
       </span>
     );
@@ -320,8 +336,7 @@ const FamilySection = ({
 
   return (
     <>
-      <div className="hidden xl:block">{desktopContent}</div>
-      <div className="xl:hidden">{mobileContent}</div>
+      <ResponsiveView desktop={desktopContent} mobile={mobileContent} />
 
       {/* Address search modal */}
       <ConfirmModal
@@ -505,8 +520,7 @@ const FaithSection = ({
 
   return (
     <>
-      <div className="hidden xl:block">{desktopContent}</div>
-      <div className="xl:hidden">{mobileContent}</div>
+      <ResponsiveView desktop={desktopContent} mobile={mobileContent} />
 
       <ChurchSearchModal
         open={churchSearchOpen}
@@ -714,12 +728,7 @@ const AppearanceSection = ({
     </SectionAnchor>
   );
 
-  return (
-    <>
-      <div className="hidden xl:block">{desktopContent}</div>
-      <div className="xl:hidden">{mobileContent}</div>
-    </>
-  );
+  return <ResponsiveView desktop={desktopContent} mobile={mobileContent} />;
 };
 
 /* ===== Section 5 ===== */
@@ -866,12 +875,7 @@ const LifestyleSection = ({
     </SectionAnchor>
   );
 
-  return (
-    <>
-      <div className="hidden xl:block">{desktopContent}</div>
-      <div className="xl:hidden">{mobileContent}</div>
-    </>
-  );
+  return <ResponsiveView desktop={desktopContent} mobile={mobileContent} />;
 };
 
 /* ===== Section 6 ===== */
@@ -893,6 +897,28 @@ const PhotoSection = ({
     { filled: false },
   ]);
   const [pbPhotos, setPbPhotos] = useState<PhotoItem[]>([{ filled: false }]);
+  const blobUrlsRef = useRef<Set<string>>(new Set());
+  const photoUploadSeqRef = useRef<number[]>([0, 0, 0, 0]);
+  const pbUploadSeqRef = useRef<Record<number, number>>({});
+
+  const createBlobUrl = (file: File): string => {
+    const url = URL.createObjectURL(file);
+    blobUrlsRef.current.add(url);
+    return url;
+  };
+
+  const revokeBlobUrl = (url: string | undefined) => {
+    if (!url?.startsWith("blob:")) return;
+    URL.revokeObjectURL(url);
+    blobUrlsRef.current.delete(url);
+  };
+
+  useEffect(() => {
+    const urls = blobUrlsRef.current;
+    return () => {
+      urls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
   const [deleteModal, setDeleteModal] = useState<{ index: number } | null>(
     null,
   );
@@ -958,6 +984,9 @@ const PhotoSection = ({
 
   const confirmDelete = () => {
     if (!deleteModal) return;
+    photoUploadSeqRef.current[deleteModal.index] =
+      (photoUploadSeqRef.current[deleteModal.index] ?? 0) + 1;
+    revokeBlobUrl(photos[deleteModal.index]?.previewUrl);
     setPhotos((prev) => {
       const next = prev.map((photo, i) =>
         i === deleteModal.index ? { filled: false } : photo,
@@ -976,6 +1005,9 @@ const PhotoSection = ({
 
   const confirmPbDelete = () => {
     if (!pbDeleteModal) return;
+    pbUploadSeqRef.current[pbDeleteModal.index] =
+      (pbUploadSeqRef.current[pbDeleteModal.index] ?? 0) + 1;
+    revokeBlobUrl(pbPhotos[pbDeleteModal.index]?.previewUrl);
     setPbPhotos((prev) =>
       prev.map((photo, i) =>
         i === pbDeleteModal.index ? { filled: false } : photo,
@@ -986,13 +1018,21 @@ const PhotoSection = ({
   };
 
   const handleUpload = async (index: number, file: File) => {
-    const previewUrl = URL.createObjectURL(file);
+    const requestId = (photoUploadSeqRef.current[index] ?? 0) + 1;
+    photoUploadSeqRef.current[index] = requestId;
+    const previousPhoto = photos[index] ?? { filled: false };
+    const previewUrl = createBlobUrl(file);
     setPhotos((prev) =>
       prev.map((photo, i) => (i === index ? { ...photo, previewUrl } : photo)),
     );
     setUploading((prev) => prev.map((v, i) => (i === index ? true : v)));
     try {
       const key = await presignAndUpload(file);
+      if (photoUploadSeqRef.current[index] !== requestId) {
+        revokeBlobUrl(previewUrl);
+        return;
+      }
+      revokeBlobUrl(previousPhoto.previewUrl);
       setPhotos((prev) =>
         prev.map((photo, i) =>
           i === index ? { ...photo, filled: true, key } : photo,
@@ -1000,21 +1040,34 @@ const PhotoSection = ({
       );
       onSave();
     } catch {
-      setPhotos((prev) =>
-        prev.map((photo, i) => (i === index ? { filled: false } : photo)),
-      );
+      revokeBlobUrl(previewUrl);
+      if (photoUploadSeqRef.current[index] === requestId) {
+        setPhotos((prev) =>
+          prev.map((photo, i) => (i === index ? previousPhoto : photo)),
+        );
+      }
     } finally {
-      setUploading((prev) => prev.map((v, i) => (i === index ? false : v)));
+      if (photoUploadSeqRef.current[index] === requestId) {
+        setUploading((prev) => prev.map((v, i) => (i === index ? false : v)));
+      }
     }
   };
 
   const handlePbUpload = async (index: number, file: File) => {
-    const previewUrl = URL.createObjectURL(file);
+    const requestId = (pbUploadSeqRef.current[index] ?? 0) + 1;
+    pbUploadSeqRef.current[index] = requestId;
+    const previousPhoto = pbPhotos[index] ?? { filled: false };
+    const previewUrl = createBlobUrl(file);
     setPbPhotos((prev) =>
       prev.map((photo, i) => (i === index ? { ...photo, previewUrl } : photo)),
     );
     try {
       const key = await presignAndUpload(file);
+      if (pbUploadSeqRef.current[index] !== requestId) {
+        revokeBlobUrl(previewUrl);
+        return;
+      }
+      revokeBlobUrl(previousPhoto.previewUrl);
       setPbPhotos((prev) =>
         prev.map((photo, i) =>
           i === index ? { ...photo, filled: true, key } : photo,
@@ -1022,9 +1075,12 @@ const PhotoSection = ({
       );
       onSave();
     } catch {
-      setPbPhotos((prev) =>
-        prev.map((photo, i) => (i === index ? { filled: false } : photo)),
-      );
+      revokeBlobUrl(previewUrl);
+      if (pbUploadSeqRef.current[index] === requestId) {
+        setPbPhotos((prev) =>
+          prev.map((photo, i) => (i === index ? previousPhoto : photo)),
+        );
+      }
     }
   };
 
@@ -1374,8 +1430,7 @@ const PhotoSection = ({
 
   return (
     <>
-      <div className="hidden xl:block">{desktopContent}</div>
-      <div className="xl:hidden">{mobileContent}</div>
+      <ResponsiveView desktop={desktopContent} mobile={mobileContent} />
 
       <ConfirmModal
         open={!!deleteModal}
@@ -1433,13 +1488,23 @@ const PhotoSection = ({
 };
 
 /* ===== d-footer ===== */
-const DFooter = ({ autoSave }: { autoSave: AutoSaveState }) => {
+const DFooter = ({
+  autoSave,
+  onManualSave,
+}: {
+  autoSave: AutoSaveState;
+  onManualSave: () => Promise<boolean>;
+}) => {
   const { showToast } = useToast();
   const [desktopStyle, setDesktopStyle] = useState<CSSProperties>({});
   const [synced, setSynced] = useState(false);
 
-  const handleManualSave = () => {
-    showToast("저장되었습니다.");
+  const handleManualSave = async () => {
+    const saved = await onManualSave();
+    showToast(
+      saved ? "저장되었습니다." : "저장에 실패했습니다. 다시 시도해 주세요.",
+      saved ? "success" : "danger",
+    );
   };
 
   const prevAutoSave = useRef<AutoSaveState>("idle");
@@ -1524,11 +1589,10 @@ const DFooter = ({ autoSave }: { autoSave: AutoSaveState }) => {
             size="md"
             type="button"
             layout="fill"
+            loading={autoSave === "saving"}
             onClick={handleManualSave}
           >
-            {autoSave === "saving" || autoSave === "saved"
-              ? "저장중..."
-              : "저장하기"}
+            저장하기
           </Button>
           <Button variant="primary" size="md" type="submit" layout="fill">
             다음
@@ -1571,6 +1635,7 @@ export const BaseInfoForm = (): ReactNode => {
     photo: { done: 0, total: 2 },
   });
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const saveIdleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const formDataRef = useRef<BaseInfoPayload>({});
   const progress = Object.values(progressMap).reduce<ProgressSection>(
     (acc, section) => ({
@@ -1628,21 +1693,52 @@ export const BaseInfoForm = (): ReactNode => {
     [],
   );
 
+  const persistFormData = useCallback(async (): Promise<boolean> => {
+    setAutoSave("saving");
+    if (saveIdleTimer.current) clearTimeout(saveIdleTimer.current);
+
+    // UI Spinner 데모용도입니다.
+    const minDelay = new Promise<void>((r) => setTimeout(r, 2000));
+
+    try {
+      const [result] = await Promise.all([
+        apiFetch<{ ok: boolean }>("/api/profile/base-info", {
+          method: "PATCH",
+          body: JSON.stringify(formDataRef.current),
+        }),
+        minDelay,
+      ]);
+      if (!result.ok) {
+        setAutoSave("error");
+        return false;
+      }
+
+      setAutoSave("saved");
+      saveIdleTimer.current = setTimeout(() => setAutoSave("idle"), 2000);
+      return true;
+    } catch {
+      setAutoSave("error");
+      return false;
+    }
+  }, []);
+
   const triggerAutoSave = useCallback(() => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(async () => {
-      setAutoSave("saving");
-      const result = await apiFetch<{ ok: boolean }>("/api/profile/base-info", {
-        method: "PATCH",
-        body: JSON.stringify(formDataRef.current),
-      });
-      if (result.ok) {
-        setAutoSave("saved");
-        setTimeout(() => setAutoSave("idle"), 2000);
-      } else {
-        setAutoSave("error");
-      }
+    saveTimer.current = setTimeout(() => {
+      void persistFormData();
     }, 500);
+  }, [persistFormData]);
+
+  const handleManualSave = useCallback(async (): Promise<boolean> => {
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    return persistFormData();
+  }, [persistFormData]);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+      if (saveIdleTimer.current) clearTimeout(saveIdleTimer.current);
+    };
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -1718,7 +1814,7 @@ export const BaseInfoForm = (): ReactNode => {
           }
           onDataChange={(data) => updateFormData("photos", data)}
         />
-        <DFooter autoSave={autoSave} />
+        <DFooter autoSave={autoSave} onManualSave={handleManualSave} />
       </form>
 
       <ConfirmModal
