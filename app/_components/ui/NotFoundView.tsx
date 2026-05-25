@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import Link from "next/link";
+import { Button } from "@/app/_components/ui/Button";
 
 export function NotFoundView(): ReactNode {
   return (
@@ -11,12 +11,9 @@ export function NotFoundView(): ReactNode {
       <p className="text-text-secondary mb-6 text-center">
         요청하신 페이지가 존재하지 않거나 이동되었습니다.
       </p>
-      <Link
-        href="/"
-        className="inline-flex items-center justify-center font-semibold text-mobile-menu h-11 px-5 rounded-md bg-primary text-white hover:bg-primary-hover transition-colors duration-base ease-standard"
-      >
+      <Button href="/" variant="primary" size="lg">
         홈으로 돌아가기
-      </Link>
+      </Button>
     </div>
   );
 }

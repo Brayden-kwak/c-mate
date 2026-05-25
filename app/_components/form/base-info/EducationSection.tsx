@@ -40,6 +40,7 @@ type Props = {
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
   onDataChange?: (data: EducationSectionData) => void;
+  initialData?: EducationSectionData;
 };
 
 const DEGREE_ROWS: Record<string, string[]> = {
@@ -56,21 +57,24 @@ export const EducationSection = ({
   onProgressChange,
   onMissingFieldsChange,
   onDataChange,
+  initialData,
 }: Props) => {
-  const [education, setEducation] = useState("");
-  const [eduRows, setEduRows] = useState<EduRow[]>([]);
+  const [education, setEducation] = useState(initialData?.education ?? "");
+  const [eduRows, setEduRows] = useState<EduRow[]>(initialData?.eduRows ?? []);
   const [pendingEduChange, setPendingEduChange] = useState<{
     newDegree: string;
     affected: EduRow[];
   } | null>(null);
-  const [job, setJob] = useState("");
+  const [job, setJob] = useState(initialData?.job ?? "");
   const [jobModalOpen, setJobModalOpen] = useState(false);
   const [jobQuery, setJobQuery] = useState("");
-  const [workplace, setWorkplace] = useState("");
+  const [workplace, setWorkplace] = useState(initialData?.workplace ?? "");
   const [schoolModalRowId, setSchoolModalRowId] = useState<number | null>(null);
   const [schoolQuery, setSchoolQuery] = useState("");
-  const [salary, setSalary] = useState("");
-  const [salaryHidden, setSalaryHidden] = useState(false);
+  const [salary, setSalary] = useState(initialData?.salary ?? "");
+  const [salaryHidden, setSalaryHidden] = useState(
+    initialData?.salaryHidden ?? false,
+  );
   const nextId = useRef(10);
   const trimmedSchoolQuery = schoolQuery.trim();
   const trimmedJobQuery = jobQuery.trim();

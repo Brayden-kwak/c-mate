@@ -4,12 +4,21 @@ type PresignResponse = {
   uploads: Array<{ uploadUrl: string; key: string }>;
 };
 
+function getUploadContentType(file: File): string {
+  if (file.type) return file.type;
+
+  const extension = file.name.split(".").pop()?.toLowerCase();
+  if (extension === "png") return "image/png";
+  return "image/jpeg";
+}
+
 export async function presignAndUpload(file: File): Promise<string> {
+  const contentType = getUploadContentType(file);
   const result = await apiFetch<PresignResponse>(
     "/api/profile/photos/presign",
     {
       method: "POST",
-      body: JSON.stringify({ count: 1, contentTypes: [file.type] }),
+      body: JSON.stringify({ count: 1, contentTypes: [contentType] }),
     },
   );
 
@@ -22,7 +31,7 @@ export async function presignAndUpload(file: File): Promise<string> {
 
   const uploadRes = await fetch(upload.uploadUrl, {
     method: "PUT",
-    headers: { "Content-Type": file.type },
+    headers: { "Content-Type": contentType },
     body: file,
   });
 

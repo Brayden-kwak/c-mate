@@ -3,6 +3,8 @@ import type { BaseInfoPayload } from "@/app/_lib/base-info";
 
 type JsonRecord = Record<string, unknown>;
 
+let storedBaseInfo: BaseInfoPayload = {};
+
 const SECTION_KEYS = [
   "family",
   "faith",
@@ -126,8 +128,7 @@ function isBaseInfoPayload(value: unknown): value is BaseInfoPayload {
 }
 
 export async function GET(): Promise<Response> {
-  const empty: BaseInfoPayload = {};
-  return Response.json(empty);
+  return Response.json(storedBaseInfo);
 }
 
 export async function PATCH(request: NextRequest): Promise<Response> {
@@ -142,5 +143,6 @@ export async function PATCH(request: NextRequest): Promise<Response> {
     return Response.json({ message: "Invalid request body" }, { status: 400 });
   }
 
+  storedBaseInfo = structuredClone(body);
   return Response.json({ ok: true });
 }

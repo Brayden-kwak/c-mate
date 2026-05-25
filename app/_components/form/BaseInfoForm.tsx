@@ -158,16 +158,22 @@ const FamilySection = ({
   onProgressChange,
   onMissingFieldsChange,
   onDataChange,
+  initialData,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
   onDataChange?: (data: FamilySectionData) => void;
+  initialData?: FamilySectionData;
 }) => {
-  const [marriageExp, setMarriageExp] = useState("");
-  const [region, setRegion] = useState("");
-  const [address, setAddress] = useState("");
-  const [addressDetail, setAddressDetail] = useState("");
+  const [marriageExp, setMarriageExp] = useState(
+    initialData?.marriageExp ?? "",
+  );
+  const [region, setRegion] = useState(initialData?.region ?? "");
+  const [address, setAddress] = useState(initialData?.address ?? "");
+  const [addressDetail, setAddressDetail] = useState(
+    initialData?.addressDetail ?? "",
+  );
   const [addrModalOpen, setAddrModalOpen] = useState(false);
   const [addrQuery, setAddrQuery] = useState("");
   const complete =
@@ -375,17 +381,21 @@ const FaithSection = ({
   onProgressChange,
   onMissingFieldsChange,
   onDataChange,
+  initialData,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
   onDataChange?: (data: FaithSectionData) => void;
+  initialData?: FaithSectionData;
 }) => {
-  const [church, setChurch] = useState("");
-  const [denom, setDenom] = useState("");
-  const [pastor, setPastor] = useState("");
-  const [churchAddr, setChurchAddr] = useState("");
-  const [nativeFaith, setNativeFaith] = useState("");
+  const [church, setChurch] = useState(initialData?.church ?? "");
+  const [denom, setDenom] = useState(initialData?.denom ?? "");
+  const [pastor, setPastor] = useState(initialData?.pastor ?? "");
+  const [churchAddr, setChurchAddr] = useState(initialData?.churchAddr ?? "");
+  const [nativeFaith, setNativeFaith] = useState(
+    initialData?.nativeFaith ?? "",
+  );
   const [churchSearchOpen, setChurchSearchOpen] = useState(false);
   const complete =
     Number(Boolean(church.trim() && denom.trim())) +
@@ -543,19 +553,30 @@ const AppearanceSection = ({
   onProgressChange,
   onMissingFieldsChange,
   onDataChange,
+  initialData,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
   onDataChange?: (data: AppearanceSectionData) => void;
+  initialData?: AppearanceSectionData;
 }) => {
-  const [height, setHeight] = useState("");
-  const [bloodType, setBloodType] = useState("");
-  const [bodyType, setBodyType] = useState("");
+  const [height, setHeight] = useState(initialData?.height ?? "");
+  const [bloodType, setBloodType] = useState(initialData?.bloodType ?? "");
+  const [bodyType, setBodyType] = useState(initialData?.bodyType ?? "");
   const [styleValue, setStyleValue] = useState<Record<string, string[]>>({
-    "외모 스타일": [],
-    "성격/기질": [],
-    성품: [],
+    "외모 스타일":
+      initialData?.styles.filter((style) =>
+        STYLE_GROUPS[0]?.options.includes(style),
+      ) ?? [],
+    "성격/기질":
+      initialData?.styles.filter((style) =>
+        STYLE_GROUPS[1]?.options.includes(style),
+      ) ?? [],
+    성품:
+      initialData?.styles.filter((style) =>
+        STYLE_GROUPS[2]?.options.includes(style),
+      ) ?? [],
   });
   const selectedStyles = Object.values(styleValue).reduce(
     (sum, values) => sum + values.length,
@@ -737,15 +758,19 @@ const LifestyleSection = ({
   onProgressChange,
   onMissingFieldsChange,
   onDataChange,
+  initialData,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
   onDataChange?: (data: LifestyleSectionData) => void;
+  initialData?: LifestyleSectionData;
 }) => {
-  const [drinking, setDrinking] = useState("");
-  const [smoking, setSmoking] = useState("");
-  const [childrenPlan, setChildrenPlan] = useState("");
+  const [drinking, setDrinking] = useState(initialData?.drinking ?? "");
+  const [smoking, setSmoking] = useState(initialData?.smoking ?? "");
+  const [childrenPlan, setChildrenPlan] = useState(
+    initialData?.childrenPlan ?? "",
+  );
   const complete =
     Number(Boolean(drinking)) +
     Number(Boolean(smoking)) +
@@ -884,19 +909,35 @@ const PhotoSection = ({
   onProgressChange,
   onMissingFieldsChange,
   onDataChange,
+  initialData,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
   onDataChange?: (data: PhotoSectionData) => void;
+  initialData?: PhotoSectionData;
 }) => {
-  const [photos, setPhotos] = useState<PhotoItem[]>([
-    { filled: false },
-    { filled: false },
-    { filled: false },
-    { filled: false },
-  ]);
-  const [pbPhotos, setPbPhotos] = useState<PhotoItem[]>([{ filled: false }]);
+  const [photos, setPhotos] = useState<PhotoItem[]>(() => {
+    const saved =
+      initialData?.photos.map((photo) => ({
+        filled: true,
+        key: photo.key,
+        description: photo.description,
+      })) ?? [];
+    return [...saved, ...Array<PhotoItem>(4).fill({ filled: false })].slice(
+      0,
+      4,
+    );
+  });
+  const [pbPhotos, setPbPhotos] = useState<PhotoItem[]>(() => {
+    const saved =
+      initialData?.pbPhotos.map((photo) => ({
+        filled: true,
+        key: photo.key,
+        description: photo.description,
+      })) ?? [];
+    return saved.length > 0 ? saved : [{ filled: false }];
+  });
   const blobUrlsRef = useRef<Set<string>>(new Set());
   const photoUploadSeqRef = useRef<number[]>([0, 0, 0, 0]);
   const pbUploadSeqRef = useRef<Record<number, number>>({});
@@ -1636,7 +1677,10 @@ export const BaseInfoForm = (): ReactNode => {
   });
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saveIdleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const saveInFlight = useRef(false);
+  const saveQueued = useRef(false);
   const formDataRef = useRef<BaseInfoPayload>({});
+  const [initialData, setInitialData] = useState<BaseInfoPayload | null>(null);
   const progress = Object.values(progressMap).reduce<ProgressSection>(
     (acc, section) => ({
       done: acc.done + section.done,
@@ -1693,7 +1737,37 @@ export const BaseInfoForm = (): ReactNode => {
     [],
   );
 
-  const persistFormData = useCallback(async (): Promise<boolean> => {
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadInitialData = async () => {
+      try {
+        const result = await apiFetch<BaseInfoPayload>(
+          "/api/profile/base-info",
+        );
+        const data = result.ok ? result.data : {};
+        if (cancelled) return;
+        formDataRef.current = data;
+        setInitialData(data);
+      } catch {
+        if (!cancelled) setInitialData({});
+      }
+    };
+
+    void loadInitialData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function persistFormData(): Promise<boolean> {
+    if (saveInFlight.current) {
+      saveQueued.current = true;
+      return true;
+    }
+
+    saveInFlight.current = true;
     setAutoSave("saving");
     if (saveIdleTimer.current) clearTimeout(saveIdleTimer.current);
 
@@ -1719,20 +1793,26 @@ export const BaseInfoForm = (): ReactNode => {
     } catch {
       setAutoSave("error");
       return false;
+    } finally {
+      saveInFlight.current = false;
+      if (saveQueued.current) {
+        saveQueued.current = false;
+        void persistFormData();
+      }
     }
-  }, []);
+  }
 
-  const triggerAutoSave = useCallback(() => {
+  const triggerAutoSave = () => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
       void persistFormData();
     }, 500);
-  }, [persistFormData]);
+  };
 
-  const handleManualSave = useCallback(async (): Promise<boolean> => {
+  const handleManualSave = async (): Promise<boolean> => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     return persistFormData();
-  }, [persistFormData]);
+  };
 
   useEffect(() => {
     return () => {
@@ -1758,6 +1838,10 @@ export const BaseInfoForm = (): ReactNode => {
     }, 0);
   };
 
+  if (initialData === null) {
+    return null;
+  }
+
   return (
     <ToastProvider>
       <form
@@ -1767,6 +1851,7 @@ export const BaseInfoForm = (): ReactNode => {
       >
         <ProgressHero progress={progress} />
         <FamilySection
+          initialData={initialData.family}
           onSave={triggerAutoSave}
           onProgressChange={(section) => updateProgress("family", section)}
           onMissingFieldsChange={(missing) =>
@@ -1775,6 +1860,7 @@ export const BaseInfoForm = (): ReactNode => {
           onDataChange={(data) => updateFormData("family", data)}
         />
         <FaithSection
+          initialData={initialData.faith}
           onSave={triggerAutoSave}
           onProgressChange={(section) => updateProgress("faith", section)}
           onMissingFieldsChange={(missing) =>
@@ -1783,6 +1869,7 @@ export const BaseInfoForm = (): ReactNode => {
           onDataChange={(data) => updateFormData("faith", data)}
         />
         <EducationSection
+          initialData={initialData.education}
           onSave={triggerAutoSave}
           onProgressChange={(section) => updateProgress("education", section)}
           onMissingFieldsChange={(missing) =>
@@ -1791,6 +1878,7 @@ export const BaseInfoForm = (): ReactNode => {
           onDataChange={(data) => updateFormData("education", data)}
         />
         <AppearanceSection
+          initialData={initialData.appearance}
           onSave={triggerAutoSave}
           onProgressChange={(section) => updateProgress("appearance", section)}
           onMissingFieldsChange={(missing) =>
@@ -1799,6 +1887,7 @@ export const BaseInfoForm = (): ReactNode => {
           onDataChange={(data) => updateFormData("appearance", data)}
         />
         <LifestyleSection
+          initialData={initialData.lifestyle}
           onSave={triggerAutoSave}
           onProgressChange={(section) => updateProgress("lifestyle", section)}
           onMissingFieldsChange={(missing) =>
@@ -1807,6 +1896,7 @@ export const BaseInfoForm = (): ReactNode => {
           onDataChange={(data) => updateFormData("lifestyle", data)}
         />
         <PhotoSection
+          initialData={initialData.photos}
           onSave={triggerAutoSave}
           onProgressChange={(section) => updateProgress("photo", section)}
           onMissingFieldsChange={(missing) =>
