@@ -59,10 +59,10 @@ export function MobileHeader() {
           className="w-11 h-11 min-w-11 -ml-2.5 flex items-center justify-center rounded-md hover:bg-subtle transition-colors duration-fast ease-standard"
         >
           <Image
-            src="/images/button/button-back.png"
+            src="/images/button/button-back.svg"
             alt=""
-            width={24}
-            height={24}
+            width={16}
+            height={14}
             aria-hidden
           />
         </button>
@@ -77,15 +77,15 @@ export function MobileHeader() {
         >
           {drawerOpen ? (
             <Image
-              src="/images/button/button-close.png"
+              src="/images/button/button-close.svg"
               alt=""
-              width={24}
-              height={24}
+              width={14}
+              height={14}
               aria-hidden
             />
           ) : (
             <Image
-              src="/images/button/button-menu.png"
+              src="/images/button/button-menu.svg"
               alt=""
               width={24}
               height={16}

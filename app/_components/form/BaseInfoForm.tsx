@@ -40,13 +40,28 @@ import {
   type ProgressMap,
   type ProgressSection,
 } from "@/app/_components/form/base-info/types";
+import { apiFetch } from "@/app/_lib/api";
+import { presignAndUpload } from "@/app/_lib/upload";
+import type {
+  AppearanceSectionData,
+  BaseInfoPayload,
+  FaithSectionData,
+  FamilySectionData,
+  LifestyleSectionData,
+  PhotoSectionData,
+} from "@/app/_lib/base-info";
 
 const SECTION_FAMILY = BASE_INFO_SECTION_ANCHOR_ID.family;
 const SECTION_FAITH = BASE_INFO_SECTION_ANCHOR_ID.faith;
 const SECTION_APPEARANCE = BASE_INFO_SECTION_ANCHOR_ID.appearance;
 const SECTION_LIFESTYLE = BASE_INFO_SECTION_ANCHOR_ID.lifestyle;
 const SECTION_PHOTO = BASE_INFO_SECTION_ANCHOR_ID.photo;
-type PhotoItem = { filled: boolean; previewUrl?: string; description?: string };
+type PhotoItem = {
+  filled: boolean;
+  previewUrl?: string;
+  key?: string;
+  description?: string;
+};
 const REQUIRED_PROFILE_PHOTOS = 2;
 const PHOTO_SECTION_PROGRESS_TOTAL = 2;
 const MAX_PHOTOBOOK_SLOTS = 8;
@@ -100,7 +115,7 @@ const AutoSaveChip = ({ state }: { state: AutoSaveState }) => {
   if (state === "saved") {
     return (
       <span className="inline-flex items-center gap-1.5 bg-success-light text-success px-3 py-1.5 rounded-pill text-[13px] font-medium before:content-[''] before:w-[7px] before:h-[7px] before:rounded-full before:bg-success shrink-0">
-        방금 자동 저장됨
+        저장됨
       </span>
     );
   }
@@ -126,10 +141,12 @@ const FamilySection = ({
   onSave,
   onProgressChange,
   onMissingFieldsChange,
+  onDataChange,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
+  onDataChange?: (data: FamilySectionData) => void;
 }) => {
   const [marriageExp, setMarriageExp] = useState("");
   const [region, setRegion] = useState("");
@@ -150,6 +167,10 @@ const FamilySection = ({
     if (!address.trim()) missing.push({ id: SECTION_FAMILY, label: "주소" });
     onMissingFieldsChange(missing);
   }, [marriageExp, address, onMissingFieldsChange]);
+
+  useEffect(() => {
+    onDataChange?.({ marriageExp, region, address, addressDetail });
+  }, [marriageExp, region, address, addressDetail, onDataChange]);
 
   const applyAddress = () => {
     if (addrQuery.trim()) {
@@ -338,10 +359,12 @@ const FaithSection = ({
   onSave,
   onProgressChange,
   onMissingFieldsChange,
+  onDataChange,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
+  onDataChange?: (data: FaithSectionData) => void;
 }) => {
   const [church, setChurch] = useState("");
   const [denom, setDenom] = useState("");
@@ -371,6 +394,10 @@ const FaithSection = ({
       missing.push({ id: SECTION_FAITH, label: "모태신앙 여부" });
     onMissingFieldsChange(missing);
   }, [church, denom, pastor, churchAddr, nativeFaith, onMissingFieldsChange]);
+
+  useEffect(() => {
+    onDataChange?.({ church, denom, pastor, churchAddr, nativeFaith });
+  }, [church, denom, pastor, churchAddr, nativeFaith, onDataChange]);
 
   const desktopContent = (
     <SectionAnchor id={SECTION_FAITH}>
@@ -501,10 +528,12 @@ const AppearanceSection = ({
   onSave,
   onProgressChange,
   onMissingFieldsChange,
+  onDataChange,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
+  onDataChange?: (data: AppearanceSectionData) => void;
 }) => {
   const [height, setHeight] = useState("");
   const [bloodType, setBloodType] = useState("");
@@ -537,6 +566,11 @@ const AppearanceSection = ({
       missing.push({ id: SECTION_APPEARANCE, label: "스타일" });
     onMissingFieldsChange(missing);
   }, [height, bloodType, bodyType, selectedStyles, onMissingFieldsChange]);
+
+  useEffect(() => {
+    const styles = Object.values(styleValue).flat();
+    onDataChange?.({ height, bloodType, bodyType, styles });
+  }, [height, bloodType, bodyType, styleValue, onDataChange]);
 
   const styleCountBadge = (
     <CountPill done={selectedStyles} total={STYLE_SELECTION_MAX} />
@@ -693,10 +727,12 @@ const LifestyleSection = ({
   onSave,
   onProgressChange,
   onMissingFieldsChange,
+  onDataChange,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
+  onDataChange?: (data: LifestyleSectionData) => void;
 }) => {
   const [drinking, setDrinking] = useState("");
   const [smoking, setSmoking] = useState("");
@@ -718,6 +754,10 @@ const LifestyleSection = ({
       missing.push({ id: SECTION_LIFESTYLE, label: "자녀 계획" });
     onMissingFieldsChange(missing);
   }, [drinking, smoking, childrenPlan, onMissingFieldsChange]);
+
+  useEffect(() => {
+    onDataChange?.({ drinking, smoking, childrenPlan });
+  }, [drinking, smoking, childrenPlan, onDataChange]);
 
   const desktopContent = (
     <SectionAnchor id={SECTION_LIFESTYLE}>
@@ -839,10 +879,12 @@ const PhotoSection = ({
   onSave,
   onProgressChange,
   onMissingFieldsChange,
+  onDataChange,
 }: {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
+  onDataChange?: (data: PhotoSectionData) => void;
 }) => {
   const [photos, setPhotos] = useState<PhotoItem[]>([
     { filled: false },
@@ -857,6 +899,12 @@ const PhotoSection = ({
   const [pbDeleteModal, setPbDeleteModal] = useState<{ index: number } | null>(
     null,
   );
+  const [uploading, setUploading] = useState<boolean[]>([
+    false,
+    false,
+    false,
+    false,
+  ]);
   const pbCarouselRef = useRef<HTMLDivElement>(null);
   const prevPbLengthRef = useRef(1);
 
@@ -885,6 +933,16 @@ const PhotoSection = ({
     }
     onMissingFieldsChange(missing);
   }, [filledCount, onMissingFieldsChange]);
+
+  useEffect(() => {
+    const photoData = photos
+      .filter((p) => p.filled && p.key)
+      .map((p) => ({ key: p.key!, description: p.description }));
+    const pbData = pbPhotos
+      .filter((p) => p.filled && p.key)
+      .map((p) => ({ key: p.key!, description: p.description }));
+    onDataChange?.({ photos: photoData, pbPhotos: pbData });
+  }, [photos, pbPhotos, onDataChange]);
 
   useEffect(() => {
     if (pbPhotos.length > prevPbLengthRef.current) {
@@ -927,24 +985,47 @@ const PhotoSection = ({
     onSave();
   };
 
-  const handleUpload = (index: number, file: File) => {
+  const handleUpload = async (index: number, file: File) => {
     const previewUrl = URL.createObjectURL(file);
     setPhotos((prev) =>
-      prev.map((photo, i) =>
-        i === index ? { ...photo, filled: true, previewUrl } : photo,
-      ),
+      prev.map((photo, i) => (i === index ? { ...photo, previewUrl } : photo)),
     );
-    onSave();
+    setUploading((prev) => prev.map((v, i) => (i === index ? true : v)));
+    try {
+      const key = await presignAndUpload(file);
+      setPhotos((prev) =>
+        prev.map((photo, i) =>
+          i === index ? { ...photo, filled: true, key } : photo,
+        ),
+      );
+      onSave();
+    } catch {
+      setPhotos((prev) =>
+        prev.map((photo, i) => (i === index ? { filled: false } : photo)),
+      );
+    } finally {
+      setUploading((prev) => prev.map((v, i) => (i === index ? false : v)));
+    }
   };
 
-  const handlePbUpload = (index: number, file: File) => {
+  const handlePbUpload = async (index: number, file: File) => {
     const previewUrl = URL.createObjectURL(file);
     setPbPhotos((prev) =>
-      prev.map((photo, i) =>
-        i === index ? { ...photo, filled: true, previewUrl } : photo,
-      ),
+      prev.map((photo, i) => (i === index ? { ...photo, previewUrl } : photo)),
     );
-    onSave();
+    try {
+      const key = await presignAndUpload(file);
+      setPbPhotos((prev) =>
+        prev.map((photo, i) =>
+          i === index ? { ...photo, filled: true, key } : photo,
+        ),
+      );
+      onSave();
+    } catch {
+      setPbPhotos((prev) =>
+        prev.map((photo, i) => (i === index ? { filled: false } : photo)),
+      );
+    }
   };
 
   const updatePbDescription = (index: number, description: string) => {
@@ -1012,6 +1093,7 @@ const PhotoSection = ({
           key={i}
           variant={i === 0 ? "rep" : "normal"}
           filled={photo.filled}
+          loading={uploading[i]}
           previewUrl={photo.previewUrl}
           onDelete={photo.filled ? () => requestDelete(i) : undefined}
           onSetRepresentative={
@@ -1045,6 +1127,7 @@ const PhotoSection = ({
           <PhotoSlot
             variant={i === 0 ? "rep" : "normal"}
             filled={photo.filled}
+            loading={uploading[i]}
             previewUrl={photo.previewUrl}
             onDelete={photo.filled ? () => requestDelete(i) : undefined}
             onSetRepresentative={
@@ -1359,6 +1442,18 @@ const DFooter = ({ autoSave }: { autoSave: AutoSaveState }) => {
     showToast("저장되었습니다.");
   };
 
+  const prevAutoSave = useRef<AutoSaveState>("idle");
+  useEffect(() => {
+    if (
+      prevAutoSave.current === "saved" &&
+      autoSave === "idle" &&
+      window.innerWidth < 1280
+    ) {
+      showToast("저장되었습니다.");
+    }
+    prevAutoSave.current = autoSave;
+  }, [autoSave, showToast]);
+
   useEffect(() => {
     const syncFooter = () => {
       const frame = document.querySelector<HTMLElement>("[data-cmate-frame]");
@@ -1431,7 +1526,9 @@ const DFooter = ({ autoSave }: { autoSave: AutoSaveState }) => {
             layout="fill"
             onClick={handleManualSave}
           >
-            저장하기
+            {autoSave === "saving" || autoSave === "saved"
+              ? "저장중..."
+              : "저장하기"}
           </Button>
           <Button variant="primary" size="md" type="submit" layout="fill">
             다음
@@ -1474,6 +1571,7 @@ export const BaseInfoForm = (): ReactNode => {
     photo: { done: 0, total: 2 },
   });
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const formDataRef = useRef<BaseInfoPayload>({});
   const progress = Object.values(progressMap).reduce<ProgressSection>(
     (acc, section) => ({
       done: acc.done + section.done,
@@ -1523,14 +1621,27 @@ export const BaseInfoForm = (): ReactNode => {
     [missingBySection],
   );
 
+  const updateFormData = useCallback(
+    <K extends keyof BaseInfoPayload>(key: K, data: BaseInfoPayload[K]) => {
+      formDataRef.current = { ...formDataRef.current, [key]: data };
+    },
+    [],
+  );
+
   const triggerAutoSave = useCallback(() => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
-    setAutoSave("idle");
     saveTimer.current = setTimeout(async () => {
       setAutoSave("saving");
-      await new Promise<void>((r) => setTimeout(r, 700));
-      setAutoSave("saved");
-      setTimeout(() => setAutoSave("idle"), 3000);
+      const result = await apiFetch<{ ok: boolean }>("/api/profile/base-info", {
+        method: "PATCH",
+        body: JSON.stringify(formDataRef.current),
+      });
+      if (result.ok) {
+        setAutoSave("saved");
+        setTimeout(() => setAutoSave("idle"), 2000);
+      } else {
+        setAutoSave("error");
+      }
     }, 500);
   }, []);
 
@@ -1565,6 +1676,7 @@ export const BaseInfoForm = (): ReactNode => {
           onMissingFieldsChange={(missing) =>
             registerMissingFields("family", missing)
           }
+          onDataChange={(data) => updateFormData("family", data)}
         />
         <FaithSection
           onSave={triggerAutoSave}
@@ -1572,6 +1684,7 @@ export const BaseInfoForm = (): ReactNode => {
           onMissingFieldsChange={(missing) =>
             registerMissingFields("faith", missing)
           }
+          onDataChange={(data) => updateFormData("faith", data)}
         />
         <EducationSection
           onSave={triggerAutoSave}
@@ -1579,6 +1692,7 @@ export const BaseInfoForm = (): ReactNode => {
           onMissingFieldsChange={(missing) =>
             registerMissingFields("education", missing)
           }
+          onDataChange={(data) => updateFormData("education", data)}
         />
         <AppearanceSection
           onSave={triggerAutoSave}
@@ -1586,6 +1700,7 @@ export const BaseInfoForm = (): ReactNode => {
           onMissingFieldsChange={(missing) =>
             registerMissingFields("appearance", missing)
           }
+          onDataChange={(data) => updateFormData("appearance", data)}
         />
         <LifestyleSection
           onSave={triggerAutoSave}
@@ -1593,6 +1708,7 @@ export const BaseInfoForm = (): ReactNode => {
           onMissingFieldsChange={(missing) =>
             registerMissingFields("lifestyle", missing)
           }
+          onDataChange={(data) => updateFormData("lifestyle", data)}
         />
         <PhotoSection
           onSave={triggerAutoSave}
@@ -1600,6 +1716,7 @@ export const BaseInfoForm = (): ReactNode => {
           onMissingFieldsChange={(missing) =>
             registerMissingFields("photo", missing)
           }
+          onDataChange={(data) => updateFormData("photos", data)}
         />
         <DFooter autoSave={autoSave} />
       </form>

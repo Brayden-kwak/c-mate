@@ -30,6 +30,7 @@ import {
   type MissingRequiredField,
   type ProgressSection,
 } from "./types";
+import type { EducationSectionData } from "@/app/_lib/base-info";
 
 const SECTION_EDUCATION = BASE_INFO_SECTION_ANCHOR_ID.education;
 
@@ -39,6 +40,7 @@ type Props = {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
   onMissingFieldsChange: (missing: MissingRequiredField[]) => void;
+  onDataChange?: (data: EducationSectionData) => void;
 };
 
 const DEGREE_ROWS: Record<string, string[]> = {
@@ -54,6 +56,7 @@ export const EducationSection = ({
   onSave,
   onProgressChange,
   onMissingFieldsChange,
+  onDataChange,
 }: Props) => {
   const [education, setEducation] = useState("");
   const [eduRows, setEduRows] = useState<EduRow[]>([]);
@@ -112,6 +115,17 @@ export const EducationSection = ({
     salaryHidden,
     onMissingFieldsChange,
   ]);
+
+  useEffect(() => {
+    onDataChange?.({
+      education,
+      eduRows,
+      job,
+      workplace,
+      salary,
+      salaryHidden,
+    });
+  }, [education, eduRows, job, workplace, salary, salaryHidden, onDataChange]);
 
   const applyDegreeChange = (newDegree: string) => {
     const newTags = DEGREE_ROWS[newDegree] ?? [];
