@@ -32,6 +32,13 @@ export function MobileQuickFab() {
       className="xl:hidden fixed right-4 bottom-mobile-fab-bottom z-(--z-rail) flex flex-col items-end gap-2"
       aria-label="퀵 메뉴"
     >
+      {/* 아이콘 프리로드: 항상 마운트하여 next/image priority preload link가 head에 추가되도록 함 */}
+      <span className="sr-only" aria-hidden="true">
+        {QUICK_MENU_ITEMS.map((item) => (
+          <span key={item.label}>{item.icon}</span>
+        ))}
+      </span>
+
       {open && (
         <div
           id={menuId}
@@ -69,7 +76,7 @@ export function MobileQuickFab() {
         onClick={() => setOpen((prev) => !prev)}
         className={[
           "w-mobile-fab-size h-mobile-fab-size rounded-pill inline-flex items-center justify-center text-2xl font-light tracking-tight shadow-fab transition-colors duration-fast ease-standard",
-          open ? "bg-text text-white" : "bg-primary text-white",
+          "bg-primary text-white",
         ].join(" ")}
       >
         {open ? "✕" : "＋"}

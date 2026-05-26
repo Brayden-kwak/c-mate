@@ -27,6 +27,10 @@ export function QuickRail() {
       }
 
       const frameRect = frame.getBoundingClientRect();
+
+      // 레이아웃이 아직 계산되지 않은 경우 건너뜀 (Tailwind bottom-6가 폴백으로 작동)
+      if (frameRect.bottom <= 0) return;
+
       const mainStyles = getComputedStyle(webMain);
       const gap =
         Number.parseFloat(mainStyles.columnGap || mainStyles.gap) || 28;
@@ -57,10 +61,22 @@ export function QuickRail() {
       });
     }
 
-    syncRail();
+    const rafId = requestAnimationFrame(syncRail);
+
+    // 프레임 크기 변화(hydration 후 콘텐츠 로드 등) 감지
+    const ro = new ResizeObserver(syncRail);
+    const frame = document.querySelector<HTMLElement>("[data-cmate-frame]");
+    const webMain = document.querySelector<HTMLElement>(
+      "[data-cmate-web-main]",
+    );
+    if (frame) ro.observe(frame);
+    if (webMain) ro.observe(webMain);
+
     window.addEventListener("resize", syncRail);
     window.addEventListener("scroll", syncRail, { passive: true });
     return () => {
+      cancelAnimationFrame(rafId);
+      ro.disconnect();
       window.removeEventListener("resize", syncRail);
       window.removeEventListener("scroll", syncRail);
     };

@@ -53,26 +53,42 @@ export function FreeConsultModal({ open, onClose }: Props) {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 px-7 py-4 border-t border-border-subtle">
+        <div
+          className={
+            callMode
+              ? "flex flex-col gap-3 px-7 py-4"
+              : "flex items-center gap-2 px-7 py-4"
+          }
+        >
           {callMode ? (
-            <a
-              href={FREE_CONSULT_TEL}
-              className="flex-1 inline-flex items-center justify-center h-10 px-4 rounded-md text-sm font-semibold bg-primary text-white hover:bg-primary-hover transition-colors duration-fast ease-standard no-underline"
-            >
-              통화하기
-            </a>
+            <>
+              <a
+                href={FREE_CONSULT_TEL}
+                className="inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-white no-underline transition-colors duration-fast ease-standard hover:bg-primary-hover"
+              >
+                통화하기
+              </a>
+              <Button
+                variant="tertiary"
+                size="md"
+                type="button"
+                layout="full"
+                onClick={onClose}
+              >
+                취소
+              </Button>
+            </>
           ) : (
-            <span className="flex-1" />
+            <Button
+              variant="primary"
+              size="md"
+              type="button"
+              layout="full"
+              onClick={onClose}
+            >
+              확인
+            </Button>
           )}
-          <Button
-            variant="primary"
-            size="md"
-            type="button"
-            layout={callMode ? undefined : "fill"}
-            onClick={onClose}
-          >
-            확인
-          </Button>
         </div>
       </div>
     </div>

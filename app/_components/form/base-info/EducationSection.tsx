@@ -14,7 +14,7 @@ import {
   type DropdownOption,
 } from "@/app/_components/ui/DropdownSelect";
 import { Checkbox } from "@/app/_components/ui/Checkbox";
-import { TrashIcon } from "@/app/_components/ui/icons";
+import Image from "next/image";
 
 const SALARY_OPTIONS: DropdownOption[] = [
   { value: "3000-under", label: "3,000만원 미만" },
@@ -75,7 +75,11 @@ export const EducationSection = ({
   const [salaryHidden, setSalaryHidden] = useState(
     initialData?.salaryHidden ?? false,
   );
-  const nextId = useRef(10);
+  const nextId = useRef(
+    initialData?.eduRows && initialData.eduRows.length > 0
+      ? Math.max(...initialData.eduRows.map((r) => r.id))
+      : 10,
+  );
   const trimmedSchoolQuery = schoolQuery.trim();
   const trimmedJobQuery = jobQuery.trim();
   const hasCompleteSchoolRow =
@@ -233,7 +237,13 @@ export const EducationSection = ({
               aria-label={`${row.degree} 학력 삭제`}
               className="w-9 h-9 border border-border rounded-[6px] bg-surface flex items-center justify-center hover:bg-subtle shrink-0 transition-colors duration-fast ease-standard"
             >
-              <TrashIcon className="w-4 h-4 text-danger" />
+              <Image
+                src="/images/button/button-trash.svg"
+                alt=""
+                width={16}
+                height={16}
+                aria-hidden
+              />
             </button>
           ) : (
             <div className="w-9 h-9 shrink-0" />
@@ -445,14 +455,6 @@ export const EducationSection = ({
           />
         </MobileField>
         <MobileField label="연봉" required>
-          <Checkbox
-            label="연봉 비공개"
-            checked={salaryHidden}
-            onChange={(e) => {
-              setSalaryHidden(e.target.checked);
-              onSave();
-            }}
-          />
           <DropdownSelect
             value={salary}
             onChange={(v) => {
@@ -464,6 +466,14 @@ export const EducationSection = ({
             aria-label="연봉 구간"
             aria-required
             disabled={salaryHidden}
+          />
+          <Checkbox
+            label="연봉 비공개"
+            checked={salaryHidden}
+            onChange={(e) => {
+              setSalaryHidden(e.target.checked);
+              onSave();
+            }}
           />
           <InfoBox>
             비공개 시 다른 회원에게 노출되지 않으며, 매니저 매칭에만 활용됩니다.
@@ -482,12 +492,11 @@ export const EducationSection = ({
         open={!!pendingEduChange}
         onClose={() => setPendingEduChange(null)}
         title="학력 정보가 삭제됩니다"
-        confirmLabel="계속 진행"
+        confirmLabel="확인"
         cancelLabel="취소"
         onConfirm={() =>
           pendingEduChange && applyDegreeChange(pendingEduChange.newDegree)
         }
-        variant="danger"
       >
         <div className="flex items-start gap-3 bg-warning-light rounded-md p-4">
           <span className="text-warning text-lg font-bold shrink-0">⚠</span>
@@ -505,7 +514,14 @@ export const EducationSection = ({
         <div className="flex flex-col gap-2">
           {pendingEduChange?.affected.map((row) => (
             <div key={row.id} className="flex items-center gap-2 text-[13px]">
-              <TrashIcon className="w-3.5 h-3.5 text-danger shrink-0" />
+              <Image
+                src="/images/button/button-trash.svg"
+                alt=""
+                width={14}
+                height={14}
+                className="shrink-0"
+                aria-hidden
+              />
               <span className="bg-subtle border border-border rounded-[4px] px-1.5 py-0.5 text-[11px] font-bold shrink-0">
                 {row.degree}
               </span>

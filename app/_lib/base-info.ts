@@ -44,6 +44,7 @@ export type LifestyleSectionData = {
 
 export type PhotoItemData = {
   key: string;
+  url?: string;
   description?: string;
 };
 

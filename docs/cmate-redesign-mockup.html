@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C-Mate · 기본정보 페이지 재설계 v4 (Next.js 16 구현 반영)</title>
+<title>C-Mate · 기본정보 페이지 재설계 v5 (Next.js 현재 구현 1:1 반영)</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
   :root {
@@ -69,6 +69,15 @@
     --space-10: 40px;
     --space-12: 48px;
     --space-16: 64px;
+    --photo-slot-width: 179.4px;
+    --photo-slot-height: 230.6px;
+    --photo-grid-gap: 14px;
+    --photo-guide-width: 286px;
+    --photo-guide-height: 475.2px;
+    --photo-guide-mobile-width: 369px;
+    --photobook-slot-width: 332px;
+    --header-nav-width: 672px;
+    --mobile-drawer-width: 292px;
 
     /* ---- Typography ---- */
     --font-sans: 'Pretendard', -apple-system, system-ui, sans-serif;
@@ -171,8 +180,8 @@
     max-width: 1440px;
     margin: 0 auto;
     background: var(--bg-shell);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
+    border: 0;
+    border-radius: var(--radius-md);
     overflow: hidden;
     box-shadow: var(--shadow-md);
   }
@@ -199,32 +208,24 @@
   .cm-logo {
     display: inline-flex;
     align-items: center;
-    gap: 9px;
     min-width: 0;
-    color: var(--text-brand);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 0.9;
   }
-  .cm-logo-mark {
-    width: 28px;
-    height: 28px;
-    border: 3px solid var(--primary);
-    border-right-color: var(--text-brand);
-    border-bottom-color: var(--text-brand);
-    border-radius: 9px 9px 12px 9px;
-    transform: rotate(-45deg);
-    flex: 0 0 auto;
-  }
-  .cm-logo-text {
-    font-size: 15px;
+  .cm-logo img {
+    display: block;
+    width: auto;
+    height: 20px;
   }
   .site-nav {
     display: grid;
+    width: 100%;
+    max-width: var(--header-nav-width);
+    min-width: 0;
+    margin: 0 auto;
+    justify-self: center;
     grid-template-columns: repeat(6, minmax(0, 1fr));
     align-items: center;
     text-align: center;
-    gap: 4px;
+    gap: 0;
   }
   .site-nav a {
     color: var(--text-brand-2);
@@ -232,6 +233,9 @@
     font-weight: 600;
     text-decoration: none;
     white-space: nowrap;
+    display: block;
+    width: 100%;
+    padding: 8px 4px;
   }
   .site-nav a.active {
     color: var(--primary);
@@ -269,9 +273,20 @@
     font-weight: 700;
     white-space: nowrap;
   }
+  .site-actions .site-profile,
+  .site-actions .logout-btn {
+    height: 36px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    line-height: 1.05;
+  }
+  .site-actions .site-profile {
+    color: var(--primary);
+  }
   .site-profile .avatar {
-    width: 27px;
-    height: 27px;
+    width: 20px;
+    height: 20px;
     border-radius: var(--radius-pill);
     background: var(--avatar-accent);
     color: white;
@@ -282,16 +297,10 @@
     box-shadow: inset -6px -6px 0 rgba(255,255,255,0.22);
     position: relative;
   }
-  .site-profile .avatar::after {
-    content: '';
-    position: absolute;
-    right: -1px;
-    top: -1px;
-    width: 7px;
-    height: 7px;
-    border-radius: var(--radius-pill);
-    background: var(--primary);
-    border: 2px solid white;
+  .drawer-profile {
+    flex-direction: row;
+    gap: 6px;
+    font-size: 12px;
   }
   .logout-btn {
     display: inline-flex;
@@ -303,10 +312,9 @@
     white-space: nowrap;
   }
   .logout-btn svg,
-  .quick-btn svg,
   .social-btn svg {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     stroke: currentColor;
     stroke-width: 2;
     fill: none;
@@ -334,8 +342,13 @@
   .mega-grid {
     grid-column: 2;
     display: grid;
+    width: 100%;
+    max-width: var(--header-nav-width);
+    min-width: 0;
+    margin: 0 auto;
+    justify-self: center;
     grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 4px;
+    gap: 0;
     text-align: center;
   }
   .mega-col {
@@ -411,7 +424,7 @@
   .quick-rail {
     position: fixed;
     right: max(32px, calc((100vw - 1440px) / 2 + 30px));
-    bottom: 104px;
+    bottom: 24px;
     width: 56px;
     z-index: var(--z-rail);
     display: flex;
@@ -451,6 +464,19 @@
     font-size: 10px;
     font-weight: 800;
     letter-spacing: -0.02em;
+  }
+  .quick-btn img,
+  .m-fab-menu .item img {
+    display: block;
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    flex: 0 0 auto;
+  }
+  .quick-btn img.icon-lg,
+  .m-fab-menu .item img.icon-lg {
+    width: 20px;
+    height: 20px;
   }
   .quick-btn.top {
     min-height: 36px;
@@ -615,8 +641,8 @@
   .btn-primary:hover { background: var(--primary-hover); }
   .btn-secondary { background: white; color: var(--text); border-color: var(--border-strong); }
   .btn-secondary:hover { background: var(--bg-subtle); border-color: var(--text-sec); }
-  .btn-tertiary { background: transparent; color: var(--text-sec); }
-  .btn-tertiary:hover { background: var(--bg-subtle); color: var(--text); }
+  .btn-tertiary { background: var(--bg-subtle); color: var(--text-sec); }
+  .btn-tertiary:hover { background: var(--bg-disabled); color: var(--text); }
   .btn-danger { background: var(--danger); color: white; }
   .btn-danger:hover { background: var(--danger-hover); }
   .btn-icon {
@@ -773,7 +799,7 @@
   .d-subtitle { font-size: 15px; color: var(--text-sec); line-height: 1.5; margin: 0; }
   .d-progress-row { display: flex; align-items: center; gap: 12px; padding-top: 8px; }
   .d-progress-bar { flex: 1; height: 6px; background: var(--border-subtle); border-radius: var(--radius-pill); overflow: hidden; }
-  .d-progress-fill { height: 100%; width: 89.5%; background: var(--primary); border-radius: var(--radius-pill); }
+  .d-progress-fill { height: 100%; width: 0%; background: var(--primary); border-radius: var(--radius-pill); }
   .d-progress-text { font-size: 13px; font-weight: 600; color: var(--text-sec); }
 
   /* Body sections */
@@ -879,27 +905,34 @@
   }
 
   /* Photo slots */
-  .photo-grid { display: flex; gap: 14px; flex-wrap: wrap; align-items: stretch; }
+  .photo-layout { display:flex; width:100%; min-width:0; flex-direction:column; gap:16px; }
+  .photo-grid { display: grid; width: max-content; grid-template-columns: repeat(2, var(--photo-slot-width)); gap: var(--photo-grid-gap); }
   .photo-slot {
     border-radius: var(--radius-lg);
     overflow: hidden;
     background: var(--bg-subtle);
     border: 1px solid var(--border);
-    display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
     padding: 12px;
     position: relative;
     transition: transform var(--motion-base) var(--easing-standard);
+    text-align: center;
+    cursor: pointer;
   }
-  .photo-slot.rep { width: 200px; height: 256px; }
-  .photo-slot.normal { width: 168px; height: 220px; }
+  .photo-slot.rep,
+  .photo-slot.normal { width: var(--photo-slot-width); height: var(--photo-slot-height); }
+  .photo-slot.rep { border-color: var(--primary); box-shadow: var(--shadow-md); padding: 16px; }
   .photo-slot.filled { background: linear-gradient(180deg, var(--photo-grad-top) 0%, var(--photo-grad-bottom) 100%); border: none; }
-  .photo-slot.empty .plus { font-size: 32px; color: var(--text-tert); font-weight: 300; margin: auto; }
-  .photo-slot.empty .label { font-size: 12px; color: var(--text-tert); margin-top: 4px; }
+  .photo-slot.empty .plus { font-size: 32px; color: var(--text-tert); font-weight: 300; line-height:1; }
+  .photo-slot.empty .label { font-size: 11px; color: var(--text-sec); margin-top: 8px; line-height:1.35; font-weight:500; }
   .photo-slot .badge {
+    position:absolute; top:8px; left:8px;
+    width:28px; height:28px; border-radius:var(--radius-pill);
     background: var(--primary); color: white;
-    font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
-    padding: 4px 10px; border-radius: var(--radius-pill);
+    display:inline-flex; align-items:center; justify-content:center;
+    box-shadow:var(--shadow-sm);
   }
+  .photo-slot .badge svg { width:14px; height:14px; fill:currentColor; display:block; }
   .photo-slot .cta {
     background: white; color: var(--text);
     font-size: 11px; font-weight: 600;
@@ -920,16 +953,43 @@
   .photo-slot .icon-btn svg { width: 14px; height: 14px; }
 
   /* Photobook */
-  .photobook-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+  .photobook-grid { display: grid; width:100%; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
   .pb-thumb {
-    width: 108px; height: 108px;
-    border-radius: var(--radius-md);
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-lg);
     background: var(--bg-subtle); border: 1px solid var(--border);
     display: flex; align-items: center; justify-content: center;
-    position: relative; overflow: hidden;
+    position: relative; overflow: hidden; cursor:pointer;
   }
+  .pb-thumb.add-slot { border-style:dashed; border-color:var(--border-strong); background:white; }
   .pb-thumb.filled { background: linear-gradient(180deg, var(--photo-grad-top) 0%, var(--photo-grad-bottom) 100%); border: none; }
-  .pb-thumb .plus { font-size: 24px; color: var(--text-tert); }
+  .pb-thumb .plus { font-size: 32px; color: var(--text-tert); font-weight:300; line-height:1; }
+  .photo-guide {
+    width:100%; min-width:0; max-width:var(--photo-guide-mobile-width);
+    display:flex; flex-direction:column;
+    border:1px solid var(--border-subtle); border-radius:var(--radius-lg);
+    background:var(--info-light); overflow:hidden;
+  }
+  .photo-guide-top { display:flex; flex-direction:column; gap:10px; padding:14px; }
+  .photo-guide-title { display:flex; align-items:center; gap:6px; color:var(--info); }
+  .photo-guide-title h3 { margin:0; font-size:14px; font-weight:700; }
+  .photo-guide ul { margin:0; padding-left:16px; list-style:disc; font-size:12px; line-height:1.35; color:var(--text-sec); }
+  .photo-guide hr { border:0; border-top:1px solid var(--border-subtle); margin:0; }
+  .photo-guide-examples { display:flex; width:100%; min-width:0; gap:8px; padding:0 14px 14px; }
+  .photo-guide-col { min-width:0; flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .photo-guide-col p { width:100%; margin:0; font-size:14px; font-weight:700; color:var(--text); }
+  .photo-guide-list { display:flex; width:100%; min-width:0; flex-direction:column; gap:4px; }
+  .photo-guide-thumb { position:relative; width:100%; aspect-ratio:517/307; overflow:hidden; border-radius:var(--radius-md); background:var(--bg-subtle); }
+  .photo-guide-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  @media (min-width: 1430px) {
+    .photo-layout { flex-direction:row; align-items:flex-start; }
+    .photo-guide { order:2; width:var(--photo-guide-width); max-width:none; height:var(--photo-guide-height); flex:0 0 var(--photo-guide-width); }
+    .photo-grid { order:1; flex:0 0 auto; }
+    .photo-guide-top { gap:8px; padding:12px; }
+    .photo-guide-examples { gap:12px; padding:0 12px 12px; }
+    .photo-guide-thumb { aspect-ratio:auto; height:calc((var(--photo-guide-width) - 24px - 12px) / 2 * 307 / 517); }
+  }
 
   /* Sticky footer */
   .d-footer {
@@ -975,8 +1035,8 @@
     width: 375px; margin: 0 auto;
     height: 812px;
     background: var(--bg-page);
-    border-radius: 32px;
-    border: 8px solid var(--phone-frame);
+    border-radius: 0;
+    border: 0;
     box-shadow: var(--shadow-lg);
     overflow: hidden;
     position: relative;
@@ -984,6 +1044,7 @@
     flex-direction: column;
   }
   .mobile-status {
+    display: none;
     height: 44px; background: white;
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 24px;
@@ -991,12 +1052,17 @@
     flex: 0 0 auto;
   }
   .mobile-status .dots { font-size: 10px; }
+  .mobile-frame > .mobile-status,
+  .desktop-app-header > .mobile-status {
+    display: none !important;
+  }
   .m-topbar {
     height: 56px; background: white; border-bottom: 1px solid var(--border);
     display: flex; align-items: center; padding: 0 16px; gap: 12px;
     flex: 0 0 auto;
   }
-  .m-back { width: var(--touch-min); height: var(--touch-min); min-width: var(--touch-min); padding: 0; margin-left: -10px; background: none; border: none; color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; font-weight: var(--fw-semibold); border-radius: var(--radius-md); transition: background var(--motion-fast) var(--easing-standard); }
+  .m-back { width: var(--touch-min); height: var(--touch-min); min-width: var(--touch-min); padding: 0; margin-left: -10px; background: none; border: none; color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border-radius: var(--radius-md); transition: background var(--motion-fast) var(--easing-standard); }
+  .m-back img { width: 16px; height: 14px; display: block; }
   .m-back:hover { background: var(--bg-subtle); }
   .m-back:focus-visible { outline: none; box-shadow: 0 0 0 var(--ring-width) var(--ring-color); }
   .m-title { font-size: 17px; font-weight: 700; }
@@ -1006,81 +1072,119 @@
     width: 34px;
     height: 34px;
     border-radius: var(--radius-pill);
-    border: 1px solid var(--border);
-    background: white;
+    border: 0;
+    background: transparent;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     color: var(--text);
   }
-  .m-menu-btn svg {
-    width: 18px;
-    height: 18px;
-    stroke: currentColor;
-    stroke-width: 2;
-    fill: none;
-    stroke-linecap: round;
-  }
+  .m-menu-btn img { display: block; width: 24px; height: 16px; }
+  .m-menu-btn[aria-expanded="true"] img { width: 14px; height: 14px; }
   .m-drawer[hidden] { display: none; }
   .m-drawer {
     position: absolute;
-    inset: 44px 0 0;
+    inset: 56px 0 0;
     z-index: var(--z-drawer-backdrop);
     background: rgba(15,23,42,0.28);
     display: flex;
     justify-content: flex-end;
   }
   .m-drawer-panel {
-    width: 292px;
+    width: var(--mobile-drawer-width);
     height: 100%;
     background: white;
     box-shadow: -12px 0 30px rgba(15,23,42,0.16);
-    padding: 18px;
-    overflow-y: auto;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
   }
   .m-drawer-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 18px;
+    gap: 12px;
+    flex: 0 0 auto;
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border-subtle);
   }
-  .m-drawer-close {
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-pill);
-    background: var(--bg-subtle);
-    color: var(--text);
-    font-size: 18px;
-  }
+  .m-drawer-scroll { flex:1 1 auto; overflow-y:auto; overscroll-behavior:contain; }
   .m-menu-section {
-    padding: 14px 0;
-    border-top: 1px solid var(--border-subtle);
+    padding: 0 20px 8px;
+    border-bottom: 1px solid var(--border-subtle);
   }
   .m-menu-section h4 {
-    margin: 0 0 10px;
+    margin: 0;
+    padding: 16px 0 8px;
     font-size: 12px;
     color: var(--text-tert);
     letter-spacing: 0.08em;
   }
   .m-menu-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    display: flex;
+    flex-direction: column;
   }
-  .m-menu-list a,
-  .m-side-list span {
+  .m-menu-list a {
+    min-height: 48px;
+    display:flex;
+    align-items:center;
     color: var(--text);
     text-decoration: none;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: var(--fw-bold);
   }
   .m-side-list {
     display: flex;
     flex-direction: column;
-    gap: 9px;
   }
-  .m-side-list span.active {
+  .m-side-list .group-toggle,
+  .m-side-list .single-link {
+    min-height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-bottom:1px solid var(--border-subtle);
+    color:var(--text);
+    font-size:15px;
+    font-weight:700;
+    text-decoration:none;
+  }
+  .m-side-list .group-toggle.open {
     color: var(--primary);
+  }
+  .m-side-sub {
+    margin-left:12px;
+    display:flex;
+    flex-direction:column;
+    border-bottom:1px solid var(--border-subtle);
+    padding-bottom:4px;
+  }
+  .m-side-sub a {
+    min-height:44px;
+    display:flex;
+    align-items:center;
+    color:var(--text);
+    text-decoration:none;
+    font-size:14px;
+    font-weight:700;
+  }
+  .m-side-sub a.active {
+    color: var(--primary);
+  }
+  .m-drawer-footer {
+    flex: 0 0 auto;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+    padding:16px 20px;
+    border-top:1px solid var(--border-subtle);
+  }
+  .m-drawer-footer .btn { width:100%; }
+  .m-drawer-footer .drawer-logout {
+    font-size:12px;
+    font-weight:700;
+    color:var(--text-brand);
   }
 
   .m-stepper { background: white; padding: 12px 16px 14px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; flex: 0 0 auto; }
@@ -1098,7 +1202,7 @@
   .m-chip.current .num { background: rgba(255,255,255,0.25); }
   .m-progress { display: flex; align-items: center; gap: 8px; }
   .m-progress-bar { flex: 1; height: 5px; background: var(--border-subtle); border-radius: var(--radius-pill); overflow: hidden; }
-  .m-progress-fill { height: 100%; width: 89.5%; background: var(--primary); }
+  .m-progress-fill { height: 100%; width: 0%; background: var(--primary); }
   .m-progress-text { font-size: 11px; font-weight: 600; color: var(--text-sec); }
 
   .m-body {
@@ -1275,12 +1379,12 @@
     position: absolute; right: 16px; bottom: 158px;
     background: white; border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg); border: 1px solid var(--border);
-    padding: 8px;
-    display: flex; flex-direction: column; gap: 4px;
-    min-width: 180px;
+    padding: 10px 8px;
+    display: flex; flex-direction: column; gap: 12px;
+    width: max-content;
     z-index: calc(var(--z-fab) - 1);
   }
-  .m-fab-menu .item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; cursor: pointer; }
+  .m-fab-menu .item { min-height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 10px; border-radius: 6px; cursor: pointer; }
   .m-fab-menu .item:hover { background: var(--bg-subtle); }
   .m-fab-menu .item .ic { font-size: 16px; }
   .m-fab-menu .item .lab { font-size: 13px; font-weight: 600; }
@@ -1297,15 +1401,32 @@
 
   /* Mobile photo carousel */
   .m-carousel {
-    display: flex; gap: 10px; overflow: visible; padding-right: 30px;
+    display: flex; gap: 10px; overflow-x: auto; overscroll-behavior-x: contain; padding: 0 0 4px;
+    scroll-snap-type: x mandatory;
   }
-  .m-carousel .photo-slot { flex-shrink: 0; }
-  .m-photo-rep { width: 180px; height: 220px; }
-  .m-photo-normal { width: 150px; height: 184px; }
-  .m-photo-peek { width: 30px; height: 160px; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: var(--radius-md); opacity: 0.6; flex-shrink: 0; }
+  .m-carousel .photo-slot { flex:0 0 auto; scroll-snap-align:start; }
+  .m-photo-rep,
+  .m-photo-normal { width: var(--photo-slot-width); height: var(--photo-slot-height); }
+  .m-photo-peek { display:none; }
   .m-dots { display: flex; gap: 6px; justify-content: center; }
   .m-dots .d { width: 7px; height: 7px; border-radius: 50%; background: var(--border-strong); }
   .m-dots .d.active { background: var(--primary); width: 18px; border-radius: 4px; }
+  .m-pb-carousel {
+    display:flex;
+    width:100%;
+    gap:10px;
+    overflow-x:auto;
+    overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory;
+    padding-bottom:4px;
+  }
+  .m-pb-carousel > * {
+    width:var(--photobook-slot-width);
+    max-width:100%;
+    flex:0 0 var(--photobook-slot-width);
+    scroll-snap-align:start;
+  }
+  .m-pb-label-add { display:none; }
 
   /* =====================================================
      MODAL VIEW
@@ -1325,40 +1446,73 @@
 
   .modal-head {
     display: flex; align-items: center; gap: 12px;
-    padding: 24px 28px 16px;
+    padding: 24px 28px 12px;
   }
   .modal-head h3 { font-size: 20px; font-weight: 700; margin: 0; }
-  .modal-head .grow { flex: 1; }
-  .modal-head .close {
-    width: 32px; height: 32px; border-radius: var(--radius-pill);
-    background: var(--bg-subtle);
-    display: inline-flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 13px; color: var(--text-sec);
-  }
 
   .modal-body {
-    padding: 0 28px 20px;
-    display: flex; flex-direction: column; gap: 16px;
+    padding: 20px 28px;
+    display: flex; flex-direction: column; gap: 20px;
   }
   .modal-foot {
-    padding: 16px 28px 24px;
-    display: flex; align-items: center; gap: 8px;
-    border-top: 1px solid var(--border-subtle);
+    padding: 0 28px 24px;
+    display: flex; flex-direction: column-reverse; gap: 12px;
+    border-top: 0;
   }
-  .modal-foot .grow { flex: 1; }
-  .modal-foot .caption { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: var(--text-tert); }
+  @media (min-width: 640px) {
+    .modal-foot { flex-direction: row; align-items: center; justify-content: flex-end; }
+  }
+  .modal-foot .btn {
+    flex: 1 1 0;
+    min-width: 0;
+    width: 100%;
+  }
+  .modal.church .modal-head,
+  .modal.consult .modal-head {
+    padding-bottom: 16px;
+  }
+  .modal.church .modal-body {
+    padding: 0 28px 24px;
+    gap: 16px;
+    max-height: 65vh;
+    overflow-y: auto;
+  }
+  .modal.consult .modal-body {
+    padding: 0 28px 20px;
+    gap: 12px;
+    align-items: center;
+    text-align: center;
+  }
+  .modal.consult .modal-foot {
+    padding: 16px 28px;
+    border-top: 1px solid var(--border-subtle);
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+  .confirm-copy {
+    margin: 8px 0 16px;
+    text-align: center;
+    color: var(--text-sec);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .confirm-copy.strong {
+    color: var(--text);
+    font-weight: 600;
+  }
 
   /* Empty state inside modal */
   .empty-state {
     background: var(--bg-subtle);
     border-radius: var(--radius-lg);
-    padding: 28px 20px;
+    padding: 20px;
     display: flex; flex-direction: column; align-items: center; gap: 8px;
     text-align: center;
   }
   .empty-state .ic { font-size: 32px; }
-  .empty-state .ttl { font-size: 15px; font-weight: 600; }
-  .empty-state .desc { font-size: 13px; color: var(--text-sec); line-height: 1.5; max-width: 360px; }
+  .empty-state .ttl { font-size: 16px; font-weight: 600; }
+  .empty-state .desc { font-size: 16px; color: var(--text-sec); line-height: 1.5; max-width: 420px; }
   .empty-state .btn { margin-top: 8px; }
 
   /* Registration form inside modal */
@@ -1396,23 +1550,17 @@
 
   /* Alert banner inside modal */
   .alert {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px 16px; border-radius: var(--radius-md);
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 16px; border-radius: var(--radius-md);
   }
   .alert.danger { background: var(--danger-light); }
   .alert.warning { background: var(--warning-light); }
   .alert .ic-circle {
-    width: 36px; height: 36px; border-radius: var(--radius-pill);
-    color: white; font-weight: 700; font-size: 18px;
-    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--warning); font-weight: 700; font-size: 18px;
     flex-shrink: 0;
   }
-  .alert.danger .ic-circle { background: var(--danger); }
-  .alert.warning .ic-circle { background: var(--warning); }
-  .alert .title { font-size: 14px; font-weight: 600; }
-  .alert.danger .title { color: var(--danger); }
-  .alert.warning .title { color: var(--warning); }
-  .alert .desc { font-size: 12px; color: var(--text); line-height: 1.5; margin-top: 2px; }
+  .alert .title { font-size: 16px; font-weight: 600; color: var(--text); }
+  .alert .desc { font-size: 13px; color: var(--text-sec); line-height: 1.5; margin-top: 4px; }
 
   /* affected rows */
   .affected-list { background: var(--bg-subtle); border-radius: var(--radius-md); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
@@ -2173,40 +2321,23 @@
 <nav class="viewer-nav">
   <span class="brand">CHRISTIAN MATE</span>
   <span class="vsep"></span>
-  <span style="font-size:13px;color:rgba(255,255,255,0.8);font-weight:500;">기본정보 페이지 재설계 v4 — Next.js 16 구현 반영</span>
+  <span style="font-size:13px;color:rgba(255,255,255,0.8);font-weight:500;">기본정보 페이지 재설계 v5 — Next.js 현재 구현 1:1 반영</span>
   <span class="vsep"></span>
   <div class="tabs">
     <button class="tab active" data-view="desktop">Desktop 1440</button>
     <button class="tab" data-view="mobile">Mobile 375</button>
-    <button class="tab" data-view="modals">Modals & States</button>
-    <button class="tab" data-view="design">Design system</button>
+    <button class="tab" data-view="modals">Modal &amp; States</button>
+    <button class="tab" data-view="design">Design System</button>
   </div>
 </nav>
 
 <!-- =================== DESKTOP =================== -->
 <section class="view active" id="view-desktop">
-  <div class="view-label">02 · Desktop 1440 — 모던 미니멀 (Next.js 16 RSC · Tailwind v4 @theme)</div>
-  <div style="max-width:1440px;margin:0 auto 20px;padding:14px 18px;background:var(--success-light);border:1px solid #BBF7D0;border-radius:var(--radius-lg);display:flex;gap:12px;align-items:flex-start;font-size:13px;color:#064E3B;">
-    <span style="font-weight:700;">v4 변경 요약</span>
-    <span>1) 헤더 site-actions 단순화 — 프로필 + 로그아웃만 (무료상담 인라인 제거)</span>
-    <span>·</span>
-    <span>2) Section 6 사진 영역에 <strong>ProfilePhotoGuide aside</strong> 신규 (I-9)</span>
-    <span>·</span>
-    <span>3) 포토북 — 사진별 description input + − 빈 슬롯 삭제 버튼</span>
-    <span>·</span>
-    <span>4) QuickRail에 <strong>무료상담</strong> 추가 (총 6 + 맨위로)</span>
-    <span>·</span>
-    <span>5) Modals에 <strong>검증 모달 (I-8)</strong> · <strong>FreeConsultModal (X-1)</strong> 추가</span>
-    <span>·</span>
-    <span>6) StyleChipGroup 그룹명 "외모 스타일 / 성격·기질 / 성품" · 옵션 확장</span>
-  </div>
+  <div class="view-label">02 · Desktop 1440 — 현재 Next.js 웹뷰 초기 입력 상태</div>
   <div class="cm-web-shell">
     <div class="site-header-area">
       <header class="site-header">
-        <div class="cm-logo" aria-label="Christian Mate">
-          <span class="cm-logo-mark"></span>
-          <span class="cm-logo-text">CHRISTIAN<br>MATE</span>
-        </div>
+        <div class="cm-logo" aria-label="Christian Mate"><img src="../public/images/logo/logo.png" alt="크리스천메이트"></div>
         <nav class="site-nav" aria-label="주요 메뉴">
           <a href="#">크리스천메이트</a>
           <a href="#">서비스 안내</a>
@@ -2216,7 +2347,7 @@
           <a href="#">문의하기</a>
         </nav>
         <div class="site-actions">
-          <!-- v2 변경: 무료 상담 받기 인라인 노출 제거 → QuickRail/MobileFab "무료상담" 클릭 시 FreeConsultModal로 통합 -->
+
           <div class="site-profile"><span class="avatar">C</span><span>임승리</span></div>
           <button class="logout-btn" type="button" aria-label="로그아웃">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -2273,44 +2404,50 @@
     <div class="desktop-app-header">
       <div class="mobile-status"><span>9:41</span><span class="dots">●●● ●</span></div>
       <div class="m-topbar">
-        <button class="m-back" type="button" aria-label="이전 화면으로">←</button>
+        <button class="m-back" type="button" aria-label="이전 화면으로"><img src="../public/images/button/button-back.svg" alt="" aria-hidden="true"></button>
         <div class="m-title">기본정보</div>
-        <button class="m-menu-btn" type="button" data-drawer-toggle aria-label="전체 메뉴 열기" aria-expanded="false" aria-controls="desktop-mobile-drawer">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
-        </button>
+        <button class="m-menu-btn" type="button" data-drawer-toggle aria-label="전체 메뉴 열기" aria-expanded="false" aria-controls="desktop-mobile-drawer"><img src="../public/images/button/button-menu.svg" alt="" aria-hidden="true"></button>
       </div>
       <div class="m-drawer" id="desktop-mobile-drawer" hidden>
         <div class="m-drawer-panel">
           <div class="m-drawer-head">
-            <div class="cm-logo"><span class="cm-logo-mark"></span><span class="cm-logo-text">CHRISTIAN<br>MATE</span></div>
-            <button class="m-drawer-close" type="button" data-drawer-close aria-label="전체 메뉴 닫기">×</button>
+            <div class="cm-logo"><img src="../public/images/logo/logo.png" alt="크리스천메이트"></div>
+            <div class="site-profile drawer-profile"><span class="avatar">C</span><span>임승리</span></div>
           </div>
-          <div class="m-menu-section">
-            <h4>MAIN MENU</h4>
-            <div class="m-menu-list">
-              <a href="#">크리스천메이트</a><a href="#">서비스 안내</a>
-              <a href="#">공개 프로필</a><a href="#">커뮤니티</a>
-              <a href="#">오프라인 모임</a><a href="#">문의하기</a>
+          <div class="m-drawer-scroll">
+            <div class="m-menu-section">
+              <h4>MAIN MENU</h4>
+              <div class="m-menu-list">
+                <a href="#">크리스천메이트</a>
+                <a href="#">서비스 안내</a>
+                <a href="#">공개 프로필</a>
+                <a href="#">커뮤니티</a>
+                <a href="#">오프라인 모임</a>
+                <a href="#">문의하기</a>
+              </div>
+            </div>
+            <div class="m-menu-section">
+              <h4>MY PAGE</h4>
+              <div class="m-side-list">
+                <button class="group-toggle open" type="button" aria-expanded="true">내 정보 <span>⌃</span></button>
+                <div class="m-side-sub">
+                  <a href="#">정보 수정</a>
+                  <a href="#">비밀번호 수정</a>
+                  <a class="active" href="#">프로필</a>
+                  <a href="#">가입정보</a>
+                  <a href="#">온라인 계약</a>
+                  <a href="#">서류제출</a>
+                  <a href="#">회원 탈퇴</a>
+                </div>
+                <button class="group-toggle" type="button" aria-expanded="false">매칭 라운지 <span>⌄</span></button>
+                <a class="single-link" href="#">만남 캘린더</a>
+                <a class="single-link" href="#">문의하기</a>
+              </div>
             </div>
           </div>
-          <div class="m-menu-section">
-            <h4>MY PAGE</h4>
-            <div class="m-side-list">
-              <!-- 그룹 1: 내 정보 (defaultOpen) -->
-              <span style="font-weight:700;">내 정보 ⌃</span>
-              <span style="margin-left:12px;">정보 수정</span>
-              <span style="margin-left:12px;">비밀번호 수정</span>
-              <span class="active" style="margin-left:12px;">프로필</span>
-              <span style="margin-left:12px;">가입정보</span>
-              <span style="margin-left:12px;">온라인 계약</span>
-              <span style="margin-left:12px;">서류제출</span>
-              <span style="margin-left:12px;">회원 탈퇴</span>
-              <!-- 그룹 2: 매칭 라운지 (collapsed) -->
-              <span style="font-weight:700;">매칭 라운지 ⌄</span>
-              <!-- 단일 -->
-              <span>만남 캘린더</span>
-              <span>문의하기</span>
-            </div>
+          <div class="m-drawer-footer">
+            <button class="btn btn-primary btn-md" type="button">업그레이드</button>
+            <button class="drawer-logout" type="button">로그아웃</button>
           </div>
         </div>
       </div>
@@ -2324,7 +2461,7 @@
         </div>
         <div class="m-progress">
           <div class="m-progress-bar"><div class="m-progress-fill"></div></div>
-          <span class="m-progress-text">17 / 19</span>
+          <span class="m-progress-text">0 / 20 항목</span>
         </div>
       </div>
     </div>
@@ -2361,21 +2498,12 @@
     <!-- Hero -->
     <div class="d-hero">
       <div class="d-hero-in">
-        <div class="d-eyebrow">
-          <span class="primary">STEP 1 / 5</span>
-          <span class="dot">·</span>
-          <span class="sec">기본정보 작성</span>
-        </div>
         <div class="d-title-row">
           <h1 class="d-title">기본정보</h1>
-          <div class="pins">
-            <span class="pin p0">P0 · S-2</span>
-            <span class="pin p1">P1 · S-5</span>
-          </div>
         </div>
         <div class="d-progress-row">
           <div class="d-progress-bar"><div class="d-progress-fill"></div></div>
-          <span class="d-progress-text">17 / 19 항목</span>
+          <span class="d-progress-text">0 / 20 항목</span>
         </div>
       </div>
     </div>
@@ -2389,9 +2517,9 @@
           <div class="card-head">
             <span class="tag">SECTION 1</span>
             <h2>혼인 &amp; 거주</h2>
-            <span class="meta">2개 항목 · 1/2 완료</span>
+            <span class="status-pill">0/2</span>
             <span class="grow"></span>
-            <span class="pin p0">P0 · S-1</span>
+
           </div>
           <div class="card-body">
             <div class="row">
@@ -2401,7 +2529,7 @@
               </div>
               <div class="fcol">
                 <div class="radio-group">
-                  <div class="radio selected">초혼</div>
+                  <div class="radio">초혼</div>
                   <div class="radio">재혼</div>
                   <div class="radio">사실혼인</div>
                 </div>
@@ -2411,15 +2539,15 @@
               <div class="lcol">
                 <div class="l-title">주소 <span class="req">*</span></div>
                 <div class="l-desc">매니저 검수 및 거주지 기반 매칭에 사용됩니다.</div>
-                <div class="l-pins"><span class="pin p1">P1 · I-1</span></div>
+
               </div>
               <div class="fcol">
                 <div class="radio-group">
-                  <div class="radio selected">국내</div>
+                  <div class="radio">국내</div>
                   <div class="radio">해외</div>
                 </div>
                 <div class="field-row">
-                  <div class="input"><input aria-label="주소" value="서울특별시 강남구 테헤란로 123"></div>
+                  <div class="input"><input aria-label="주소" disabled placeholder="주소를 검색해 주세요"></div>
                   <button class="btn btn-secondary btn-md" type="button">주소 검색</button>
                 </div>
                 <div class="highlight-box">
@@ -2441,20 +2569,19 @@
           <div class="card-head">
             <span class="tag">SECTION 2</span>
             <h2>신앙</h2>
-            <span class="meta">4개 항목</span>
             <span class="grow"></span>
-            <span class="status-pill">4/4 완료</span>
-            <span class="pin p0">P0 · S-1</span>
+            <span class="status-pill">0/4</span>
+
           </div>
           <div class="card-body">
             <div class="row">
               <div class="lcol">
                 <div class="l-title">출석 교회명 / 교단 <span class="req">*</span></div>
-                <div class="l-pins"><span class="pin p1">P1 · I-2</span></div>
+
               </div>
               <div class="fcol">
                 <div class="field-row">
-                  <div class="input"><input aria-label="출석 교회명 및 교단" value="반석교회 / 대한예수교장로회(합동)"></div>
+                  <div class="input"><input aria-label="출석 교회명" disabled placeholder="교회 검색을 통해 입력해 주세요"></div><div class="input"><input aria-label="교단" disabled placeholder="교단"></div>
                   <button class="btn btn-secondary btn-md" type="button">교회 검색</button>
                 </div>
               </div>
@@ -2464,7 +2591,7 @@
                 <div class="l-title">담임목사님 성함 <span class="req">*</span></div>
               </div>
               <div class="fcol">
-                <div class="input"><input aria-label="담임목사님 성함" value="김OO"></div>
+                <div class="input"><input aria-label="담임목사님 성함"></div>
               </div>
             </div>
             <div class="row">
@@ -2473,7 +2600,7 @@
               </div>
               <div class="fcol">
                 <div class="field-row">
-                  <div class="input"><input aria-label="교회 주소" value="서울특별시 서초구 효령로 50"></div>
+                  <div class="input"><input aria-label="교회 주소"></div>
                   <button class="btn btn-secondary btn-md" type="button">주소 검색</button>
                 </div>
               </div>
@@ -2481,14 +2608,14 @@
             <div class="row">
               <div class="lcol">
                 <div class="l-title">모태신앙 여부 <span class="req">*</span></div>
-                <div class="l-pins"><span class="pin p2">P2 · C-1</span></div>
+
               </div>
               <div class="fcol">
                 <div class="radio-group">
-                  <div class="radio selected">그렇다</div>
+                  <div class="radio">그렇다</div>
                   <div class="radio">그렇지 않다</div>
                 </div>
-                <div class="infobox info"><span class="ic">ⓘ</span><span>v2 수정: 제3옵션 제거 (모태신앙 여부 질문 의도와 불일치)</span></div>
+
               </div>
             </div>
           </div>
@@ -2499,23 +2626,23 @@
           <div class="card-head">
             <span class="tag">SECTION 3</span>
             <h2>학력 &amp; 직장</h2>
-            <span class="meta">5개 항목 · 3/5 완료</span>
+            <span class="status-pill">0/5</span>
             <span class="grow"></span>
-            <span class="pin p0">P0 · S-1</span>
+
           </div>
           <div class="card-body">
             <div class="row">
               <div class="lcol">
                 <div class="l-title">최종 학력 <span class="req">*</span></div>
                 <div class="l-desc">선택 시 학교/전공 행이 자동으로 늘어납니다.</div>
-                <div class="l-pins"><span class="pin p1">P1 · I-3</span></div>
+
               </div>
               <div class="fcol">
                 <div class="radio-group">
                   <div class="radio">고졸</div>
                   <div class="radio">전문대</div>
                   <div class="radio">학사</div>
-                  <div class="radio selected">석사</div>
+                  <div class="radio">석사</div>
                   <div class="radio">박사</div>
                 </div>
               </div>
@@ -2523,26 +2650,10 @@
             <div class="row">
               <div class="lcol">
                 <div class="l-title">학교명 / 전공 <span class="req">*</span></div>
-                <div class="l-pins"><span class="pin p1">P1 · I-3</span><span class="pin p1">P1 · I-4</span></div>
+
               </div>
               <div class="fcol">
-                <div class="edu-stack">
-                  <div class="edu-row">
-                    <span class="deg-tag">학사</span>
-                    <div class="input input-sm school"><input aria-label="학사 학교명" placeholder="학교명을 검색해 주세요" value="서울대학교"></div>
-                    <button class="btn btn-secondary btn-sm" type="button">검색</button>
-                    <div class="input input-sm major"><input aria-label="학사 전공" value="경영학과"></div>
-                    <div style="width:36px;height:36px;"></div>
-                  </div>
-                  <div class="edu-row">
-                    <span class="deg-tag">석사</span>
-                    <div class="input input-sm school"><input aria-label="석사 학교명" placeholder="학교명을 검색해 주세요" value="서울대학교 대학원"></div>
-                    <button class="btn btn-secondary btn-sm" type="button">검색</button>
-                    <div class="input input-sm major"><input aria-label="석사 전공" value="MBA"></div>
-                    <button class="btn-icon btn-trash" type="button" aria-label="석사 학력 삭제" title="석사 학력 삭제"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
-                  </div>
-                </div>
-                <div><button class="btn btn-secondary btn-sm" type="button">＋ 학력 추가</button></div>
+                <div class="infobox info"><span class="ic">ⓘ</span><span>최종 학력을 선택해주세요.</span></div>
               </div>
             </div>
             <div class="row">
@@ -2551,8 +2662,7 @@
               </div>
               <div class="fcol">
                 <div class="row-cluster">
-                  <div class="select" style="flex:0 0 220px;"><span>IT/개발</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></div>
-                  <div class="select" style="flex:0 0 280px;"><span>백엔드 엔지니어</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></div>
+                  <div class="input"><input aria-label="직업" disabled placeholder="직업을 검색해 주세요"></div><button class="btn btn-secondary btn-md" type="button">직업 검색</button>
                 </div>
               </div>
             </div>
@@ -2563,20 +2673,19 @@
               </div>
               <div class="fcol">
                 <div class="field-row">
-                  <div class="input"><input aria-label="직장명" value="네**"></div>
-                  <button class="btn btn-secondary btn-md" type="button">직장 검색</button>
+                  <div class="input"><input aria-label="직장명" placeholder="직장명을 입력해 주세요"></div>
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="lcol">
                 <div class="l-title">연봉 <span class="req">*</span></div>
-                <div class="l-pins"><span class="pin p2">P2 · C-2</span></div>
+
               </div>
               <div class="fcol">
                 <div class="row-cluster">
-                  <div class="select" style="flex:0 0 280px;"><span>6,000만원 ~ 8,000만원</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></div>
-                  <label class="checkbox checked">
+                  <div class="select" style="flex:0 0 280px;"><span>연봉 구간 선택</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></div>
+                  <label class="checkbox">
                     <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
                     <span class="label">연봉 비공개</span>
                   </label>
@@ -2592,26 +2701,26 @@
           <div class="card-head">
             <span class="tag">SECTION 4</span>
             <h2>신체 &amp; 스타일</h2>
-            <span class="meta">4개 항목</span>
+            <span class="status-pill">0/4</span>
             <span class="grow"></span>
-            <span class="pin p0">P0 · S-1</span>
+
           </div>
           <div class="card-body">
             <div class="row">
               <div class="lcol">
                 <div class="l-title">신장 <span class="req">*</span></div>
                 <div class="l-desc">본인의 키를 입력해 주세요.</div>
-                <div class="l-pins"><span class="pin p3">P3 · B-4</span></div>
+
               </div>
               <div class="fcol">
-                <div style="width:160px;" class="input"><input aria-label="신장" value="176"><span class="suffix">cm</span></div>
+                <div style="width:160px;" class="input"><input aria-label="신장"><span class="suffix">cm</span></div>
               </div>
             </div>
             <div class="row">
               <div class="lcol"><div class="l-title">혈액형 <span class="req">*</span></div></div>
               <div class="fcol">
                 <div class="radio-group">
-                  <div class="radio selected">A형</div>
+                  <div class="radio">A형</div>
                   <div class="radio">B형</div>
                   <div class="radio">AB형</div>
                   <div class="radio">O형</div>
@@ -2622,12 +2731,12 @@
               <div class="lcol">
                 <div class="l-title">체형 <span class="req">*</span></div>
                 <div class="l-desc">옵션 위에 마우스를 올리면 정의가 표시됩니다.</div>
-                <div class="l-pins"><span class="pin p3">P3 · B-3</span></div>
+
               </div>
               <div class="fcol">
                 <div class="radio-group">
                   <div class="radio">슬림</div>
-                  <div class="radio selected">슬림탄탄</div>
+                  <div class="radio">슬림탄탄</div>
                   <div class="radio">보통</div>
                   <div class="radio">근육질</div>
                   <div class="radio">통통</div>
@@ -2639,18 +2748,18 @@
               <div class="lcol">
                 <div class="l-title">스타일 <span class="req">*</span></div>
                 <div class="l-desc">외모·성격·성품 각 그룹에서 자유롭게 선택 (합계 최대 5개).</div>
-                <div class="l-pins"><span class="pin p3">P3 · B-2</span></div>
+
               </div>
               <div class="fcol">
                 <div class="style-group">
                   <div class="style-sub">
                     <div class="style-sub-head">
                       <span class="style-sub-title">외모 스타일</span>
-                      <span class="style-sub-count">2개</span>
+                      <span class="style-sub-count">0/5</span>
                     </div>
                     <div class="style-chips">
-                      <div class="radio selected">귀여운</div>
-                      <div class="radio selected">청순한</div>
+                      <div class="radio">귀여운</div>
+                      <div class="radio">청순한</div>
                       <div class="radio">세련된</div>
                       <div class="radio">지적인</div>
                       <div class="radio">훈훈한</div>
@@ -2662,18 +2771,18 @@
                   <div class="style-sub">
                     <div class="style-sub-head">
                       <span class="style-sub-title">성격/기질</span>
-                      <span class="style-sub-count">1개</span>
+                      <span class="style-sub-count">0/5</span>
                     </div>
                     <div class="style-chips">
-                      <div class="radio selected">다정한</div>
+                      <div class="radio">다정한</div>
                       <div class="radio">유머있는</div>
                       <div class="radio">차분한</div>
                       <div class="radio">활발한</div>
-                      <div class="radio">리더십</div>
-                      <div class="radio">듬직한</div>
-                      <div class="radio">도도한</div>
                       <div class="radio">대범한</div>
-                      <div class="radio">신중한</div>
+                      <div class="radio">열정적인</div>
+                      <div class="radio">낙천적인</div>
+                      <div class="radio">대범한</div>
+                      <div class="radio">섬세한</div>
                       <div class="radio">열정적인</div>
                       <div class="radio">낙천적인</div>
                     </div>
@@ -2681,20 +2790,20 @@
                   <div class="style-sub">
                     <div class="style-sub-head">
                       <span class="style-sub-title">성품</span>
-                      <span class="style-sub-count">1개</span>
+                      <span class="style-sub-count">0/5</span>
                     </div>
                     <div class="style-chips">
-                      <div class="radio selected">성실한</div>
-                      <div class="radio">책임감</div>
-                      <div class="radio">정직한</div>
-                      <div class="radio">상냥한</div>
+                      <div class="radio">성실한</div>
+                      <div class="radio">책임감 있는</div>
+<div class="radio">정직한</div>
+                      <div class="radio">듬직한</div>
                       <div class="radio">섬세한</div>
-                      <div class="radio">창의적인</div>
+                      <div class="radio">배려심 있는</div>
                       <div class="radio">끈기있는</div>
                     </div>
                   </div>
                   <div class="style-total">
-                    <span>선택 합계 4 / 5</span>
+                    <span>선택 합계 0 / 5</span>
                     <span class="max">최대 5개까지</span>
                   </div>
                 </div>
@@ -2708,31 +2817,31 @@
           <div class="card-head">
             <span class="tag">SECTION 5</span>
             <h2>생활 습관 &amp; 가치관</h2>
-            <span class="meta">3개 항목</span>
+            <span class="status-pill">0/3</span>
             <span class="grow"></span>
-            <span class="pin p2">P2 · C-1</span>
+
           </div>
           <div class="card-body">
             <div class="row">
               <div class="lcol">
                 <div class="l-title">음주 여부 <span class="req">*</span></div>
-                <div class="l-pins"><span class="pin p2">P2 · C-1</span></div>
+
               </div>
               <div class="fcol">
                 <div class="radio-group">
                   <div class="radio">즐겨함</div>
-                  <div class="radio selected">보통</div>
+                  <div class="radio">보통</div>
                   <div class="radio">어쩔 수 없을 때</div>
                   <div class="radio">전혀 하지 않음</div>
                 </div>
-                <div class="infobox info"><span class="ic">ⓘ</span><span>v2 수정: '아예 하지 않습니다' → '전혀 하지 않음'</span></div>
+
               </div>
             </div>
             <div class="row">
               <div class="lcol"><div class="l-title">흡연 여부 <span class="req">*</span></div></div>
               <div class="fcol">
                 <div class="radio-group">
-                  <div class="radio selected">흡연</div>
+                  <div class="radio">흡연</div>
                   <div class="radio">비흡연</div>
                 </div>
               </div>
@@ -2740,16 +2849,16 @@
             <div class="row">
               <div class="lcol">
                 <div class="l-title">자녀 계획 <span class="req">*</span></div>
-                <div class="l-pins"><span class="pin p2">P2 · C-1</span></div>
+
               </div>
               <div class="fcol">
                 <div class="radio-group">
-                  <div class="radio selected">자녀를 갖기 희망</div>
+                  <div class="radio">자녀를 갖기 희망</div>
                   <div class="radio">자녀 계획 없음</div>
                   <div class="radio">상호 논의 후 결정</div>
                   <div class="radio">고민중</div>
                 </div>
-                <div class="infobox info"><span class="ic">ⓘ</span><span>v2 수정: 옵션 라벨 4개 모두 간결화</span></div>
+
               </div>
             </div>
           </div>
@@ -2760,92 +2869,80 @@
           <div class="card-head">
             <span class="tag">SECTION 6</span>
             <h2>프로필 사진</h2>
-            <span class="meta">필수 + 자유</span>
             <span class="grow"></span>
-            <span class="pin p1">P1 · I-5</span>
+            <span class="status-pill">0/2</span>
           </div>
           <div class="card-body">
             <div class="row">
               <div class="lcol">
                 <div class="l-title">프로필 사진 <span class="req">*</span></div>
-                <div class="l-desc"><strong style="color:var(--primary);">2장 필수 등록</strong>. 비대표 사진의 '★ 대표 등록' 버튼으로 변경.</div>
-                <div class="l-pins"><span class="pin p1">P1 · I-5</span><span class="pin p2">P2 · I-9</span></div>
+                <div class="l-desc"><strong style="color:var(--primary);">2장 필수 등록</strong><br>나를 잘 표현할 수 있는 사진을 업로드 해주세요.</div>
+
               </div>
               <div class="fcol">
-                <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
-                  <div class="photo-grid" style="flex:0 0 auto;">
-                    <div class="photo-slot rep filled">
-                      <div class="actions"><button class="icon-btn" type="button" aria-label="대표 사진 삭제" title="삭제"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-                      <div class="badge">★ 대표</div>
+                <div class="photo-layout">
+                  <aside class="photo-guide" aria-label="사진 등록 TIP">
+                    <div class="photo-guide-top">
+                      <div class="photo-guide-title">
+                        <span class="ic">ⓘ</span>
+                        <h3>사진 등록 TIP</h3>
+                      </div>
+                      <ul>
+                        <li>얼굴이 잘 보이는 선명한 사진이 좋아요.</li>
+                        <li>마스크, 선글라스 등으로 가린 사진은 대표 사진으로 사용할 수 없어요.</li>
+                        <li>AI 프로필 사진은 등록이 불가해요.</li>
+                        <li>여러명이 함께 나오거나, 흐릿하거나 어두운 사진은 피해주세요.</li>
+                      </ul>
+                      <hr>
                     </div>
-                    <div class="photo-slot normal filled">
-                      <div class="actions"><button class="icon-btn" type="button" aria-label="두 번째 사진 삭제" title="삭제"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-                      <button class="cta" type="button">★ 대표 등록</button>
-                    </div>
-                    <div class="photo-slot normal filled">
-                      <div class="actions"><button class="icon-btn" type="button" aria-label="세 번째 사진 삭제" title="삭제"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-                      <button class="cta" type="button">★ 대표 등록</button>
-                    </div>
-                    <div class="photo-slot normal empty">
-                      <div class="plus">＋</div>
-                      <div class="label">추가</div>
-                    </div>
-                  </div>
-                  <!-- I-9 (v2 신규) — ProfilePhotoGuide aside : 1430px+ 사진 슬롯 옆, 그 이하 상단 -->
-                  <aside class="photo-guide-aside" aria-label="사진 등록 TIP" style="flex:1 1 240px;min-width:220px;max-width:340px;background:var(--info-light);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:14px;display:flex;flex-direction:column;gap:10px;">
-                    <div style="display:flex;align-items:center;gap:6px;">
-                      <span style="display:inline-flex;width:16px;height:16px;align-items:center;justify-content:center;font-weight:700;color:var(--info);">ⓘ</span>
-                      <h3 style="margin:0;font-size:14px;font-weight:700;color:var(--info);">사진 등록 TIP</h3>
-                    </div>
-                    <ul style="margin:0;padding-left:16px;list-style:disc;font-size:12px;line-height:1.45;color:var(--text-sec);">
-                      <li>얼굴이 잘 보이는 선명한 사진이 좋아요.</li>
-                      <li>마스크, 선글라스 등으로 가린 사진은 대표 사진으로 사용할 수 없어요.</li>
-                      <li>AI 프로필 사진은 등록이 불가해요.</li>
-                      <li>여러명이 함께 나오거나, 흐릿하거나 어두운 사진은 피해주세요.</li>
-                    </ul>
-                    <hr style="border:0;border-top:1px solid var(--border-subtle);margin:0;" />
-                    <div style="display:flex;gap:12px;">
-                      <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
-                        <p style="margin:0;font-size:13px;font-weight:700;color:var(--text);">좋은 사진</p>
-                        <div style="display:flex;flex-direction:column;gap:4px;">
-                          <div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-md);"></div>
-                          <div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-md);"></div>
-                          <div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-md);"></div>
+                    <div class="photo-guide-examples">
+                      <div class="photo-guide-col">
+                        <p>좋은 사진</p>
+                        <div class="photo-guide-list">
+                          <div class="photo-guide-thumb"><img src="../public/images/profile-info/profile_good_ex1.png" alt="좋은 사진 예시 1"></div>
+                          <div class="photo-guide-thumb"><img src="../public/images/profile-info/profile_good_ex2.png" alt="좋은 사진 예시 2"></div>
+                          <div class="photo-guide-thumb"><img src="../public/images/profile-info/profile_good_ex3.png" alt="좋은 사진 예시 3"></div>
                         </div>
                       </div>
-                      <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
-                        <p style="margin:0;font-size:13px;font-weight:700;color:var(--text);">나쁜 사진</p>
-                        <div style="display:flex;flex-direction:column;gap:4px;">
-                          <div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-md);"></div>
-                          <div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-md);"></div>
-                          <div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-md);"></div>
+                      <div class="photo-guide-col">
+                        <p>나쁜 사진</p>
+                        <div class="photo-guide-list">
+                          <div class="photo-guide-thumb"><img src="../public/images/profile-info/profile_bad_ex1.png" alt="나쁜 사진 예시 1"></div>
+                          <div class="photo-guide-thumb"><img src="../public/images/profile-info/profile_bad_ex2.png" alt="나쁜 사진 예시 2"></div>
+                          <div class="photo-guide-thumb"><img src="../public/images/profile-info/profile_bad_ex3.png" alt="나쁜 사진 예시 3"></div>
                         </div>
                       </div>
                     </div>
                   </aside>
+                  <div class="photo-grid">
+                    <div class="photo-slot rep empty">
+                      <div class="plus">＋</div>
+                      <div class="label">정면 얼굴이 잘 나온 사진<br>(타인에게 먼저 노출됩니다.)</div>
+                      <div class="badge" aria-label="대표 사진"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+                    </div>
+                    <div class="photo-slot normal empty"><div class="plus">＋</div></div>
+                    <div class="photo-slot normal empty"><div class="plus">＋</div></div>
+                    <div class="photo-slot normal empty">
+                      <div class="plus">＋</div>
+                    </div>
+                  </div>
                 </div>
-                <div class="infobox info"><span class="ic">ⓘ</span><span>이미지 파일 크기는 10MB 이하로 업로드해주세요.</span></div>
+                <div class="infobox info"><span class="ic">ⓘ</span><span>이미지 파일 크기는 10MB 이하로 업로드해주세요</span></div>
               </div>
             </div>
             <div class="row">
               <div class="lcol">
                 <div class="l-title">포토북</div>
-                <div class="l-desc"><strong style="color:var(--primary);">최대 8장</strong>. 나의 일상, 취미, 운동, 여행 등의 모습을 자유롭게 보여주는 공간입니다. 추가 슬롯은 항상 끝에 위치.</div>
-                <div class="l-pins"><span class="pin p1">P1 · I-6</span></div>
+                <div class="l-desc"><strong style="color:var(--primary);">최대 8장</strong><br>나의 일상, 취미, 운동, 여행 등의 모습을 자유롭게 보여주는 공간입니다.</div>
+
               </div>
               <div class="fcol">
-                <!-- v2: 2-col grid, 사진별 description input, − 빈 슬롯 삭제 (첫 빈 슬롯 제외) -->
-                <div class="photobook-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
+
+                <div class="photobook-grid">
                   <div style="display:flex;flex-direction:column;gap:8px;min-width:0;">
-                    <div class="pb-thumb filled" style="aspect-ratio:4/3;"></div>
-                    <div class="input input-sm"><input aria-label="포토북 1 사진 설명" placeholder="사진에 대한 간단한 설명을 입력해주세요" value="제주 한라산 등반"></div>
+                    <div class="pb-thumb"><div class="plus">＋</div></div>
                   </div>
-                  <div style="display:flex;flex-direction:column;gap:8px;min-width:0;">
-                    <div class="pb-thumb filled" style="aspect-ratio:4/3;"></div>
-                    <div class="input input-sm"><input aria-label="포토북 2 사진 설명" placeholder="사진에 대한 간단한 설명을 입력해주세요"></div>
-                  </div>
-                  <div class="pb-thumb" style="aspect-ratio:4/3;position:relative;"><button type="button" aria-label="빈 포토북 슬롯 삭제" style="position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:white;border:1px solid var(--border);color:var(--text-sec);display:flex;align-items:center;justify-content:center;font-size:14px;">−</button><div class="plus">＋</div></div>
-                  <div class="pb-thumb" style="aspect-ratio:4/3;"><div class="plus">＋</div></div>
+                  <button class="pb-thumb add-slot" type="button" aria-label="포토북 슬롯 추가"><div class="plus">＋</div></button>
                 </div>
               </div>
             </div>
@@ -2858,9 +2955,8 @@
     <!-- Sticky footer (S-3, I-7) -->
     <div class="d-footer">
       <div class="d-footer-in">
-        <span class="auto-save-chip">방금 자동 저장됨</span>
         <span class="grow" style="flex:1;"></span>
-        <span class="pin p0">P0 · I-7</span>
+
         <button class="btn btn-secondary btn-lg" type="button">저장하기</button>
         <button class="btn btn-primary btn-lg" type="button">다음</button>
       </div>
@@ -2870,29 +2966,29 @@
       <aside class="quick-rail" aria-label="퀵 메뉴">
         <button class="quick-fab-toggle" type="button" aria-label="퀵 메뉴 열기" aria-expanded="false">＋</button>
         <div class="quick-menu">
-          <!-- v2 신규: 무료상담 → 클릭 시 FreeConsultModal 오픈 (X-1) -->
+
           <button class="quick-btn" type="button" aria-label="무료상담 모달 열기">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <img src="../public/images/quick-menu/quick-call.png" alt="" aria-hidden="true">
             <span>무료상담</span>
           </button>
           <button class="quick-btn" type="button">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.5-1.4 2-3.5 1.2-5.3A5 5 0 0 0 13 6.7L12 8l-1-1.3A5 5 0 0 0 3.8 8.7c-.8 1.8-.3 3.9 1.2 5.3l7 6 7-6Z"></path><path d="M12 8v4"></path><path d="M10 10h4"></path></svg>
+            <img class="icon-lg" src="../public/images/quick-menu/quick-children.png" alt="" aria-hidden="true">
             <span>자녀결혼</span>
           </button>
           <button class="quick-btn" type="button">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+            <img src="../public/images/quick-menu/quick-upgrade.png" alt="" aria-hidden="true">
             <span>업그레이드</span>
           </button>
           <button class="quick-btn" type="button">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.1 7-11a7 7 0 0 0-14 0c0 5.9 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+            <img src="../public/images/quick-menu/quick-location.png" alt="" aria-hidden="true">
             <span>오시는길</span>
           </button>
           <button class="quick-btn" type="button">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><circle cx="12" cy="10" r="3"></circle><path d="M7 19c.8-2.4 2.5-3.6 5-3.6s4.2 1.2 5 3.6"></path></svg>
+            <img src="../public/images/quick-menu/quick-profile-consulting.png" alt="" aria-hidden="true">
             <span>프로필컨설팅</span>
           </button>
           <button class="quick-btn" type="button">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 3v6h-6"></path><path d="M9 11h2v4H9z"></path><path d="M14 9h2v6h-2z"></path></svg>
+            <img src="../public/images/quick-menu/quick-33.png" alt="" aria-hidden="true">
             <span>33법칙</span>
           </button>
           <button class="quick-btn top" type="button">맨위로</button>
@@ -2908,10 +3004,7 @@
           <a href="#">손해배상청구절차</a>
           <a href="#">아동 안전 표준 정책</a>
         </div>
-        <div class="cm-logo" aria-label="Christian Mate footer">
-          <span class="cm-logo-mark"></span>
-          <span class="cm-logo-text">CHRISTIAN<br>MATE</span>
-        </div>
+        <div class="cm-logo" aria-label="Christian Mate footer"><img src="../public/images/logo/logo.png" alt="크리스천메이트"></div>
         <div class="footer-info">
           (주)크리스천메이트 · 대표 임승리 · 주소 서울 금천구 가산디지털1로 181 W센터 3층 119호<br>
           사업자등록번호 247-86-02178 · 통신판매업 신고번호 제2023-서울금천-02585호<br>
@@ -2960,7 +3053,7 @@
 
 <!-- =================== MOBILE =================== -->
 <section class="view" id="view-mobile">
-  <div class="view-label">03 · Mobile 375 — 반응형 (R-1, R-2, R-3)</div>
+  <div class="view-label">03 · Mobile 375 — 현재 Next.js 앱뷰 초기 입력 상태</div>
   <div style="display:flex;gap:48px;flex-wrap:wrap;justify-content:center;align-items:flex-start;">
 
     <!-- Variant A: Default -->
@@ -2969,38 +3062,50 @@
       <div class="mobile-frame">
         <div class="mobile-status"><span>9:41</span><span class="dots">●●● ●</span></div>
         <div class="m-topbar">
-          <button class="m-back" type="button" aria-label="이전 화면으로">←</button>
+          <button class="m-back" type="button" aria-label="이전 화면으로"><img src="../public/images/button/button-back.svg" alt="" aria-hidden="true"></button>
           <div class="m-title">기본정보</div>
-          <button class="m-menu-btn" type="button" data-drawer-toggle aria-label="전체 메뉴 열기" aria-expanded="false" aria-controls="mobile-drawer-a">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
-          </button>
+          <button class="m-menu-btn" type="button" data-drawer-toggle aria-label="전체 메뉴 열기" aria-expanded="false" aria-controls="mobile-drawer-a"><img src="../public/images/button/button-menu.svg" alt="" aria-hidden="true"></button>
         </div>
         <div class="m-drawer" id="mobile-drawer-a" hidden>
           <div class="m-drawer-panel">
             <div class="m-drawer-head">
-              <div class="cm-logo"><span class="cm-logo-mark"></span><span class="cm-logo-text">CHRISTIAN<br>MATE</span></div>
-              <button class="m-drawer-close" type="button" data-drawer-close aria-label="전체 메뉴 닫기">×</button>
+              <div class="cm-logo"><img src="../public/images/logo/logo.png" alt="크리스천메이트"></div>
+              <div class="site-profile drawer-profile"><span class="avatar">C</span><span>임승리</span></div>
             </div>
-            <div class="m-menu-section">
-              <h4>MAIN MENU</h4>
-              <div class="m-menu-list">
-                <a href="#">크리스천메이트</a><a href="#">서비스 안내</a>
-                <a href="#">공개 프로필</a><a href="#">커뮤니티</a>
-                <a href="#">오프라인 모임</a><a href="#">문의하기</a>
+            <div class="m-drawer-scroll">
+              <div class="m-menu-section">
+                <h4>MAIN MENU</h4>
+                <div class="m-menu-list">
+                  <a href="#">크리스천메이트</a>
+                  <a href="#">서비스 안내</a>
+                  <a href="#">공개 프로필</a>
+                  <a href="#">커뮤니티</a>
+                  <a href="#">오프라인 모임</a>
+                  <a href="#">문의하기</a>
+                </div>
+              </div>
+              <div class="m-menu-section">
+                <h4>MY PAGE</h4>
+                <div class="m-side-list">
+                  <button class="group-toggle open" type="button" aria-expanded="true">내 정보 <span>⌃</span></button>
+                  <div class="m-side-sub">
+                    <a href="#">정보 수정</a>
+                    <a href="#">비밀번호 수정</a>
+                    <a class="active" href="#">프로필</a>
+                    <a href="#">가입정보</a>
+                    <a href="#">온라인 계약</a>
+                    <a href="#">서류제출</a>
+                    <a href="#">회원 탈퇴</a>
+                  </div>
+                  <button class="group-toggle" type="button" aria-expanded="false">매칭 라운지 <span>⌄</span></button>
+                  <a class="single-link" href="#">만남 캘린더</a>
+                  <a class="single-link" href="#">문의하기</a>
+                </div>
               </div>
             </div>
-            <div class="m-menu-section">
-              <h4>MY PAGE</h4>
-              <div class="m-side-list">
-                <span class="active">내 정보 · 프로필</span>
-                <span>정보 수정</span>
-                <span>비밀번호 수정</span>
-                <span>가입정보</span>
-                <span>온라인 계약</span>
-                <span>서류제출</span>
-                <span>매칭 라운지</span>
-                <span>만남 캘린더</span>
-              </div>
+            <div class="m-drawer-footer">
+              <button class="btn btn-primary btn-md" type="button">업그레이드</button>
+              <button class="drawer-logout" type="button">로그아웃</button>
             </div>
           </div>
         </div>
@@ -3014,37 +3119,33 @@
           </div>
           <div class="m-progress">
             <div class="m-progress-bar"><div class="m-progress-fill"></div></div>
-            <span class="m-progress-text">17 / 19</span>
+            <span class="m-progress-text">0 / 20 항목</span>
           </div>
         </div>
         <div class="m-body has-site-footer">
           <div class="m-card open">
             <button class="m-card-head" type="button" aria-expanded="true">
               <div class="num-badge">1</div>
-              <div>
-                <h3>혼인 &amp; 거주</h3>
-                <div class="sub">2개 항목 · 2/2 완료</div>
-              </div>
+              <div><h3>혼인 &amp; 거주</h3></div>
               <div class="grow"></div>
-              <span class="pin p0">P0 · S-1</span>
-              <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              <span class="status-pill">0/2</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="m-card-body">
               <div class="m-field">
                 <div class="l-title">결혼 경험 <span class="req">*</span></div>
                 <div class="m-radio-group">
-                  <div class="m-radio selected">초혼</div>
+                  <div class="m-radio">초혼</div>
                   <div class="m-radio">재혼</div>
                   <div class="m-radio">사실혼인</div>
                 </div>
               </div>
               <div class="m-field">
-                <div class="l-title">주소 <span class="req">*</span> <span class="pin p1">P1 · I-1</span></div>
+                <div class="l-title">주소 <span class="req">*</span> </div>
                 <div class="m-radio-group">
-                  <div class="m-radio selected">국내</div>
+                  <div class="m-radio">국내</div>
                   <div class="m-radio">해외</div>
                 </div>
-                <div class="input"><input aria-label="모바일 주소" value="서울특별시 강남구 테헤란로 123"></div>
+                <div class="input"><input aria-label="모바일 주소" disabled placeholder="주소를 검색해 주세요"></div>
                 <button class="btn btn-secondary btn-md" type="button" style="width:100%;">주소 검색</button>
                 <div class="highlight-box">
                   <div class="h-head">
@@ -3061,30 +3162,30 @@
           <div class="m-card open">
             <button class="m-card-head" type="button" aria-expanded="true">
               <div class="num-badge">2</div>
-              <div><h3>신앙</h3><div class="sub">4개 항목 · 4/4 완료</div></div>
+              <div><h3>신앙</h3></div>
               <div class="grow"></div>
-              <span class="status-pill">✓</span>
+              <span class="status-pill">0/4</span>
               <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="m-card-body">
               <div class="m-field">
-                <div class="l-title">출석 교회명 / 교단 <span class="req">*</span> <span class="pin p1">P1 · I-2</span></div>
-                <div class="input"><input aria-label="모바일 출석 교회명 및 교단" value="반석교회 / 대한예수교장로회(합동)"></div>
+                <div class="l-title">출석 교회명 / 교단 <span class="req">*</span> </div>
+                <div class="input"><input aria-label="모바일 출석 교회명" disabled placeholder="교회 검색을 통해 입력해 주세요"></div><div class="input"><input aria-label="모바일 교단" disabled placeholder="교단"></div>
                 <button class="btn btn-secondary btn-md" type="button" style="width:100%;">교회 검색</button>
               </div>
               <div class="m-field">
                 <div class="l-title">담임목사님 성함 <span class="req">*</span></div>
-                <div class="input"><input aria-label="모바일 담임목사님 성함" value="김OO"></div>
+                <div class="input"><input aria-label="모바일 담임목사님 성함"></div>
               </div>
               <div class="m-field">
                 <div class="l-title">교회 주소 <span class="req">*</span></div>
-                <div class="input"><input aria-label="모바일 교회 주소" value="서울특별시 서초구 효령로 50"></div>
+                <div class="input"><input aria-label="모바일 교회 주소"></div>
                 <button class="btn btn-secondary btn-md" type="button" style="width:100%;">주소 검색</button>
               </div>
               <div class="m-field">
-                <div class="l-title">모태신앙 여부 <span class="req">*</span> <span class="pin p2">P2 · C-1</span></div>
+                <div class="l-title">모태신앙 여부 <span class="req">*</span> </div>
                 <div class="m-radio-group">
-                  <div class="m-radio selected">그렇다</div>
+                  <div class="m-radio">그렇다</div>
                   <div class="m-radio">그렇지 않다</div>
                 </div>
               </div>
@@ -3094,59 +3195,38 @@
           <div class="m-card open">
             <button class="m-card-head" type="button" aria-expanded="true">
               <div class="num-badge">3</div>
-              <div><h3>학력 &amp; 직장</h3><div class="sub">5개 항목 · 3/5 완료</div></div>
+              <div><h3>학력 &amp; 직장</h3></div>
               <div class="grow"></div>
-              <span class="pin p1">I-3</span>
-              <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              <span class="status-pill">0/5</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="m-card-body">
               <div class="m-field">
-                <div class="l-title">최종 학력 <span class="req">*</span> <span class="pin p1">P1 · I-3</span></div>
+                <div class="l-title">최종 학력 <span class="req">*</span> </div>
                 <div class="m-radio-group">
                   <div class="m-radio">고졸</div>
                   <div class="m-radio">전문대</div>
                   <div class="m-radio">학사</div>
-                  <div class="m-radio selected">석사</div>
+                  <div class="m-radio">석사</div>
                   <div class="m-radio">박사</div>
                 </div>
                 <div class="infobox info"><span class="ic">ⓘ</span><span>학력 선택 시 학교/전공 행이 자동으로 늘어납니다.</span></div>
               </div>
               <div class="m-field">
-                <div class="l-title">학교 / 전공 <span class="req">*</span> <span class="pin p1">P1 · I-4</span></div>
-                <div class="edu-stack">
-                  <div class="edu-row" style="flex-wrap:wrap;">
-                    <span class="deg-tag">학사</span>
-                    <span style="flex:1;"></span>
-                    <div style="width:36px;"></div>
-                    <div class="input input-sm" style="flex:1 1 100%;"><input aria-label="모바일 학사 학교명" placeholder="학교명을 검색해 주세요" value="서울대학교"></div>
-                    <button class="btn btn-secondary btn-sm" type="button">검색</button>
-                    <div class="input input-sm" style="flex:1 1 100%;"><input aria-label="모바일 학사 전공" value="경영학과"></div>
-                  </div>
-                  <div class="edu-row" style="flex-wrap:wrap;">
-                    <span class="deg-tag">석사</span>
-                    <span style="flex:1;"></span>
-                    <button class="btn-icon btn-trash" type="button" aria-label="모바일 석사 학력 삭제" title="삭제"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
-                    <div class="input input-sm" style="flex:1 1 100%;"><input aria-label="모바일 석사 학교명" placeholder="학교명을 검색해 주세요" value="서울대학교 대학원"></div>
-                    <button class="btn btn-secondary btn-sm" type="button">검색</button>
-                    <div class="input input-sm" style="flex:1 1 100%;"><input aria-label="모바일 석사 전공" value="MBA"></div>
-                  </div>
-                </div>
-                <button class="btn btn-secondary btn-sm" type="button" style="align-self:flex-start;">＋ 학력 추가</button>
+                <div class="l-title">학교 / 전공 <span class="req">*</span> </div>
+                <div class="infobox info"><span class="ic">ⓘ</span><span>최종 학력을 선택해주세요.</span></div>
               </div>
               <div class="m-field">
                 <div class="l-title">직업 / 직무 <span class="req">*</span></div>
-                <div class="select"><span>IT/개발</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></div>
-                <div class="select"><span>백엔드 엔지니어</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <div class="input"><input aria-label="모바일 직업" disabled placeholder="직업을 검색해 주세요"></div><button class="btn btn-secondary btn-md" type="button" style="width:100%;">직업 검색</button>
               </div>
               <div class="m-field">
                 <div class="l-title">직장명 <span class="req">*</span></div>
-                <div class="input"><input aria-label="모바일 직장명" value="네**"></div>
-                <button class="btn btn-secondary btn-md" type="button" style="width:100%;">직장 검색</button>
+                <div class="input"><input aria-label="모바일 직장명" placeholder="직장명을 입력해 주세요"></div>
               </div>
               <div class="m-field">
-                <div class="l-title">연봉 <span class="req">*</span> <span class="pin p2">P2 · C-2</span></div>
-                <div class="select"><span>6,000만원 ~ 8,000만원</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></div>
-                <label class="checkbox checked">
+                <div class="l-title">연봉 <span class="req">*</span> </div>
+                <div class="select"><span>연봉 구간 선택</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <label class="checkbox">
                   <span class="box"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
                   <span class="label">연봉 비공개</span>
                 </label>
@@ -3158,30 +3238,29 @@
           <div class="m-card open">
             <button class="m-card-head" type="button" aria-expanded="true">
               <div class="num-badge">4</div>
-              <div><h3>신체 &amp; 스타일</h3><div class="sub">4개 항목 · 4/4 완료</div></div>
+              <div><h3>신체 &amp; 스타일</h3></div>
               <div class="grow"></div>
-              <span class="pin p0">S-1</span>
-              <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              <span class="status-pill">0/4</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="m-card-body">
               <div class="m-field">
-                <div class="l-title">신장 <span class="req">*</span> <span class="pin p3">B-4</span></div>
-                <div class="input" style="max-width:160px;"><input aria-label="모바일 신장" value="176"><span class="suffix">cm</span></div>
+                <div class="l-title">신장 <span class="req">*</span> </div>
+                <div class="input" style="max-width:160px;"><input aria-label="모바일 신장"><span class="suffix">cm</span></div>
               </div>
               <div class="m-field">
                 <div class="l-title">혈액형 <span class="req">*</span></div>
                 <div class="m-radio-group">
-                  <div class="m-radio selected">A형</div>
+                  <div class="m-radio">A형</div>
                   <div class="m-radio">B형</div>
                   <div class="m-radio">AB형</div>
                   <div class="m-radio">O형</div>
                 </div>
               </div>
               <div class="m-field">
-                <div class="l-title">체형 <span class="req">*</span> <span class="pin p3">B-3</span></div>
+                <div class="l-title">체형 <span class="req">*</span> </div>
                 <div class="m-radio-group">
                   <div class="m-radio">슬림</div>
-                  <div class="m-radio selected">슬림탄탄</div>
+                  <div class="m-radio">슬림탄탄</div>
                   <div class="m-radio">보통</div>
                   <div class="m-radio">근육질</div>
                   <div class="m-radio">통통</div>
@@ -3189,13 +3268,13 @@
                 </div>
               </div>
               <div class="m-field">
-                <div class="l-title">스타일 <span class="req">*</span> <span class="pin p3">B-2</span></div>
+                <div class="l-title">스타일 <span class="req">*</span> </div>
                 <div class="style-group">
                   <div class="style-sub">
-                    <div class="style-sub-head"><span class="style-sub-title">외모 스타일</span><span class="style-sub-count">2개</span></div>
+                    <div class="style-sub-head"><span class="style-sub-title">외모 스타일</span><span class="style-sub-count">0/5</span></div>
                     <div class="style-chips">
-                      <div class="radio selected">귀여운</div>
-                      <div class="radio selected">청순한</div>
+                      <div class="radio">귀여운</div>
+                      <div class="radio">청순한</div>
                       <div class="radio">세련된</div>
                       <div class="radio">지적인</div>
                       <div class="radio">훈훈한</div>
@@ -3205,34 +3284,34 @@
                     </div>
                   </div>
                   <div class="style-sub">
-                    <div class="style-sub-head"><span class="style-sub-title">성격/기질</span><span class="style-sub-count">1개</span></div>
+                    <div class="style-sub-head"><span class="style-sub-title">성격/기질</span><span class="style-sub-count">0/5</span></div>
                     <div class="style-chips">
-                      <div class="radio selected">다정한</div>
+                      <div class="radio">다정한</div>
                       <div class="radio">유머있는</div>
                       <div class="radio">차분한</div>
                       <div class="radio">활발한</div>
-                      <div class="radio">리더십</div>
-                      <div class="radio">듬직한</div>
-                      <div class="radio">도도한</div>
                       <div class="radio">대범한</div>
-                      <div class="radio">신중한</div>
+                      <div class="radio">열정적인</div>
+                      <div class="radio">낙천적인</div>
+                      <div class="radio">대범한</div>
+                      <div class="radio">섬세한</div>
                       <div class="radio">열정적인</div>
                       <div class="radio">낙천적인</div>
                     </div>
                   </div>
                   <div class="style-sub">
-                    <div class="style-sub-head"><span class="style-sub-title">성품</span><span class="style-sub-count">1개</span></div>
+                    <div class="style-sub-head"><span class="style-sub-title">성품</span><span class="style-sub-count">0/5</span></div>
                     <div class="style-chips">
-                      <div class="radio selected">성실한</div>
-                      <div class="radio">책임감</div>
-                      <div class="radio">정직한</div>
-                      <div class="radio">상냥한</div>
+                      <div class="radio">성실한</div>
+                      <div class="radio">책임감 있는</div>
+<div class="radio">정직한</div>
+                      <div class="radio">듬직한</div>
                       <div class="radio">섬세한</div>
-                      <div class="radio">창의적인</div>
+                      <div class="radio">배려심 있는</div>
                       <div class="radio">끈기있는</div>
                     </div>
                   </div>
-                  <div class="style-total"><span>선택 합계 4 / 5</span><span class="max">최대 5개까지</span></div>
+                  <div class="style-total"><span>선택 합계 0 / 5</span><span class="max">최대 5개까지</span></div>
                 </div>
               </div>
             </div>
@@ -3241,17 +3320,16 @@
           <div class="m-card open">
             <button class="m-card-head" type="button" aria-expanded="true">
               <div class="num-badge">5</div>
-              <div><h3>생활 습관 &amp; 가치관</h3><div class="sub">3개 항목 · 3/3 완료</div></div>
+              <div><h3>생활 습관 &amp; 가치관</h3></div>
               <div class="grow"></div>
-              <span class="pin p2">C-1</span>
-              <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              <span class="status-pill">0/3</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="m-card-body">
               <div class="m-field">
-                <div class="l-title">음주 여부 <span class="req">*</span> <span class="pin p2">C-1</span></div>
+                <div class="l-title">음주 여부 <span class="req">*</span> </div>
                 <div class="m-radio-group">
                   <div class="m-radio">즐겨함</div>
-                  <div class="m-radio selected">보통</div>
+                  <div class="m-radio">보통</div>
                   <div class="m-radio">어쩔 수 없을 때</div>
                   <div class="m-radio">전혀 하지 않음</div>
                 </div>
@@ -3259,14 +3337,14 @@
               <div class="m-field">
                 <div class="l-title">흡연 여부 <span class="req">*</span></div>
                 <div class="m-radio-group">
-                  <div class="m-radio selected">흡연</div>
+                  <div class="m-radio">흡연</div>
                   <div class="m-radio">비흡연</div>
                 </div>
               </div>
               <div class="m-field">
-                <div class="l-title">자녀 계획 <span class="req">*</span> <span class="pin p2">C-1</span></div>
+                <div class="l-title">자녀 계획 <span class="req">*</span> </div>
                 <div class="m-radio-group">
-                  <div class="m-radio selected">자녀를 갖기 희망</div>
+                  <div class="m-radio">자녀를 갖기 희망</div>
                   <div class="m-radio">자녀 계획 없음</div>
                   <div class="m-radio">상호 논의 후 결정</div>
                   <div class="m-radio">고민중</div>
@@ -3278,59 +3356,61 @@
           <div class="m-card open">
             <button class="m-card-head" type="button" aria-expanded="true">
               <div class="num-badge">6</div>
-              <div><h3>프로필 사진</h3><div class="sub">carousel · 길게 누르면 위치 변경</div></div>
+              <div><h3>프로필 사진</h3></div>
               <div class="grow"></div>
-              <span class="pin p1">I-5</span>
-              <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              <span class="status-pill">0/2</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="m-card-body">
               <div class="m-field">
-                <div class="l-title">프로필 사진 <span class="req">*</span> <span class="pin p2">P2 · I-9</span></div>
-                <!-- I-9 v2 신규 — 모바일에서는 가이드가 carousel 위에 상단 노출 -->
-                <aside aria-label="사진 등록 TIP" style="background:var(--info-light);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:12px;display:flex;flex-direction:column;gap:8px;">
-                  <div style="display:flex;align-items:center;gap:6px;">
-                    <span style="font-weight:700;color:var(--info);">ⓘ</span>
-                    <h3 style="margin:0;font-size:13px;font-weight:700;color:var(--info);">사진 등록 TIP</h3>
+                <div class="l-title">프로필 사진 <span class="req">*</span> </div>
+                <div class="l-desc"><strong style="color:var(--primary);">2장 필수 등록</strong><br>나를 잘 표현할 수 있는 사진을 업로드 해주세요.</div>
+                <!-- ProfilePhotoGuide: 모바일에서는 가이드가 carousel 위에 상단 노출 -->
+                <aside class="photo-guide" aria-label="사진 등록 TIP">
+                  <div class="photo-guide-top">
+                    <div class="photo-guide-title">
+                      <span class="ic">ⓘ</span>
+                      <h3>사진 등록 TIP</h3>
+                    </div>
+                    <ul>
+                      <li>얼굴이 잘 보이는 선명한 사진이 좋아요.</li>
+                      <li>마스크, 선글라스 등으로 가린 사진은 대표 사진으로 사용할 수 없어요.</li>
+                      <li>AI 프로필 사진은 등록이 불가해요.</li>
+                      <li>여러명이 함께 나오거나, 흐릿하거나 어두운 사진은 피해주세요.</li>
+                    </ul>
+                    <hr>
                   </div>
-                  <ul style="margin:0;padding-left:14px;list-style:disc;font-size:11px;line-height:1.45;color:var(--text-sec);">
-                    <li>얼굴이 잘 보이는 선명한 사진이 좋아요.</li>
-                    <li>마스크·선글라스 가린 사진은 대표로 사용할 수 없어요.</li>
-                    <li>AI 프로필 사진은 등록 불가.</li>
-                  </ul>
-                  <div style="display:flex;gap:8px;">
-                    <div style="flex:1;display:flex;flex-direction:column;gap:4px;"><p style="margin:0;font-size:11px;font-weight:700;">좋은 사진</p><div style="display:flex;flex-direction:column;gap:3px;"><div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-sm);"></div><div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-sm);"></div></div></div>
-                    <div style="flex:1;display:flex;flex-direction:column;gap:4px;"><p style="margin:0;font-size:11px;font-weight:700;">나쁜 사진</p><div style="display:flex;flex-direction:column;gap:3px;"><div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-sm);"></div><div style="aspect-ratio:517/307;background:var(--bg-subtle);border-radius:var(--radius-sm);"></div></div></div>
+                  <div class="photo-guide-examples">
+                    <div class="photo-guide-col">
+                      <p>좋은 사진</p>
+                      <div class="photo-guide-list">
+                        <div class="photo-guide-thumb"><img src="../public/images/profile-info/profile_good_ex1.png" alt="좋은 사진 예시 1"></div>
+                        <div class="photo-guide-thumb"><img src="../public/images/profile-info/profile_good_ex2.png" alt="좋은 사진 예시 2"></div>
+                        <div class="photo-guide-thumb"><img src="../public/images/profile-info/profile_good_ex3.png" alt="좋은 사진 예시 3"></div>
+                      </div>
+                    </div>
+                    <div class="photo-guide-col">
+                      <p>나쁜 사진</p>
+                      <div class="photo-guide-list">
+                        <div class="photo-guide-thumb"><img src="../public/images/profile-info/profile_bad_ex1.png" alt="나쁜 사진 예시 1"></div>
+                        <div class="photo-guide-thumb"><img src="../public/images/profile-info/profile_bad_ex2.png" alt="나쁜 사진 예시 2"></div>
+                        <div class="photo-guide-thumb"><img src="../public/images/profile-info/profile_bad_ex3.png" alt="나쁜 사진 예시 3"></div>
+                      </div>
+                    </div>
                   </div>
                 </aside>
                 <div class="m-carousel">
-                  <div class="photo-slot filled m-photo-rep">
-                    <div class="actions"><button class="icon-btn" type="button" aria-label="모바일 대표 사진 삭제"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-                    <div class="badge">★ 대표</div>
-                  </div>
-                  <div class="photo-slot filled m-photo-normal">
-                    <button class="cta" type="button">★ 대표 등록</button>
-                  </div>
-                  <div class="m-photo-peek"></div>
-                </div>
-                <div class="m-dots">
-                  <div class="d active"></div>
-                  <div class="d"></div>
-                  <div class="d"></div>
-                  <div class="d"></div>
+                  <div class="photo-slot rep empty m-photo-rep"><div class="plus">＋</div><div class="label">정면 얼굴이 잘 나온 사진<br>(타인에게 먼저 노출됩니다.)</div><div class="badge" aria-label="대표 사진"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div></div><div class="photo-slot normal empty m-photo-normal"><div class="plus">＋</div></div><div class="photo-slot normal empty m-photo-normal"><div class="plus">＋</div></div><div class="photo-slot normal empty m-photo-normal"><div class="plus">＋</div></div>
                 </div>
               </div>
               <div class="m-field">
-                <div class="l-title">포토북 <span class="pin p1">P1 · I-6</span></div>
+                <div class="l-title">포토북 <button class="btn btn-secondary btn-sm m-pb-label-add" type="button" style="margin-left:auto;">+ 추가</button></div>
                 <div class="l-desc"><strong style="color:var(--primary);">최대 8장</strong>까지 슬롯을 추가할 수 있습니다.</div>
-                <!-- v2: 가로 carousel + 사진별 description input -->
-                <div class="photobook-grid" style="display:flex;gap:10px;overflow-x:auto;">
+
+                <div class="m-pb-carousel">
                   <div style="flex:0 0 220px;display:flex;flex-direction:column;gap:6px;">
-                    <div class="pb-thumb filled" style="aspect-ratio:4/3;"></div>
-                    <div class="input input-sm"><input aria-label="모바일 포토북 1 설명" placeholder="사진에 대한 간단한 설명" value="제주 한라산"></div>
+                    <div class="pb-thumb"><div class="plus">＋</div></div>
                   </div>
-                  <div style="flex:0 0 220px;">
-                    <div class="pb-thumb" style="aspect-ratio:4/3;"><div class="plus">＋</div></div>
-                  </div>
+                  <button class="pb-thumb add-slot" type="button" aria-label="포토북 슬롯 추가"><div class="plus">＋</div></button>
                 </div>
               </div>
             </div>
@@ -3361,12 +3441,12 @@
 
         <!-- FAB (closed state) -->
         <div class="m-fab-menu" id="mobile-fab-menu-a" hidden>
-          <div class="item"><span class="ic">☎</span><span class="lab">무료상담</span></div>
-          <div class="item"><span class="ic">♡</span><span class="lab">자녀결혼</span></div>
-          <div class="item"><span class="ic">↗</span><span class="lab">업그레이드</span></div>
-          <div class="item"><span class="ic">⌖</span><span class="lab">오시는길</span></div>
-          <div class="item"><span class="ic">▣</span><span class="lab">프로필컨설팅</span></div>
-          <div class="item"><span class="ic">↻</span><span class="lab">33법칙</span></div>
+          <div class="item"><img src="../public/images/quick-menu/quick-call.png" alt="" aria-hidden="true"><span class="lab">무료상담</span></div>
+          <div class="item"><img class="icon-lg" src="../public/images/quick-menu/quick-children.png" alt="" aria-hidden="true"><span class="lab">자녀결혼</span></div>
+          <div class="item"><img src="../public/images/quick-menu/quick-upgrade.png" alt="" aria-hidden="true"><span class="lab">업그레이드</span></div>
+          <div class="item"><img src="../public/images/quick-menu/quick-location.png" alt="" aria-hidden="true"><span class="lab">오시는길</span></div>
+          <div class="item"><img src="../public/images/quick-menu/quick-profile-consulting.png" alt="" aria-hidden="true"><span class="lab">프로필컨설팅</span></div>
+          <div class="item"><img src="../public/images/quick-menu/quick-33.png" alt="" aria-hidden="true"><span class="lab">33법칙</span></div>
         </div>
         <button class="m-fab" type="button" data-fab-toggle aria-label="퀵 메뉴 열기" aria-expanded="false" aria-controls="mobile-fab-menu-a" title="퀵 메뉴 열기">＋</button>
 
@@ -3384,34 +3464,50 @@
       <div class="mobile-frame">
         <div class="mobile-status"><span>9:41</span><span class="dots">●●● ●</span></div>
         <div class="m-topbar">
-          <button class="m-back" type="button" aria-label="이전 화면으로">←</button>
+          <button class="m-back" type="button" aria-label="이전 화면으로"><img src="../public/images/button/button-back.svg" alt="" aria-hidden="true"></button>
           <div class="m-title">기본정보</div>
-          <button class="m-menu-btn" type="button" data-drawer-toggle aria-label="전체 메뉴 열기" aria-expanded="false" aria-controls="mobile-drawer-b">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
-          </button>
+          <button class="m-menu-btn" type="button" data-drawer-toggle aria-label="전체 메뉴 열기" aria-expanded="false" aria-controls="mobile-drawer-b"><img src="../public/images/button/button-menu.svg" alt="" aria-hidden="true"></button>
         </div>
         <div class="m-drawer" id="mobile-drawer-b" hidden>
           <div class="m-drawer-panel">
             <div class="m-drawer-head">
-              <div class="cm-logo"><span class="cm-logo-mark"></span><span class="cm-logo-text">CHRISTIAN<br>MATE</span></div>
-              <button class="m-drawer-close" type="button" data-drawer-close aria-label="전체 메뉴 닫기">×</button>
+              <div class="cm-logo"><img src="../public/images/logo/logo.png" alt="크리스천메이트"></div>
+              <div class="site-profile drawer-profile"><span class="avatar">C</span><span>임승리</span></div>
             </div>
-            <div class="m-menu-section">
-              <h4>MAIN MENU</h4>
-              <div class="m-menu-list">
-                <a href="#">크리스천메이트</a><a href="#">서비스 안내</a>
-                <a href="#">공개 프로필</a><a href="#">커뮤니티</a>
-                <a href="#">오프라인 모임</a><a href="#">문의하기</a>
+            <div class="m-drawer-scroll">
+              <div class="m-menu-section">
+                <h4>MAIN MENU</h4>
+                <div class="m-menu-list">
+                  <a href="#">크리스천메이트</a>
+                  <a href="#">서비스 안내</a>
+                  <a href="#">공개 프로필</a>
+                  <a href="#">커뮤니티</a>
+                  <a href="#">오프라인 모임</a>
+                  <a href="#">문의하기</a>
+                </div>
+              </div>
+              <div class="m-menu-section">
+                <h4>MY PAGE</h4>
+                <div class="m-side-list">
+                  <button class="group-toggle open" type="button" aria-expanded="true">내 정보 <span>⌃</span></button>
+                  <div class="m-side-sub">
+                    <a href="#">정보 수정</a>
+                    <a href="#">비밀번호 수정</a>
+                    <a class="active" href="#">프로필</a>
+                    <a href="#">가입정보</a>
+                    <a href="#">온라인 계약</a>
+                    <a href="#">서류제출</a>
+                    <a href="#">회원 탈퇴</a>
+                  </div>
+                  <button class="group-toggle" type="button" aria-expanded="false">매칭 라운지 <span>⌄</span></button>
+                  <a class="single-link" href="#">만남 캘린더</a>
+                  <a class="single-link" href="#">문의하기</a>
+                </div>
               </div>
             </div>
-            <div class="m-menu-section">
-              <h4>MY PAGE</h4>
-              <div class="m-side-list">
-                <span class="active">내 정보 · 프로필</span>
-                <span>정보 수정</span>
-                <span>매칭 라운지</span>
-                <span>만남 캘린더</span>
-              </div>
+            <div class="m-drawer-footer">
+              <button class="btn btn-primary btn-md" type="button">업그레이드</button>
+              <button class="drawer-logout" type="button">로그아웃</button>
             </div>
           </div>
         </div>
@@ -3432,12 +3528,12 @@
         </div>
 
         <div class="m-fab-menu" id="mobile-fab-menu-b">
-          <div class="item"><span class="ic">☎</span><span class="lab">무료상담</span></div>
-          <div class="item"><span class="ic">♡</span><span class="lab">자녀결혼</span></div>
-          <div class="item"><span class="ic">↗</span><span class="lab">업그레이드</span></div>
-          <div class="item"><span class="ic">⌖</span><span class="lab">오시는길</span></div>
-          <div class="item"><span class="ic">▣</span><span class="lab">프로필컨설팅</span></div>
-          <div class="item"><span class="ic">↻</span><span class="lab">33법칙</span></div>
+          <div class="item"><img src="../public/images/quick-menu/quick-call.png" alt="" aria-hidden="true"><span class="lab">무료상담</span></div>
+          <div class="item"><img class="icon-lg" src="../public/images/quick-menu/quick-children.png" alt="" aria-hidden="true"><span class="lab">자녀결혼</span></div>
+          <div class="item"><img src="../public/images/quick-menu/quick-upgrade.png" alt="" aria-hidden="true"><span class="lab">업그레이드</span></div>
+          <div class="item"><img src="../public/images/quick-menu/quick-location.png" alt="" aria-hidden="true"><span class="lab">오시는길</span></div>
+          <div class="item"><img src="../public/images/quick-menu/quick-profile-consulting.png" alt="" aria-hidden="true"><span class="lab">프로필컨설팅</span></div>
+          <div class="item"><img src="../public/images/quick-menu/quick-33.png" alt="" aria-hidden="true"><span class="lab">33법칙</span></div>
         </div>
         <button class="m-fab close-state" type="button" aria-label="메뉴 닫기" aria-expanded="true" aria-controls="mobile-fab-menu-b" title="메뉴 닫기">✕</button>
 
@@ -3453,25 +3549,33 @@
 
 <!-- =================== MODALS =================== -->
 <section class="view" id="view-modals">
-  <div class="view-label">04 · Modals &amp; States — 핵심 인터랙션</div>
+  <div class="view-label">04 · Modal &amp; States — 핵심 인터랙션</div>
   <div class="modal-row">
 
-    <!-- I-2 Church Empty + Registration -->
-    <div class="modal m-w-560" role="dialog" aria-modal="true" aria-labelledby="modal-church-title" aria-describedby="modal-church-desc">
+    <!-- ChurchSearchModal · search empty -->
+    <div class="modal church m-w-560" role="dialog" aria-modal="true" aria-labelledby="modal-church-title" aria-describedby="modal-church-desc">
       <div class="modal-head">
         <h3 id="modal-church-title">교회 검색</h3>
-        <span class="grow"></span>
-        <button class="close" type="button" aria-label="교회 검색 모달 닫기">✕</button>
       </div>
       <div class="modal-body" id="modal-church-desc">
-        <div class="input"><span class="prefix">🔍</span><input aria-label="교회 또는 교단명 검색" value="반석 교회" placeholder="교회/교단명 검색"></div>
-        <div class="infobox info"><span class="ic">ⓘ</span><span>'반석 교회' → '반석교회'로 정규화 매칭 (띄어쓰기·특수문자 무시)</span></div>
+        <div class="input"><span class="prefix">🔍</span><input aria-label="교회 또는 교단명 검색" value="반석 교회" placeholder="교회/교단명 검색 ('온누리 교회' 입력 시 임시 검색됩니다)"></div>
         <div class="empty-state">
-          <div class="ic">🔍</div>
           <div class="ttl">'반석 교회' 검색 결과가 없어요</div>
-          <div class="desc">등록되지 않은 교회/교단이라면 신청해 주세요.<br>관리자 승인 후 마스터 DB에 등록됩니다.</div>
-          <button class="btn btn-primary btn-md" type="button" data-reg-toggle aria-expanded="true">＋ 교회/교단 가입 신청하기</button>
+          <div class="desc">하단의 신청하기를 누르면 신규 등록 신청을 진행할 수 있어요</div>
         </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-tertiary btn-lg" type="button">취소</button>
+        <button class="btn btn-primary btn-lg" type="button">신청하기</button>
+      </div>
+    </div>
+
+    <!-- ChurchSearchModal · form -->
+    <div class="modal church m-w-560" role="dialog" aria-modal="true" aria-labelledby="modal-church-form-title" aria-describedby="modal-church-form-desc">
+      <div class="modal-head">
+        <h3 id="modal-church-form-title">교회 등록 신청하기</h3>
+      </div>
+      <div class="modal-body" id="modal-church-form-desc">
         <div class="reg-form">
           <div class="rh">
             <span class="rh-title">교회/교단 신규 등록 신청</span>
@@ -3483,70 +3587,38 @@
           <div class="rf"><div class="l">교회 주소 <span class="req">*</span></div><div class="input input-sm"><input aria-label="신규 신청 교회 주소" value="서울특별시 ..."></div></div>
           <div class="rf"><div class="l">연락처 (선택)</div><div class="input input-sm"><input aria-label="신규 신청 연락처" placeholder="010-0000-0000"></div></div>
           <div class="rf"><div class="l">신청 사유 <span class="req">*</span></div><div class="input textarea"><textarea aria-label="교회 가입 신청 사유" rows="3">검색 결과에 출석 교회가 없어 신규 등록을 요청합니다.</textarea></div></div>
-          <div class="actions">
-            <button class="btn btn-tertiary btn-md" type="button">취소</button>
-            <button class="btn btn-primary btn-md" type="button">신청하기</button>
-          </div>
         </div>
-        <div class="infobox success"><span class="ic">✓</span><span>신청 후: 매니저팀 메일/Slack 통보 → 24시간 내 검토. 임시값으로 다음 단계 진행 가능.</span></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-tertiary btn-lg" type="button">취소</button>
+        <button class="btn btn-primary btn-lg" type="button">신청하기</button>
       </div>
     </div>
 
     <!-- I-5 Branch A -->
-    <div class="modal m-w-480" role="dialog" aria-modal="true" aria-labelledby="modal-photo-a-title" aria-describedby="modal-photo-a-desc">
-      <div class="modal-head">
-        <h3 id="modal-photo-a-title">대표사진 삭제</h3>
-        <span class="grow"></span>
-        <button class="close" type="button" aria-label="대표사진 삭제 모달 닫기">✕</button>
-      </div>
+    <div class="modal m-w-480" role="dialog" aria-modal="true" aria-label="대표사진 삭제 확인" aria-describedby="modal-photo-a-desc">
       <div class="modal-body" id="modal-photo-a-desc">
-        <div class="alert danger">
-          <div class="ic-circle">!</div>
-          <div>
-            <div class="title">두 번째 사진이 대표가 됩니다</div>
-            <div class="desc">해당 사진을 삭제하면 두 번째에 등록된 사진이 대표 사진으로 자동 변경됩니다.</div>
-          </div>
-        </div>
-        <div class="delete-preview">
-          <div class="tile fading"><div class="badge">★ 대표</div></div>
-          <div class="arrow">→</div>
-          <div class="tile"><div class="badge">★ 대표</div></div>
-          <div class="tile"></div>
+        <div class="confirm-copy">
+          해당 사진을 삭제하면 두 번째에 등록된 사진이<br>
+          대표 사진으로 변경됩니다
         </div>
       </div>
       <div class="modal-foot">
-        <span class="caption">CASE A · 다른 사진 ≥ 1장</span>
-        <span class="grow"></span>
-        <span class="pin p1">P1 · I-5</span>
-        <button class="btn btn-tertiary btn-md" type="button">취소</button>
-        <button class="btn btn-danger btn-md" type="button">삭제</button>
+        <button class="btn btn-tertiary btn-lg" type="button">취소</button>
+        <button class="btn btn-danger btn-lg" type="button">삭제</button>
       </div>
     </div>
 
     <!-- I-5 Branch B -->
-    <div class="modal m-w-440" role="alertdialog" aria-modal="true" aria-labelledby="modal-photo-b-title" aria-describedby="modal-photo-b-desc">
-      <div class="modal-head">
-        <h3 id="modal-photo-b-title">삭제할 수 없어요</h3>
-        <span class="grow"></span>
-        <button class="close" type="button" aria-label="삭제 불가 모달 닫기">✕</button>
-      </div>
+    <div class="modal m-w-440" role="alertdialog" aria-modal="true" aria-label="대표 사진 필수 안내" aria-describedby="modal-photo-b-desc">
       <div class="modal-body" id="modal-photo-b-desc">
-        <div class="alert warning">
-          <div class="ic-circle">!</div>
-          <div>
-            <div class="title">대표사진은 반드시 등록되어야 합니다</div>
-            <div class="desc">새 사진을 먼저 등록한 뒤 다시 시도해 주세요.</div>
-          </div>
-        </div>
-        <div class="delete-preview" style="justify-content:center;">
-          <div class="tile"><div class="badge">★ 대표</div></div>
+        <div class="confirm-copy strong">
+          대표 사진은 필수 입니다<br>
+          반드시 등록해주세요
         </div>
       </div>
       <div class="modal-foot">
-        <span class="caption">CASE B · 단독 등록</span>
-        <span class="grow"></span>
-        <span class="pin p1">P1 · I-5</span>
-        <button class="btn btn-primary btn-md" type="button" style="min-width:80px;">확인</button>
+        <button class="btn btn-primary btn-lg" type="button">확인</button>
       </div>
     </div>
 
@@ -3554,8 +3626,6 @@
     <div class="modal m-w-480" role="alertdialog" aria-modal="true" aria-labelledby="modal-edu-title" aria-describedby="modal-edu-desc">
       <div class="modal-head">
         <h3 id="modal-edu-title">학력 정보가 삭제됩니다</h3>
-        <span class="grow"></span>
-        <button class="close" type="button" aria-label="학력 정보 삭제 모달 닫기">✕</button>
       </div>
       <div class="modal-body" id="modal-edu-desc">
         <div class="alert warning">
@@ -3579,20 +3649,15 @@
         </div>
       </div>
       <div class="modal-foot">
-        <span class="caption">CASE · 학력 다운그레이드</span>
-        <span class="grow"></span>
-        <span class="pin p1">P1 · I-3</span>
-        <button class="btn btn-tertiary btn-md" type="button">취소</button>
-        <button class="btn btn-danger btn-md" type="button">계속 진행</button>
+        <button class="btn btn-tertiary btn-lg" type="button">취소</button>
+        <button class="btn btn-danger btn-lg" type="button">계속 진행</button>
       </div>
     </div>
 
-    <!-- I-8 Validation Modal (v2 신규) — 미입력 항목 안내 -->
+    <!-- Validation Modal — 미입력 항목 안내 -->
     <div class="modal m-w-440" role="dialog" aria-modal="true" aria-labelledby="modal-validation-title" aria-describedby="modal-validation-desc">
       <div class="modal-head">
         <h3 id="modal-validation-title">입력하지 않은 항목이 있습니다</h3>
-        <span class="grow"></span>
-        <button class="close" type="button" aria-label="검증 모달 닫기">✕</button>
       </div>
       <div class="modal-body" id="modal-validation-desc">
         <p style="margin:0;font-size:14px;color:var(--text-sec);">다음 항목을 입력해 주세요.</p>
@@ -3607,27 +3672,19 @@
         </ul>
       </div>
       <div class="modal-foot">
-        <span class="caption">"다음" 클릭 → 첫 미입력 섹션으로 자동 스크롤</span>
-        <span class="grow"></span>
-        <span class="pin p1">P1 · I-8</span>
-        <button class="btn btn-primary btn-md" type="button" style="min-width:80px;">확인</button>
+        <button class="btn btn-primary btn-lg" type="button">확인</button>
       </div>
     </div>
 
-    <!-- X-1 Free Consult Modal (v2 신규) — 헤더/퀵메뉴/FAB 공통 진입점 -->
-    <div class="modal m-w-440" role="dialog" aria-modal="true" aria-labelledby="modal-consult-title" aria-describedby="modal-consult-desc">
+    <!-- Free Consult Modal — 헤더/퀵메뉴/FAB 공통 진입점 -->
+    <div class="modal consult m-w-440" role="dialog" aria-modal="true" aria-labelledby="modal-consult-title" aria-describedby="modal-consult-desc">
       <div class="modal-head">
         <h3 id="modal-consult-title">무료 상담</h3>
-        <span class="grow"></span>
-        <button class="close" type="button" aria-label="무료 상담 모달 닫기">✕</button>
       </div>
-      <div class="modal-body" id="modal-consult-desc" style="align-items:center;text-align:center;">
+      <div class="modal-body" id="modal-consult-desc">
         <p style="margin:0;font-size:24px;font-weight:800;letter-spacing:-0.02em;color:var(--text-brand);">02)862-3920</p>
-        <p style="margin:0;font-size:13px;color:var(--text-sec);">평일 10:00 ~ 19:00 · 점심 12:30 ~ 13:30 · 주말/공휴일 휴무</p>
       </div>
       <div class="modal-foot">
-        <a href="tel:+8228623920" class="btn btn-primary btn-md" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">통화하기</a>
-        <span class="pin p2">P2 · X-1</span>
         <button class="btn btn-primary btn-md" type="button">확인</button>
       </div>
     </div>
@@ -3642,12 +3699,12 @@
     <div class="ds-hero">
       <div class="ds-kicker">C-Mate Profile Form System</div>
       <h1>기본정보 작성 화면을 위한 Design system</h1>
-      <p>이 시스템은 기획서의 S/R/I/C/X 항목과 현재 Next.js 16 구현(<code>app/_components/</code>)을 하나로 묶은 구현 기준입니다. 새 필드나 모달을 추가할 때는 <b>토큰 → 레이아웃 → 컴포넌트 → 상태 → 접근성</b> 순서로 적용합니다. <strong>모든 토큰은 <code>app/globals.css</code>의 단일 <code>@theme</code> 블록</strong>에서 관리되며 JSX/CSS에서 hex/px 리터럴 사용을 금지합니다.</p>
+      <p>이 시스템은 기획서의 S/R/I/C/X 항목과 현재 Next.js 구현(<code>app/_components/</code>)을 하나로 묶은 구현 기준입니다. 새 필드나 모달을 추가할 때는 <b>토큰 → 레이아웃 → 컴포넌트 → 상태 → 접근성</b> 순서로 적용합니다. <strong>모든 토큰은 <code>app/globals.css</code>의 단일 <code>@theme</code> 블록</strong>에서 관리되며 JSX/CSS에서 hex/px 리터럴 사용을 금지합니다.</p>
       <div class="ds-meta-row">
-        <span class="ds-version">v1.2.0 · 2026-05-22</span>
+        <span class="ds-version">v1.3.0 · 2026-05-26</span>
         <span class="pin p2">Pretendard / 4px grid / 1280px (xl) shell breakpoint</span>
         <span class="pin p3">WCAG 2.1 AA target</span>
-        <span class="pin p0">Next.js 16 · RSC default · Tailwind v4 @theme</span>
+        <span class="pin p0">Next.js 현재 구현 · RSC default · Tailwind @theme</span>
       </div>
     </div>
 
@@ -4129,13 +4186,13 @@ type ButtonSize = 'sm' | 'md' | 'lg';
             <div><h3>Progress &amp; Footer</h3><p><code>ProgressStepper</code>, <code>StickyFooter</code>, <code>MobileSiteFooter</code></p></div>
             <div>
               <div class="ds-preview">
-                <span class="auto-save-chip">방금 자동 저장됨</span>
-                <span class="pin p1">17 / 19</span>
+                <span class="auto-save-chip">변경사항 없음</span>
+                <span class="pin p1">0 / 20 항목</span>
                 <button class="btn btn-secondary btn-md" type="button">저장하기</button>
                 <button class="btn btn-primary btn-md" type="button">다음</button>
               </div>
               <div class="ds-code"><code>&lt;StickyFooter fixed&gt;
-  &lt;AutoSaveStatus state="saved" label="방금 자동 저장됨" /&gt;
+  &lt;AutoSaveStatus state="saved" label="변경사항 없음" /&gt;
   &lt;Button variant="secondary"&gt;저장하기&lt;/Button&gt;
   &lt;Button variant="primary" onClick={handleNext}&gt;다음&lt;/Button&gt;
 &lt;/StickyFooter&gt;</code></div>
@@ -4224,7 +4281,7 @@ type ButtonSize = 'sm' | 'md' | 'lg';
             <div><h3>AutoSaveChip</h3><p><code>.auto-save-chip</code></p></div>
             <div>
               <div class="ds-preview">
-                <span class="auto-save-chip">방금 자동 저장됨</span>
+                <span class="auto-save-chip">변경사항 없음</span>
                 <span class="auto-save-chip" style="background:var(--info-light);color:var(--info);"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--info);animation:ds-spin 0.8s linear infinite;border:2px solid var(--info-light);"></span>저장 중...</span>
                 <span class="auto-save-chip" style="background:var(--danger-light);color:var(--danger);">저장 실패 · 다시 시도</span>
               </div>
@@ -4233,7 +4290,7 @@ type ButtonSize = 'sm' | 'md' | 'lg';
                 <tbody>
                   <tr><td><code>idle</code></td><td>변화 없음 (10초 후)</td><td>회색 dot · "변경사항 없음" (또는 숨김)</td></tr>
                   <tr><td><code>saving</code></td><td>onBlur / debounce 500ms</td><td>info chip + 스피너 · "저장 중..."</td></tr>
-                  <tr><td><code>saved</code></td><td>API 200 OK</td><td>success chip · "방금 자동 저장됨"</td></tr>
+                  <tr><td><code>saved</code></td><td>API 200 OK</td><td>success chip · "변경사항 없음"</td></tr>
                   <tr><td><code>error</code></td><td>API fail · network</td><td>danger chip · retry CTA · 비파괴 toast</td></tr>
                 </tbody>
               </table>
@@ -4625,7 +4682,7 @@ type ButtonSize = 'sm' | 'md' | 'lg';
         <div class="ds-card-head">
           <div>
             <h2>17. Layout Contract</h2>
-            <p>웹과 모바일의 항목은 동일하고 배치만 달라집니다. <strong>v4 기준 shell 전환점은 1280px (xl)</strong>.</p>
+            <p>웹과 모바일의 항목은 동일하고 배치만 달라집니다. <strong>v5 기준 shell 전환점은 1280px (xl)</strong>.</p>
           </div>
           <span class="pin p0">xl 1280px</span>
         </div>
@@ -4728,7 +4785,7 @@ function canSelectStyle(nextSelectedIds) {
       BaseInfoForm.tsx                 // root client · 6 섹션 · ProgressMap · AutoSaveChip · 검증 ConfirmModal · D-Footer sync
       base-info/
         EducationSection.tsx           // 학력 자동 행 · DEGREE_ROWS map · 다운그레이드 confirm
-        ProfilePhotoGuide.tsx          // v2 신규 · TIP + 좋은/나쁜 사진 썸네일
+        ProfilePhotoGuide.tsx          // 사진 등록 TIP · TIP + 좋은/나쁜 사진 썸네일
         SectionAnchor.tsx              // scroll-margin · 검증 시 scroll target
         scrollToFieldAnchor.ts         // 보조: aria-expanded=false 아코디언 열기 + smooth scroll
         types.ts                       // AutoSaveState · ProgressSection · MissingRequiredField · BASE_INFO_SECTION_ORDER · ANCHOR_ID
@@ -4743,7 +4800,7 @@ function canSelectStyle(nextSelectedIds) {
       Footer.tsx                       // desktop 2 col + mobile column
       QuickRail.tsx                    // xl+ · 6 quick items + 맨위로 · frame-end dock
       MobileQuickFab.tsx               // xl- · ＋↔✕ FAB · 6 menu stack
-      FreeConsultModal.tsx             // v2 신규 · 통화하기(모바일) + 확인
+      FreeConsultModal.tsx             // 무료상담 modal · 통화하기(모바일) + 확인
       quickMenuItems.tsx               // QUICK_MENU_ITEMS 상수
       consultation.ts                  // FREE_CONSULT_PHONE_DISPLAY / TEL
       CmLogo.tsx · LogoutIcon.tsx
@@ -4794,7 +4851,7 @@ function canSelectStyle(nextSelectedIds) {
           <div class="ds-changelog">
             <div class="ds-changelog-row">
               <span class="ver">1.2.0</span>
-              <span class="desc"><strong>v4 — Next.js 16 구현 반영</strong>. ProfilePhotoGuide(I-9) · 검증 ConfirmModal(I-8) · FreeConsultModal(X-1) 신규 추가. QuickRail 6+맨위로로 확장. 헤더 site-actions 단순화(call info 제거). 포토북 description input + − empty remove. Shell 전환점을 1280px(xl)로 명시. <small>2026-05-22</small></span>
+              <span class="desc"><strong>v5 — Next.js 현재 구현 1:1 반영</strong>. 초기 입력 상태(0/20), 웹 저장 버튼 spinner 제거, xl(1280px) 기준 웹/앱뷰 전환, QuickRail 6+맨위로와 모바일 FAB 상태를 최신 화면 기준으로 재정렬. <small>2026-05-26</small></span>
             </div>
             <div class="ds-changelog-row">
               <span class="ver">1.0.0</span>
@@ -4969,6 +5026,9 @@ function canSelectStyle(nextSelectedIds) {
       const drawer = document.getElementById(btn.getAttribute('aria-controls'));
       const open = btn.getAttribute('aria-expanded') !== 'true';
       btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? '전체 메뉴 닫기' : '전체 메뉴 열기');
+      const icon = btn.querySelector('img');
+      if (icon) icon.src = open ? '../public/images/button/button-close.svg' : '../public/images/button/button-menu.svg';
       if (drawer) drawer.hidden = !open;
     });
   });
