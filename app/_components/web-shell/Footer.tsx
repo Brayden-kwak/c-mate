@@ -13,7 +13,6 @@ const MOBILE_LINKS = [
   "개인정보처리방침",
   "손해배상청구절차",
   "아동 안전 표준 정책",
-  "로그아웃",
 ];
 
 function FooterLink({

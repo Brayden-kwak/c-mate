@@ -8,7 +8,7 @@ export function LogoutIcon({
 }: LogoutIconProps) {
   return (
     <svg
-      viewBox="0 0 24 24"
+      viewBox="0 0 25 25"
       fill="none"
       stroke="currentColor"
       strokeWidth={2}
@@ -17,9 +17,9 @@ export function LogoutIcon({
       className={className}
       aria-hidden="true"
     >
-      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-      <path d="M16 17l5-5-5-5" />
-      <path d="M21 12H9" />
+      <path d="M12.2448 1H1V23.5H12.25" />
+      <path d="M17.875 17.875L23.5 12.25L17.875 6.625" />
+      <path d="M7.24998 12.2449H23.5" />
     </svg>
   );
 }

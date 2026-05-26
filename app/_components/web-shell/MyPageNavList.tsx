@@ -7,7 +7,7 @@ import {
   MY_PAGE_NAV,
   isMyPageNavGroup,
 } from "@/app/_components/web-shell/myPageNav";
-import { ChevronDown } from "@/app/_components/ui/icons";
+import { ChevronDown, ChevronUp } from "@/app/_components/ui/icons";
 
 type Variant = "drawer" | "sidebar";
 
@@ -23,14 +23,11 @@ function NavChevron({ open, variant }: { open: boolean; variant: Variant }) {
       ].join(" ")}
       aria-hidden="true"
     >
-      <ChevronDown
-        className={[
-          "w-4 h-4",
-          toneClass,
-          "transition-transform duration-fast ease-standard",
-          open ? "rotate-180" : "",
-        ].join(" ")}
-      />
+      {open ? (
+        <ChevronUp className="w-4 h-4 transition-colors duration-fast ease-standard" />
+      ) : (
+        <ChevronDown className="w-4 h-4 transition-colors duration-fast ease-standard" />
+      )}
     </span>
   );
 }

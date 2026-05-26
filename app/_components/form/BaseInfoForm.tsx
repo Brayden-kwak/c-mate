@@ -129,8 +129,11 @@ const STYLE_GROUPS: StyleGroup[] = [
 const AutoSaveChip = ({ state }: { state: AutoSaveState }) => {
   if (state === "saved") {
     return (
-      <span className="inline-flex items-center gap-1.5 bg-success-light text-success px-3 py-1.5 rounded-pill text-[13px] font-medium before:content-[''] before:w-[7px] before:h-[7px] before:rounded-full before:bg-success shrink-0">
-        저장됨
+      <span className="inline-flex items-center gap-1.5 bg-success-light text-success px-3 py-1.5 rounded-pill text-[13px] font-medium shrink-0">
+        <span aria-hidden="true" className="text-xs font-bold leading-none">
+          ✓
+        </span>
+        저장되었습니다
       </span>
     );
   }
@@ -922,6 +925,7 @@ const PhotoSection = ({
       initialData?.photos.map((photo) => ({
         filled: true,
         key: photo.key,
+        previewUrl: photo.url,
         description: photo.description,
       })) ?? [];
     return [...saved, ...Array<PhotoItem>(4).fill({ filled: false })].slice(
@@ -934,6 +938,7 @@ const PhotoSection = ({
       initialData?.pbPhotos.map((photo) => ({
         filled: true,
         key: photo.key,
+        previewUrl: photo.url,
         description: photo.description,
       })) ?? [];
     return saved.length > 0 ? saved : [{ filled: false }];
@@ -1004,10 +1009,18 @@ const PhotoSection = ({
   useEffect(() => {
     const photoData = photos
       .filter((p) => p.filled && p.key)
-      .map((p) => ({ key: p.key!, description: p.description }));
+      .map((p) => ({
+        key: p.key!,
+        url: p.previewUrl,
+        description: p.description,
+      }));
     const pbData = pbPhotos
       .filter((p) => p.filled && p.key)
-      .map((p) => ({ key: p.key!, description: p.description }));
+      .map((p) => ({
+        key: p.key!,
+        url: p.previewUrl,
+        description: p.description,
+      }));
     onDataChange?.({ photos: photoData, pbPhotos: pbData });
   }, [photos, pbPhotos, onDataChange]);
 
@@ -1439,6 +1452,7 @@ const PhotoSection = ({
         >
           {mobilePhotoGuide}
           {mobilePhotoCarousel}
+          <InfoBox>이미지 파일 크기는 10MB 이하로 업로드해주세요</InfoBox>
         </MobileField>
         <MobileField
           label="포토북"
@@ -1486,7 +1500,7 @@ const PhotoSection = ({
         confirmLabel={isRepDeleteBlocked ? "확인" : "삭제"}
         cancelLabel={isRepDeleteBlocked ? false : "취소"}
         onConfirm={confirmDelete}
-        variant={isRepDeleteBlocked ? "primary" : "danger"}
+        variant="primary"
         width={isRepDeleteBlocked ? "sm" : "md"}
       >
         {hasReplacementPhoto ? (
@@ -1517,7 +1531,6 @@ const PhotoSection = ({
         confirmLabel="삭제"
         cancelLabel="취소"
         onConfirm={confirmPbDelete}
-        variant="danger"
         width="md"
       >
         <p className="text-md text-text-secondary text-center mt-2 mb-4">
@@ -1679,6 +1692,8 @@ export const BaseInfoForm = (): ReactNode => {
   const saveIdleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saveInFlight = useRef(false);
   const saveQueued = useRef(false);
+  const queuedResolvers = useRef<Array<(v: boolean) => void>>([]);
+  const loadFailed = useRef(false);
   const formDataRef = useRef<BaseInfoPayload>({});
   const [initialData, setInitialData] = useState<BaseInfoPayload | null>(null);
   const progress = Object.values(progressMap).reduce<ProgressSection>(
@@ -1745,12 +1760,26 @@ export const BaseInfoForm = (): ReactNode => {
         const result = await apiFetch<BaseInfoPayload>(
           "/api/profile/base-info",
         );
-        const data = result.ok ? result.data : {};
+        if (!result.ok) {
+          if (!cancelled) {
+            if (result.error.code === "404") {
+              formDataRef.current = {};
+              setInitialData({});
+            } else {
+              loadFailed.current = true;
+              setInitialData({});
+            }
+          }
+          return;
+        }
         if (cancelled) return;
-        formDataRef.current = data;
-        setInitialData(data);
+        formDataRef.current = result.data;
+        setInitialData(result.data);
       } catch {
-        if (!cancelled) setInitialData({});
+        if (!cancelled) {
+          loadFailed.current = true;
+          setInitialData({});
+        }
       }
     };
 
@@ -1762,9 +1791,15 @@ export const BaseInfoForm = (): ReactNode => {
   }, []);
 
   async function persistFormData(): Promise<boolean> {
+    if (loadFailed.current) {
+      setAutoSave("error");
+      return false;
+    }
     if (saveInFlight.current) {
       saveQueued.current = true;
-      return true;
+      return new Promise<boolean>((resolve) => {
+        queuedResolvers.current.push(resolve);
+      });
     }
 
     saveInFlight.current = true;
@@ -1797,7 +1832,9 @@ export const BaseInfoForm = (): ReactNode => {
       saveInFlight.current = false;
       if (saveQueued.current) {
         saveQueued.current = false;
-        void persistFormData();
+        const resolvers = queuedResolvers.current.splice(0);
+        const result = await persistFormData();
+        resolvers.forEach((r) => r(result));
       }
     }
   }

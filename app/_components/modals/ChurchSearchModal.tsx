@@ -155,9 +155,6 @@ export function ChurchSearchModal({
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="교회/교단명 검색 ('온누리 교회' 입력 시 임시 검색됩니다)"
-                prefix={
-                  <span className="text-text-tertiary shrink-0 mr-0.5">🔍</span>
-                }
                 aria-label="교회 또는 교단명 검색"
                 autoFocus
               />

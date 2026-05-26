@@ -1,3 +1,4 @@
+import type { MouseEvent } from "react";
 import Link from "next/link";
 import type { LinkProps } from "next/link";
 import type {
@@ -76,13 +77,22 @@ export function Button({
     .join(" ");
 
   if ("href" in rest && rest.href !== undefined) {
-    const { href, ...linkRest } = rest;
+    const { href, onClick: linkOnClick, ...linkRest } = rest;
+    const isDisabled = loading || linkRest["aria-disabled"];
+    const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
+      if (isDisabled) {
+        e.preventDefault();
+        return;
+      }
+      linkOnClick?.(e);
+    };
     return (
       <Link
         {...linkRest}
         href={href}
         className={classNames}
-        aria-disabled={loading || linkRest["aria-disabled"]}
+        aria-disabled={isDisabled}
+        onClick={handleClick}
       >
         {loading && (
           <span className={isLight ? "btn-spinner" : "btn-spinner-dark"} />

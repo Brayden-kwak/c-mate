@@ -1,6 +1,6 @@
 import { LogoutIcon } from "@/app/_components/web-shell/LogoutIcon";
 
-const DISPLAY_NAME = "임승리";
+const DISPLAY_NAME = "곽지훈";
 const AVATAR_INITIAL = "C";
 
 /** 데스크톱 헤더 프로필·로그아웃 공통 스택 (아이콘 20px + 12px 라벨) */
@@ -42,9 +42,11 @@ const logoutModeClass: Record<
   NonNullable<HeaderLogoutButtonProps["mode"]>,
   string
 > = {
-  header: [HEADER_ACCOUNT_STACK_CLASS, "text-text-brand"].join(" "),
+  header: [HEADER_ACCOUNT_STACK_CLASS, "bg-transparent p-0 text-text-brand"].join(
+    " ",
+  ),
   drawer:
-    "inline-flex w-full items-center justify-center text-xs font-bold leading-tight text-text-brand",
+    "inline-flex h-10 w-full items-center justify-center rounded-md bg-subtle px-4 text-xs font-bold leading-tight text-text-secondary hover:bg-disabled hover:text-text",
 };
 
 export function HeaderLogoutButton({
@@ -54,14 +56,14 @@ export function HeaderLogoutButton({
     <button
       type="button"
       className={[
-        "border-0 bg-transparent p-0 transition-colors duration-fast ease-standard",
+        "border-0 transition-colors duration-fast ease-standard",
         "hover:text-text focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2",
         logoutModeClass[mode],
       ].join(" ")}
       aria-label="로그아웃"
     >
       {mode === "header" ? (
-        <LogoutIcon className={HEADER_ACCOUNT_ICON_CLASS} />
+        <LogoutIcon className="w-4 h-4 shrink-0" />
       ) : null}
       <span>로그아웃</span>
     </button>

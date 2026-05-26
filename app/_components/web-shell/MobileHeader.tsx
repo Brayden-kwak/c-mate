@@ -81,6 +81,7 @@ export function MobileHeader() {
               alt=""
               width={24}
               height={16}
+              className="w-6 h-4"
               aria-hidden
             />
           )}
@@ -167,7 +168,7 @@ export function MobileHeader() {
             </div>
 
             {/* 업그레이드 · 로그아웃 — 스크롤 영역 밖 고정 */}
-            <div className="shrink-0 flex flex-col items-center gap-3 border-t border-border-subtle px-5 py-4">
+            <div className="shrink-0 flex flex-col items-center gap-2 border-t border-border-subtle px-5 py-4">
               <Button variant="primary" size="md" layout="full" type="button">
                 업그레이드
               </Button>

@@ -1,13 +1,13 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 
-const QUICK_ICON_SM = "w-4 h-4 shrink-0 object-contain";
-const QUICK_ICON_LG = "w-5 h-5 shrink-0 object-contain";
+const QUICK_ICON_SM = "w-4 h-4 shrink-0 object-contain max-w-none";
+const QUICK_ICON_LG = "w-5 h-5 shrink-0 object-contain max-w-none";
 
 function QuickMenuImage({
   src,
   size,
-  priority = false,
+  priority = true,
 }: {
   src: string;
   size: "sm" | "lg";
