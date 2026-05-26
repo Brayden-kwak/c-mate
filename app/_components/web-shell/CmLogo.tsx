@@ -18,6 +18,7 @@ export function CmLogo({
       width={140}
       height={40}
       className={className}
+      loading="eager"
       priority={eager}
     />
   );

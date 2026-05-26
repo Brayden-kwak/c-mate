@@ -1,3 +1,5 @@
+"use client";
+
 import type { MouseEvent } from "react";
 import Link from "next/link";
 import type { LinkProps } from "next/link";
