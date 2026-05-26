@@ -1,14 +1,8 @@
-"use client";
-
-import type { MouseEvent } from "react";
-import Link from "next/link";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 import type { LinkProps } from "next/link";
-import type {
-  AnchorHTMLAttributes,
-  ButtonHTMLAttributes,
-  ReactNode,
-} from "react";
+import type { AnchorHTMLAttributes } from "react";
 import type { ButtonVariant, Size } from "./types";
+import { LinkButton } from "./LinkButton";
 
 type CommonProps = {
   variant?: ButtonVariant;
@@ -79,28 +73,17 @@ export function Button({
     .join(" ");
 
   if ("href" in rest && rest.href !== undefined) {
-    const { href, onClick: linkOnClick, ...linkRest } = rest;
-    const isDisabled = loading || linkRest["aria-disabled"];
-    const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
-      if (isDisabled) {
-        e.preventDefault();
-        return;
-      }
-      linkOnClick?.(e);
-    };
+    const { href, ...linkRest } = rest;
     return (
-      <Link
+      <LinkButton
         {...linkRest}
         href={href}
+        loading={loading}
+        spinnerClass={isLight ? "btn-spinner" : "btn-spinner-dark"}
         className={classNames}
-        aria-disabled={isDisabled}
-        onClick={handleClick}
       >
-        {loading && (
-          <span className={isLight ? "btn-spinner" : "btn-spinner-dark"} />
-        )}
         {children}
-      </Link>
+      </LinkButton>
     );
   }
 

@@ -70,7 +70,7 @@ export function Header() {
             href="/"
             className="inline-flex h-9 min-w-0 items-center no-underline"
           >
-            <CmLogo eager className="h-5 w-auto" />
+            <CmLogo priority className="h-5 w-auto" />
           </Link>
         </div>
 

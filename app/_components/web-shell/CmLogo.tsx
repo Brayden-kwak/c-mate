@@ -4,12 +4,12 @@ const LOGO_SRC = "/images/logo/logo.png";
 
 type CmLogoProps = {
   className?: string;
-  eager?: boolean;
+  priority?: boolean;
 };
 
 export function CmLogo({
   className = "h-7 w-auto",
-  eager = false,
+  priority = false,
 }: CmLogoProps) {
   return (
     <Image
@@ -19,7 +19,7 @@ export function CmLogo({
       height={40}
       className={className}
       loading="eager"
-      priority={eager}
+      priority={priority}
     />
   );
 }
