@@ -26,13 +26,13 @@ type Props = ButtonProps | LinkButtonProps;
 
 const variantClass: Record<ButtonVariant, string> = {
   primary:
-    "bg-primary text-white hover:bg-primary-hover disabled:bg-disabled disabled:text-text-tertiary",
+    "bg-primary text-white hover:bg-primary-hover disabled:bg-disabled disabled:text-text-tertiary aria-disabled:bg-disabled aria-disabled:text-text-tertiary",
   secondary:
-    "bg-surface text-text border border-border-strong hover:bg-subtle hover:border-border-strong disabled:bg-disabled disabled:text-text-tertiary",
+    "bg-surface text-text border border-border-strong hover:bg-subtle hover:border-border-strong disabled:bg-disabled disabled:text-text-tertiary aria-disabled:bg-disabled aria-disabled:text-text-tertiary",
   tertiary:
-    "bg-subtle text-text-secondary hover:bg-disabled hover:text-text disabled:bg-disabled disabled:text-text-tertiary",
+    "bg-subtle text-text-secondary hover:bg-disabled hover:text-text disabled:bg-disabled disabled:text-text-tertiary aria-disabled:bg-disabled aria-disabled:text-text-tertiary",
   danger:
-    "bg-danger text-white hover:bg-danger-hover disabled:bg-disabled disabled:text-text-tertiary",
+    "bg-danger text-white hover:bg-danger-hover disabled:bg-disabled disabled:text-text-tertiary aria-disabled:bg-disabled aria-disabled:text-text-tertiary",
   icon: "bg-surface border border-border w-9 h-9 p-0 rounded-[6px] hover:bg-subtle hover:border-border-strong",
 };
 
@@ -59,7 +59,7 @@ export function Button({
   ...rest
 }: Props) {
   const base =
-    "inline-flex items-center justify-center font-semibold transition-colors duration-base ease-standard focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 disabled:cursor-not-allowed";
+    "inline-flex items-center justify-center font-semibold transition-colors duration-base ease-standard focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 disabled:cursor-not-allowed aria-disabled:cursor-not-allowed";
   const isLight = variant === "primary" || variant === "danger";
   const classNames = [
     base,
