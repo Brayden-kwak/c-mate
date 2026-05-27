@@ -4,6 +4,13 @@ import { useRef } from "react";
 import type { ReactNode } from "react";
 import { ChevronLeft, ChevronRight, XIcon } from "@/app/_components/ui/icons";
 
+const isAllowedImageUrl = (url: string | undefined): url is string => {
+  if (!url) return false;
+  return (
+    url.startsWith("blob:") || url.startsWith("https://") || url.startsWith("/")
+  );
+};
+
 type PhotoSlotProps = {
   variant: "rep" | "normal";
   filled?: boolean;
@@ -75,9 +82,11 @@ export const PhotoSlot = ({
   if (filled) {
     return (
       <div
-        className={`${sizeClass} relative rounded-lg overflow-hidden border bg-center bg-cover bg-no-repeat ${isRepresentative ? "border-primary shadow-md" : "border-transparent"} ${previewUrl ? "" : "bg-photo-gradient"}`}
+        className={`${sizeClass} relative rounded-lg overflow-hidden border bg-center bg-cover bg-no-repeat ${isRepresentative ? "border-primary shadow-md" : "border-transparent"} ${isAllowedImageUrl(previewUrl) ? "" : "bg-photo-gradient"}`}
         style={
-          previewUrl ? { backgroundImage: `url("${previewUrl}")` } : undefined
+          isAllowedImageUrl(previewUrl)
+            ? { backgroundImage: `url("${previewUrl}")` }
+            : undefined
         }
       >
         {isRepresentative && <RepresentativeBadge />}
@@ -183,9 +192,11 @@ export const PhotobookThumb = ({
   if (filled) {
     return (
       <div
-        className={`relative aspect-4/3 w-full rounded-lg overflow-hidden bg-center bg-cover bg-no-repeat ${previewUrl ? "" : "bg-photo-gradient"}`}
+        className={`relative aspect-4/3 w-full rounded-lg overflow-hidden bg-center bg-cover bg-no-repeat ${isAllowedImageUrl(previewUrl) ? "" : "bg-photo-gradient"}`}
         style={
-          previewUrl ? { backgroundImage: `url("${previewUrl}")` } : undefined
+          isAllowedImageUrl(previewUrl)
+            ? { backgroundImage: `url("${previewUrl}")` }
+            : undefined
         }
       >
         {onDelete && (

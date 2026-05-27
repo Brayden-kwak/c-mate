@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, type ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 import { Button } from "@/app/_components/ui/Button";
 
 type Props = {
@@ -32,6 +32,49 @@ export const ConfirmModal = ({
   width = "md",
 }: Props): ReactNode => {
   const uid = useId();
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const focusableSelector =
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    const getFocusable = () =>
+      Array.from(dialog.querySelectorAll<HTMLElement>(focusableSelector));
+
+    const timerId = setTimeout(() => getFocusable()[0]?.focus(), 0);
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const elements = getFocusable();
+      if (elements.length === 0) return;
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last?.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first?.focus();
+      }
+    };
+
+    dialog.addEventListener("keydown", onKeyDown);
+    return () => {
+      clearTimeout(timerId);
+      dialog.removeEventListener("keydown", onKeyDown);
+      previousFocus?.focus();
+    };
+  }, [open, onClose]);
+
   if (!open) return null;
 
   const widthClass = {
@@ -47,6 +90,7 @@ export const ConfirmModal = ({
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
+        ref={dialogRef}
         className={`bg-surface rounded-xl border border-border w-full ${widthClass} overflow-hidden shadow-modal`}
         role="dialog"
         aria-modal="true"

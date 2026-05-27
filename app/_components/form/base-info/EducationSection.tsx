@@ -35,6 +35,14 @@ import type { EduRow, EducationSectionData } from "@/app/_lib/base-info";
 
 const SECTION_EDUCATION = BASE_INFO_SECTION_ANCHOR_ID.education;
 
+const particleEuro = (word: string): string => {
+  if (!word) return "으로";
+  const last = word.charCodeAt(word.length - 1);
+  if (last < 0xac00 || last > 0xd7a3) return "으로";
+  const jongseong = (last - 0xac00) % 28;
+  return jongseong === 0 || jongseong === 8 ? "로" : "으로";
+};
+
 type Props = {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
@@ -496,7 +504,8 @@ export const EducationSection = ({
           <span className="text-warning text-lg font-bold shrink-0">⚠</span>
           <div>
             <div className="text-md font-semibold text-text">
-              {education} → {pendingEduChange?.newDegree}으로 변경
+              {education} → {pendingEduChange?.newDegree}
+              {particleEuro(pendingEduChange?.newDegree ?? "")} 변경
             </div>
             <div className="text-[13px] text-text-secondary mt-1">
               입력하신 학력 정보가 모두 삭제됩니다

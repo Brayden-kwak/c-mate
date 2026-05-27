@@ -32,12 +32,23 @@ const useSidebarStickyTop = () => {
       setStickyTop(Math.max(0, Math.round(alignTop)));
     };
 
+    let rafId = 0;
+    const scheduleSync = () => {
+      if (!rafId) {
+        rafId = requestAnimationFrame(() => {
+          sync();
+          rafId = 0;
+        });
+      }
+    };
+
     sync();
-    window.addEventListener("scroll", sync, { passive: true });
-    window.addEventListener("resize", sync);
+    window.addEventListener("scroll", scheduleSync, { passive: true });
+    window.addEventListener("resize", scheduleSync);
     return () => {
-      window.removeEventListener("scroll", sync);
-      window.removeEventListener("resize", sync);
+      window.removeEventListener("scroll", scheduleSync);
+      window.removeEventListener("resize", scheduleSync);
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
 

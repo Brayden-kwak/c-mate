@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { Input } from "@/app/_components/ui/Input";
 import { Button } from "@/app/_components/ui/Button";
@@ -55,6 +55,63 @@ export const ChurchSearchModal = ({
   const [regAddr, setRegAddr] = useState("");
   const [regContact, setRegContact] = useState("");
   const [regReason, setRegReason] = useState(DEFAULT_REG_REASON);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const handleCloseRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    handleCloseRef.current = () => {
+      setStep("search");
+      setQuery("");
+      setRegName("");
+      setRegDenom("");
+      setRegPastor("");
+      setRegAddr("");
+      setRegContact("");
+      setRegReason(DEFAULT_REG_REASON);
+      onClose();
+    };
+  });
+
+  useEffect(() => {
+    if (!open || step === "submitted") return;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const focusableSelector =
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    const getFocusable = () =>
+      Array.from(dialog.querySelectorAll<HTMLElement>(focusableSelector));
+
+    const timerId = setTimeout(() => getFocusable()[0]?.focus(), 0);
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        handleCloseRef.current?.();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const elements = getFocusable();
+      if (elements.length === 0) return;
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last?.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first?.focus();
+      }
+    };
+
+    dialog.addEventListener("keydown", onKeyDown);
+    return () => {
+      clearTimeout(timerId);
+      dialog.removeEventListener("keydown", onKeyDown);
+      previousFocus?.focus();
+    };
+  }, [open, step]);
 
   if (!open) return null;
 
@@ -132,6 +189,7 @@ export const ChurchSearchModal = ({
       onClick={(e) => e.target === e.currentTarget && handleClose()}
     >
       <div
+        ref={dialogRef}
         className="bg-surface rounded-xl border border-border w-full max-w-(--spacing-modal-lg) overflow-hidden shadow-modal"
         role="dialog"
         aria-modal="true"
