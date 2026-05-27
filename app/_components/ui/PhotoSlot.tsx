@@ -26,7 +26,7 @@ type PhotobookThumbProps = {
   onMoveRight?: () => void;
 };
 
-function RepresentativeBadge(): ReactNode {
+const RepresentativeBadge = (): ReactNode => {
   return (
     <span
       className="absolute top-2 left-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-primary text-white shadow-sm"
@@ -42,9 +42,9 @@ function RepresentativeBadge(): ReactNode {
       </svg>
     </span>
   );
-}
+};
 
-export function PhotoSlot({
+export const PhotoSlot = ({
   variant,
   filled,
   loading,
@@ -54,7 +54,7 @@ export function PhotoSlot({
   onMoveLeft,
   onMoveRight,
   onUpload,
-}: PhotoSlotProps): ReactNode {
+}: PhotoSlotProps): ReactNode => {
   const fileRef = useRef<HTMLInputElement>(null);
   const sizeClass =
     "w-[var(--spacing-photo-slot-width)] h-[var(--spacing-photo-slot-height)]";
@@ -167,9 +167,9 @@ export function PhotoSlot({
       {isRepresentative && <RepresentativeBadge />}
     </div>
   );
-}
+};
 
-export function PhotobookThumb({
+export const PhotobookThumb = ({
   filled,
   previewUrl,
   onDelete,
@@ -177,7 +177,7 @@ export function PhotobookThumb({
   onUpload,
   onMoveLeft,
   onMoveRight,
-}: PhotobookThumbProps): ReactNode {
+}: PhotobookThumbProps): ReactNode => {
   const fileRef = useRef<HTMLInputElement>(null);
 
   if (filled) {
@@ -272,4 +272,4 @@ export function PhotobookThumb({
       </span>
     </div>
   );
-}
+};

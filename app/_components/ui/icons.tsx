@@ -2,7 +2,9 @@ import type { ReactNode } from "react";
 
 type IconProps = { className?: string };
 
-export function ChevronDown({ className = "w-4 h-4" }: IconProps): ReactNode {
+export const ChevronDown = ({
+  className = "w-4 h-4",
+}: IconProps): ReactNode => {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -17,9 +19,9 @@ export function ChevronDown({ className = "w-4 h-4" }: IconProps): ReactNode {
       <polyline points="6 9 12 15 18 9" />
     </svg>
   );
-}
+};
 
-export function ChevronUp({ className = "w-4 h-4" }: IconProps): ReactNode {
+export const ChevronUp = ({ className = "w-4 h-4" }: IconProps): ReactNode => {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -34,11 +36,11 @@ export function ChevronUp({ className = "w-4 h-4" }: IconProps): ReactNode {
       <polyline points="18 15 12 9 6 15" />
     </svg>
   );
-}
+};
 
-export function ChevronLeft({
+export const ChevronLeft = ({
   className = "w-3.5 h-3.5",
-}: IconProps): ReactNode {
+}: IconProps): ReactNode => {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -53,11 +55,11 @@ export function ChevronLeft({
       <polyline points="15 18 9 12 15 6" />
     </svg>
   );
-}
+};
 
-export function ChevronRight({
+export const ChevronRight = ({
   className = "w-3.5 h-3.5",
-}: IconProps): ReactNode {
+}: IconProps): ReactNode => {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -72,9 +74,9 @@ export function ChevronRight({
       <polyline points="9 18 15 12 9 6" />
     </svg>
   );
-}
+};
 
-export function XIcon({ className = "w-3.5 h-3.5" }: IconProps): ReactNode {
+export const XIcon = ({ className = "w-3.5 h-3.5" }: IconProps): ReactNode => {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -89,4 +91,4 @@ export function XIcon({ className = "w-3.5 h-3.5" }: IconProps): ReactNode {
       <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
   );
-}
+};

@@ -15,15 +15,21 @@ import { NAV_ITEMS } from "@/app/_components/web-shell/navItems";
 const XL_BREAKPOINT = 1280;
 
 const STEPS = [
-  { num: 1, label: "기본정보", current: true },
+  { num: 1, label: "기본정보" },
   { num: 2, label: "나의소개" },
   { num: 3, label: "매력어필" },
   { num: 4, label: "라이프" },
   { num: 5, label: "이상형" },
 ];
 
-export function MobileHeader() {
+type Props = {
+  currentStep?: number;
+};
+
+export const MobileHeader = ({ currentStep = 1 }: Props) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const currentStepLabel =
+    STEPS.find((step) => step.num === currentStep)?.label ?? STEPS[0].label;
 
   useEffect(() => {
     const onResize = () => {
@@ -58,7 +64,7 @@ export function MobileHeader() {
             aria-hidden
           />
         </button>
-        <span className="text-mobile-title font-bold">기본정보</span>
+        <span className="text-mobile-title font-bold">{currentStepLabel}</span>
         <button
           type="button"
           aria-label={drawerOpen ? "전체 메뉴 닫기" : "전체 메뉴 열기"}
@@ -96,7 +102,7 @@ export function MobileHeader() {
               key={step.num}
               className={[
                 "inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-pill text-xs whitespace-nowrap",
-                step.current
+                step.num === currentStep
                   ? "bg-primary text-white font-semibold"
                   : "bg-subtle text-text-secondary font-medium",
               ].join(" ")}
@@ -104,7 +110,7 @@ export function MobileHeader() {
               <span
                 className={[
                   "w-4 h-4 rounded-full inline-flex items-center justify-center text-2xs font-bold",
-                  step.current ? "bg-white/25" : "bg-black/5",
+                  step.num === currentStep ? "bg-white/25" : "bg-black/5",
                 ].join(" ")}
               >
                 {step.num}
@@ -179,4 +185,4 @@ export function MobileHeader() {
       )}
     </>
   );
-}
+};

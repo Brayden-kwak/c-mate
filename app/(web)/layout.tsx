@@ -6,7 +6,7 @@ import { Footer } from "@/app/_components/web-shell/Footer";
 import { MobileQuickFab } from "@/app/_components/web-shell/MobileQuickFab";
 import { QuickRail } from "@/app/_components/web-shell/QuickRail";
 
-export default function WebLayout({ children }: { children: ReactNode }) {
+const WebLayout = ({ children }: { children: ReactNode }) => {
   return (
     <>
       <Header />
@@ -27,4 +27,6 @@ export default function WebLayout({ children }: { children: ReactNode }) {
       <MobileQuickFab />
     </>
   );
-}
+};
+
+export default WebLayout;

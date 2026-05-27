@@ -15,22 +15,11 @@ const COMPANY_LINES = [
   "개인정보보호책임자 : 임성진 (sjyc00@c-mate.co.kr)",
 ];
 
-function CompanyChevron({ open }: { open: boolean }) {
-  return (
-    <ChevronDown
-      className={[
-        "w-4 h-4 shrink-0 text-text-brand-muted transition-transform duration-fast ease-standard",
-        open ? "rotate-180" : "",
-      ].join(" ")}
-    />
-  );
-}
-
 type Props = {
   className?: string;
 };
 
-export function FooterCompanyToggle({ className }: Props) {
+export const FooterCompanyToggle = ({ className }: Props) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -42,7 +31,12 @@ export function FooterCompanyToggle({ className }: Props) {
         className="inline-flex items-center gap-1.5 text-text-brand-muted text-[11px] font-bold hover:text-text-brand transition-colors duration-fast ease-standard"
       >
         <span>크리스천메이트 회사 정보</span>
-        <CompanyChevron open={open} />
+        <ChevronDown
+          className={[
+            "w-4 h-4 shrink-0 text-text-brand-muted transition-transform duration-fast ease-standard",
+            open ? "rotate-180" : "",
+          ].join(" ")}
+        />
       </button>
       {open && (
         <p className="mt-2 text-text-brand-muted text-[11px] leading-relaxed whitespace-pre-line m-0">
@@ -51,4 +45,4 @@ export function FooterCompanyToggle({ className }: Props) {
       )}
     </div>
   );
-}
+};

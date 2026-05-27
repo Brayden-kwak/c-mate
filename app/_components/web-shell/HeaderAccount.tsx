@@ -1,5 +1,3 @@
-import { LogoutIcon } from "@/app/_components/web-shell/LogoutIcon";
-
 const DISPLAY_NAME = "곽지훈";
 const AVATAR_INITIAL = "C";
 
@@ -15,24 +13,24 @@ const avatarClass = [
 ].join(" ");
 
 /** 데스크톱 헤더 — 아이콘·이름 세로 스택 */
-export function HeaderUserProfile() {
+export const HeaderUserProfile = () => {
   return (
     <div className={HEADER_ACCOUNT_STACK_CLASS}>
       <span className={avatarClass}>{AVATAR_INITIAL}</span>
       <span className="text-primary">{DISPLAY_NAME}</span>
     </div>
   );
-}
+};
 
 /** 모바일 드로어 헤더 — 로고 우측, 아이콘·이름 가로 */
-export function DrawerUserProfile() {
+export const DrawerUserProfile = () => {
   return (
     <div className="inline-flex min-w-0 shrink-0 items-center gap-1.5 text-xs font-bold leading-tight whitespace-nowrap">
       <span className={avatarClass}>{AVATAR_INITIAL}</span>
       <span className="text-primary">{DISPLAY_NAME}</span>
     </div>
   );
-}
+};
 
 type HeaderLogoutButtonProps = {
   mode?: "header" | "drawer";
@@ -42,16 +40,17 @@ const logoutModeClass: Record<
   NonNullable<HeaderLogoutButtonProps["mode"]>,
   string
 > = {
-  header: [HEADER_ACCOUNT_STACK_CLASS, "bg-transparent p-0 text-text-brand"].join(
-    " ",
-  ),
+  header: [
+    HEADER_ACCOUNT_STACK_CLASS,
+    "bg-transparent p-0 text-text-brand",
+  ].join(" "),
   drawer:
     "inline-flex h-10 w-full items-center justify-center rounded-md bg-subtle px-4 text-xs font-bold leading-tight text-text-secondary hover:bg-disabled hover:text-text",
 };
 
-export function HeaderLogoutButton({
+export const HeaderLogoutButton = ({
   mode = "header",
-}: HeaderLogoutButtonProps) {
+}: HeaderLogoutButtonProps) => {
   return (
     <button
       type="button"
@@ -63,9 +62,22 @@ export function HeaderLogoutButton({
       aria-label="로그아웃"
     >
       {mode === "header" ? (
-        <LogoutIcon className="w-4 h-4 shrink-0" />
+        <svg
+          viewBox="0 0 25 25"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="w-4 h-4 shrink-0"
+          aria-hidden="true"
+        >
+          <path d="M12.2448 1H1V23.5H12.25" />
+          <path d="M17.875 17.875L23.5 12.25L17.875 6.625" />
+          <path d="M7.24998 12.2449H23.5" />
+        </svg>
       ) : null}
       <span>로그아웃</span>
     </button>
   );
-}
+};

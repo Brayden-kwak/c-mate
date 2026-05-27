@@ -4,15 +4,15 @@ type PresignResponse = {
   uploads: Array<{ uploadUrl: string; key: string }>;
 };
 
-function getUploadContentType(file: File): string {
+const getUploadContentType = (file: File): string => {
   if (file.type) return file.type;
 
   const extension = file.name.split(".").pop()?.toLowerCase();
   if (extension === "png") return "image/png";
   return "image/jpeg";
-}
+};
 
-export async function presignAndUpload(file: File): Promise<string> {
+export const presignAndUpload = async (file: File): Promise<string> => {
   const contentType = getUploadContentType(file);
   const result = await apiFetch<PresignResponse>(
     "/api/profile/photos/presign",
@@ -40,4 +40,4 @@ export async function presignAndUpload(file: File): Promise<string> {
   }
 
   return upload.key;
-}
+};

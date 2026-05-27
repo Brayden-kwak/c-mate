@@ -4,7 +4,7 @@ import { useEffect, useState, type CSSProperties } from "react";
 import { FreeConsultModal } from "@/app/_components/web-shell/FreeConsultModal";
 import { QUICK_MENU_ITEMS } from "@/app/_components/web-shell/quickMenuItems";
 
-export function QuickRail() {
+export const QuickRail = () => {
   const [consultOpen, setConsultOpen] = useState(false);
   const [railStyle, setRailStyle] = useState<CSSProperties>({
     right: "max(32px, calc((100vw - 1440px) / 2 + 30px))",
@@ -12,7 +12,7 @@ export function QuickRail() {
   });
 
   useEffect(() => {
-    function syncRail() {
+    const syncRail = () => {
       const frame = document.querySelector<HTMLElement>("[data-cmate-frame]");
       const webMain = document.querySelector<HTMLElement>(
         "[data-cmate-web-main]",
@@ -59,7 +59,7 @@ export function QuickRail() {
         bottom: `${bottom}px`,
         width: `${railWidth}px`,
       });
-    }
+    };
 
     const rafId = requestAnimationFrame(syncRail);
 
@@ -82,9 +82,9 @@ export function QuickRail() {
     };
   }, []);
 
-  function scrollToTop() {
+  const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }
+  };
 
   return (
     <aside
@@ -120,4 +120,4 @@ export function QuickRail() {
       </button>
     </aside>
   );
-}
+};

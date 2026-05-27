@@ -25,10 +25,10 @@ type ServerErrorBody = {
   fields?: Record<string, string>;
 };
 
-export async function apiFetch<T>(
+export const apiFetch = async <T>(
   url: string,
   options?: RequestInit,
-): Promise<ApiResult<T>> {
+): Promise<ApiResult<T>> => {
   let res: Response;
 
   try {
@@ -73,4 +73,4 @@ export async function apiFetch<T>(
       fields: body.fields,
     },
   };
-}
+};

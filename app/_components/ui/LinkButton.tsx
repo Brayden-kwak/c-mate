@@ -16,7 +16,7 @@ export type LinkButtonProps = Omit<
   children: ReactNode;
 };
 
-export function LinkButton({
+export const LinkButton = ({
   href,
   loading,
   spinnerClass,
@@ -24,7 +24,7 @@ export function LinkButton({
   onClick: externalOnClick,
   children,
   ...rest
-}: LinkButtonProps) {
+}: LinkButtonProps) => {
   const isDisabled = loading || rest["aria-disabled"];
   const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
     if (isDisabled) {
@@ -45,4 +45,4 @@ export function LinkButton({
       {children}
     </Link>
   );
-}
+};

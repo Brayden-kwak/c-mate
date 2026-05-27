@@ -1,25 +1,34 @@
 "use client";
 
 import { useState } from "react";
+import type { Size } from "./types";
 
 export type StyleGroup = {
   label: string;
   options: string[];
 };
 
+const chipSizeClass: Record<Size, string> = {
+  sm: "px-2.5 h-8 text-xs",
+  md: "px-3.5 h-[38px] text-sm",
+  lg: "px-4 h-10 text-base",
+};
+
 type Props = {
   groups: StyleGroup[];
   maxTotal?: number;
+  size?: Size;
   value?: Record<string, string[]>;
   onChange?: (value: Record<string, string[]>) => void;
 };
 
-export function StyleChipGroup({
+export const StyleChipGroup = ({
   groups,
   maxTotal = 5,
+  size = "md",
   value = {},
   onChange,
-}: Props) {
+}: Props) => {
   const [local, setLocal] = useState<Record<string, string[]>>(value);
 
   const selected = value ?? local;
@@ -28,7 +37,7 @@ export function StyleChipGroup({
   const totalCount = Object.values(selected).flat().length;
   const atMax = totalCount >= maxTotal;
 
-  function toggle(groupLabel: string, opt: string) {
+  const toggle = (groupLabel: string, opt: string) => {
     const groupSelected = selected[groupLabel] ?? [];
     const isSelected = groupSelected.includes(opt);
 
@@ -41,7 +50,7 @@ export function StyleChipGroup({
         : [...groupSelected, opt],
     };
     update(next);
-  }
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -62,7 +71,8 @@ export function StyleChipGroup({
                     onClick={() => toggle(group.label, opt)}
                     disabled={!isSelected && atMax}
                     className={[
-                      "inline-flex items-center justify-center px-3.5 h-[38px] rounded-md border text-sm select-none transition-all duration-fast ease-standard",
+                      "inline-flex items-center justify-center rounded-md border select-none transition-all duration-fast ease-standard",
+                      chipSizeClass[size],
                       isSelected
                         ? "bg-primary border-primary text-white font-semibold"
                         : "bg-surface border-border text-text font-medium hover:bg-subtle hover:border-border-strong",
@@ -83,4 +93,4 @@ export function StyleChipGroup({
       })}
     </div>
   );
-}
+};

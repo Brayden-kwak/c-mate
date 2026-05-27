@@ -48,8 +48,8 @@ export const INITIAL_MY_PAGE_EXPANDED = MY_PAGE_NAV.reduce<
   return acc;
 }, {});
 
-export function isMyPageNavGroup(
+export const isMyPageNavGroup = (
   entry: MyPageNavEntry,
-): entry is MyPageNavGroup {
+): entry is MyPageNavGroup => {
   return "items" in entry;
-}
+};

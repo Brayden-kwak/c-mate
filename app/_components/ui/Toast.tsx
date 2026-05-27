@@ -34,7 +34,7 @@ const VISIBLE_MS = 2000;
 const ENTER_MS = 240;
 const EXIT_MS = 240;
 
-export function ToastProvider({ children }: { children: ReactNode }) {
+export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [toast, setToast] = useState<ToastState | null>(null);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
@@ -112,12 +112,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       )}
     </ToastContext.Provider>
   );
-}
+};
 
-export function useToast() {
+export const useToast = () => {
   const ctx = useContext(ToastContext);
   if (!ctx) {
     throw new Error("useToast must be used within ToastProvider");
   }
   return ctx;
-}
+};

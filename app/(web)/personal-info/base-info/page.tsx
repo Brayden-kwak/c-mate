@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "크리스천메이트",
 };
 
-export default function BaseInfoPage() {
+const BaseInfoPage = () => {
   return (
     <div
       className="xl:relative xl:w-full xl:overflow-visible xl:rounded-lg xl:border xl:border-border xl:bg-page xl:shadow-md"
@@ -23,4 +23,6 @@ export default function BaseInfoPage() {
       </div>
     </div>
   );
-}
+};
+
+export default BaseInfoPage;

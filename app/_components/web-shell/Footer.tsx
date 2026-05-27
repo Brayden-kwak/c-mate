@@ -15,21 +15,7 @@ const MOBILE_LINKS = [
   "아동 안전 표준 정책",
 ];
 
-function FooterLink({
-  label,
-  className,
-}: {
-  label: string;
-  className: string;
-}) {
-  return (
-    <button type="button" className={className}>
-      {label}
-    </button>
-  );
-}
-
-export function Footer() {
+export const Footer = () => {
   return (
     <>
       {/* Desktop site-footer (xl+) */}
@@ -37,11 +23,13 @@ export function Footer() {
         <div>
           <div className="flex flex-wrap gap-4-5 mb-8-5">
             {FOOTER_LINKS.map((link) => (
-              <FooterLink
+              <button
                 key={link}
-                label={link}
+                type="button"
                 className="text-text-brand text-xs font-bold hover:text-primary transition-colors duration-fast ease-standard"
-              />
+              >
+                {link}
+              </button>
             ))}
           </div>
           <CmLogo />
@@ -129,11 +117,13 @@ export function Footer() {
         </p>
         <div className="flex flex-wrap gap-x-3.5 gap-y-2.5 pt-4-5 border-t border-border mb-4-5">
           {MOBILE_LINKS.map((link) => (
-            <FooterLink
+            <button
               key={link}
-              label={link}
+              type="button"
               className="text-text-brand-muted text-[13px] font-bold"
-            />
+            >
+              {link}
+            </button>
           ))}
         </div>
         <FooterCompanyToggle className="mb-3" />
@@ -143,4 +133,4 @@ export function Footer() {
       </footer>
     </>
   );
-}
+};

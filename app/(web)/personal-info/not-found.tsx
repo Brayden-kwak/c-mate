@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { NotFoundView } from "@/app/_components/ui/NotFoundView";
 
-export default function PersonalInfoNotFound(): ReactNode {
+const PersonalInfoNotFound = (): ReactNode => {
   return <NotFoundView />;
-}
+};
+
+export default PersonalInfoNotFound;

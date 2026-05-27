@@ -14,7 +14,7 @@ type CardProps = {
   bodyClassName?: string;
 };
 
-export function MobileCard({
+export const MobileCard = ({
   num,
   title,
   sub,
@@ -22,7 +22,7 @@ export function MobileCard({
   children,
   defaultOpen = true,
   bodyClassName,
-}: CardProps) {
+}: CardProps) => {
   const [open, setOpen] = useState(defaultOpen);
   const isComplete = progress
     ? (progress.statusComplete ?? progress.done >= progress.total)
@@ -76,7 +76,7 @@ export function MobileCard({
       )}
     </div>
   );
-}
+};
 
 type FieldProps = {
   label: ReactNode;
@@ -86,13 +86,13 @@ type FieldProps = {
   children: ReactNode;
 };
 
-export function MobileField({
+export const MobileField = ({
   label,
   required,
   desc,
   labelBadge,
   children,
-}: FieldProps) {
+}: FieldProps) => {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex w-full items-center gap-1.5 flex-wrap">
@@ -110,4 +110,4 @@ export function MobileField({
       {children}
     </div>
   );
-}
+};

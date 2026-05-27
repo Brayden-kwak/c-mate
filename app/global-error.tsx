@@ -4,12 +4,12 @@ import type { ReactNode } from "react";
 
 import { Button } from "@/app/_components/ui/Button";
 
-export default function GlobalError({
+const GlobalError = ({
   unstable_retry,
 }: {
   error: Error & { digest?: string };
   unstable_retry: () => void;
-}): ReactNode {
+}): ReactNode => {
   return (
     <html lang="ko">
       <body className="min-h-screen flex items-center justify-center bg-page font-sans">
@@ -27,4 +27,6 @@ export default function GlobalError({
       </body>
     </html>
   );
-}
+};
+
+export default GlobalError;

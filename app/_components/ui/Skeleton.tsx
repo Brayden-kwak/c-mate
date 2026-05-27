@@ -9,12 +9,12 @@ interface SkeletonProps {
   className?: string;
 }
 
-export function Skeleton({
+export const Skeleton = ({
   variant = "rect",
   width = "w-full",
   height = "h-4",
   className = "",
-}: SkeletonProps): ReactNode {
+}: SkeletonProps): ReactNode => {
   const shapeClass =
     variant === "circle"
       ? "rounded-full"
@@ -29,9 +29,9 @@ export function Skeleton({
       className={`block ${width} ${height} ${shapeClass} animate-skeleton ${className}`}
     />
   );
-}
+};
 
-export function SkeletonRow(): ReactNode {
+export const SkeletonRow = (): ReactNode => {
   return (
     <div
       role="presentation"
@@ -49,13 +49,13 @@ export function SkeletonRow(): ReactNode {
       </div>
     </div>
   );
-}
+};
 
 interface SkeletonCardProps {
   rows?: number;
 }
 
-export function SkeletonCard({ rows = 3 }: SkeletonCardProps): ReactNode {
+export const SkeletonCard = ({ rows = 3 }: SkeletonCardProps): ReactNode => {
   return (
     <div
       role="presentation"
@@ -75,4 +75,4 @@ export function SkeletonCard({ rows = 3 }: SkeletonCardProps): ReactNode {
       </div>
     </div>
   );
-}
+};

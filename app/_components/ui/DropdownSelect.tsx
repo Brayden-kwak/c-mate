@@ -10,7 +10,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import { createPortal } from "react-dom";
-import type { FieldState, Size } from "./types";
+import type { FieldState, FieldWidth, Size } from "./types";
 import Image from "next/image";
 
 export type DropdownOption = {
@@ -27,7 +27,7 @@ type Props = {
   state?: FieldState;
   disabled?: boolean;
   layout?: "full" | "auto";
-  fieldWidth?: "salary";
+  fieldWidth?: Extract<FieldWidth, "salary">;
   name?: string;
   id?: string;
   wrapperClassName?: string;
@@ -83,7 +83,7 @@ type MenuRect = {
   triggerTop: number;
 };
 
-export function DropdownSelect({
+export const DropdownSelect = ({
   value,
   onChange,
   options,
@@ -97,7 +97,7 @@ export function DropdownSelect({
   id,
   wrapperClassName,
   ...aria
-}: Props) {
+}: Props) => {
   const resolvedState: FieldState = disabled ? "disabled" : state;
   const reactId = useId();
   const triggerId = id ?? `dropdown-${reactId}`;
@@ -285,7 +285,11 @@ export function DropdownSelect({
           {selected ? selected.label : placeholder}
         </span>
         <Image
-          src={open ? "/images/button/button-up.svg" : "/images/button/button-down.svg"}
+          src={
+            open
+              ? "/images/button/button-up.svg"
+              : "/images/button/button-down.svg"
+          }
           alt=""
           width={12}
           height={7}
@@ -341,4 +345,4 @@ export function DropdownSelect({
         )}
     </div>
   );
-}
+};

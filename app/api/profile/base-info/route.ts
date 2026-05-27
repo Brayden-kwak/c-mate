@@ -14,19 +14,22 @@ const SECTION_KEYS = [
   "photos",
 ] as const;
 
-function isRecord(value: unknown): value is JsonRecord {
+const isRecord = (value: unknown): value is JsonRecord => {
   return typeof value === "object" && value !== null && !Array.isArray(value);
-}
+};
 
-function hasOnlyKeys(value: JsonRecord, keys: readonly string[]): boolean {
+const hasOnlyKeys = (value: JsonRecord, keys: readonly string[]): boolean => {
   return Object.keys(value).every((key) => keys.includes(key));
-}
+};
 
-function hasStringFields(value: JsonRecord, keys: readonly string[]): boolean {
+const hasStringFields = (
+  value: JsonRecord,
+  keys: readonly string[],
+): boolean => {
   return keys.every((key) => typeof value[key] === "string");
-}
+};
 
-function isEduRow(value: unknown): boolean {
+const isEduRow = (value: unknown): boolean => {
   return (
     isRecord(value) &&
     typeof value.id === "number" &&
@@ -34,17 +37,17 @@ function isEduRow(value: unknown): boolean {
     typeof value.school === "string" &&
     typeof value.major === "string"
   );
-}
+};
 
-function isPhotoItem(value: unknown): boolean {
+const isPhotoItem = (value: unknown): boolean => {
   return (
     isRecord(value) &&
     typeof value.key === "string" &&
     (value.description === undefined || typeof value.description === "string")
   );
-}
+};
 
-function isBaseInfoPayload(value: unknown): value is BaseInfoPayload {
+const isBaseInfoPayload = (value: unknown): value is BaseInfoPayload => {
   if (!isRecord(value) || !hasOnlyKeys(value, SECTION_KEYS)) return false;
 
   if (
@@ -125,13 +128,13 @@ function isBaseInfoPayload(value: unknown): value is BaseInfoPayload {
   }
 
   return true;
-}
+};
 
-export async function GET(): Promise<Response> {
+export const GET = async (): Promise<Response> => {
   return Response.json(storedBaseInfo);
-}
+};
 
-export async function PATCH(request: NextRequest): Promise<Response> {
+export const PATCH = async (request: NextRequest): Promise<Response> => {
   let body: unknown;
   try {
     body = await request.json();
@@ -145,4 +148,4 @@ export async function PATCH(request: NextRequest): Promise<Response> {
 
   storedBaseInfo = structuredClone(body);
   return Response.json({ ok: true });
-}
+};

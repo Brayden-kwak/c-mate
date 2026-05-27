@@ -1,12 +1,12 @@
 import type { SelectHTMLAttributes } from "react";
-import type { FieldState, Size } from "./types";
+import type { FieldState, FieldWidth, Size } from "./types";
 import { ChevronDown } from "@/app/_components/ui/icons";
 
 type Props = Omit<SelectHTMLAttributes<HTMLSelectElement>, "style" | "size"> & {
   size?: Size;
   state?: FieldState;
   layout?: "full" | "auto";
-  fieldWidth?: "salary";
+  fieldWidth?: Extract<FieldWidth, "salary">;
   wrapperClassName?: string;
 };
 
@@ -33,7 +33,7 @@ const fieldWidthClass: Record<NonNullable<Props["fieldWidth"]>, string> = {
   salary: "w-[var(--spacing-field-salary)]",
 };
 
-export function Select({
+export const Select = ({
   size = "md",
   state = "default",
   layout = "full",
@@ -43,7 +43,7 @@ export function Select({
   wrapperClassName,
   children,
   ...rest
-}: Props) {
+}: Props) => {
   const resolvedState: FieldState = disabled ? "disabled" : state;
   return (
     <div
@@ -80,4 +80,4 @@ export function Select({
       />
     </div>
   );
-}
+};

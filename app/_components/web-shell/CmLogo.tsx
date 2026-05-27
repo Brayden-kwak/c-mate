@@ -7,10 +7,10 @@ type CmLogoProps = {
   priority?: boolean;
 };
 
-export function CmLogo({
+export const CmLogo = ({
   className = "h-7 w-auto",
   priority = false,
-}: CmLogoProps) {
+}: CmLogoProps) => {
   return (
     <Image
       src={LOGO_SRC}
@@ -22,4 +22,4 @@ export function CmLogo({
       priority={priority}
     />
   );
-}
+};

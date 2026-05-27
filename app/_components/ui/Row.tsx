@@ -1,5 +1,13 @@
 import type { ReactNode } from "react";
 
+type LabelWidth = "sm" | "md" | "lg";
+
+const labelWidthClass: Record<LabelWidth, string> = {
+  sm: "xl:grid-cols-[180px_1fr]",
+  md: "xl:grid-cols-[260px_1fr]",
+  lg: "xl:grid-cols-[320px_1fr]",
+};
+
 type Props = {
   label: string;
   required?: boolean;
@@ -8,10 +16,11 @@ type Props = {
   error?: string;
   labelAlign?: "start" | "center";
   labelBadge?: ReactNode;
+  labelWidth?: LabelWidth;
   children: ReactNode;
 };
 
-export function Row({
+export const Row = ({
   label,
   required,
   optional,
@@ -19,8 +28,9 @@ export function Row({
   error,
   labelAlign,
   labelBadge,
+  labelWidth = "md",
   children,
-}: Props) {
+}: Props) => {
   const subtext = error ?? helper;
   const isError = !!error;
   const resolvedLabelAlign = labelAlign ?? (subtext ? "start" : "center");
@@ -28,10 +38,13 @@ export function Row({
     resolvedLabelAlign === "center"
       ? "flex flex-col gap-1.5 xl:justify-center"
       : "flex flex-col gap-1.5";
-  const rowClass =
-    resolvedLabelAlign === "center"
-      ? "grid xl:grid-cols-[260px_1fr] xl:gap-10 xl:items-center gap-3"
-      : "grid xl:grid-cols-[260px_1fr] xl:gap-10 gap-3";
+  const rowClass = [
+    "grid xl:gap-10 gap-3",
+    labelWidthClass[labelWidth],
+    resolvedLabelAlign !== "center" ? "" : "xl:items-center",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div className={rowClass}>
@@ -65,4 +78,4 @@ export function Row({
       <div className="flex flex-col gap-2.5">{children}</div>
     </div>
   );
-}
+};

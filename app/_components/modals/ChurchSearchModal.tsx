@@ -38,15 +38,15 @@ const MOCK_CHURCHES: ChurchSelectResult[] = [
   },
 ];
 
-function normalize(value: string): string {
+const normalize = (value: string): string => {
   return value.replace(/\s+/g, "").toLowerCase();
-}
+};
 
-export function ChurchSearchModal({
+export const ChurchSearchModal = ({
   open,
   onClose,
   onSelect,
-}: Props): ReactNode {
+}: Props): ReactNode => {
   const [step, setStep] = useState<Step>("search");
   const [query, setQuery] = useState("");
   const [regName, setRegName] = useState("");
@@ -76,7 +76,7 @@ export function ChurchSearchModal({
     regReason.trim().length > 0;
   const title = step === "search" ? "교회 검색" : "교회 등록 신청하기";
 
-  function handleClose(): void {
+  const handleClose = (): void => {
     setStep("search");
     setQuery("");
     setRegName("");
@@ -86,22 +86,22 @@ export function ChurchSearchModal({
     setRegContact("");
     setRegReason(DEFAULT_REG_REASON);
     onClose();
-  }
+  };
 
-  function handleGoToForm(): void {
+  const handleGoToForm = (): void => {
     setRegName(query);
     setStep("form");
-  }
+  };
 
-  function handleSubmitReg(): void {
+  const handleSubmitReg = (): void => {
     if (!canSubmitReg) return;
     setStep("submitted");
-  }
+  };
 
-  function handleSelectMatch(match: ChurchSelectResult): void {
+  const handleSelectMatch = (match: ChurchSelectResult): void => {
     onSelect?.(match);
     handleClose();
-  }
+  };
 
   if (step === "submitted") {
     return (
@@ -309,9 +309,9 @@ export function ChurchSearchModal({
       </div>
     </div>
   );
-}
+};
 
-function RegField({
+const RegField = ({
   label,
   required,
   children,
@@ -319,7 +319,7 @@ function RegField({
   label: string;
   required?: boolean;
   children: ReactNode;
-}): ReactNode {
+}): ReactNode => {
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center gap-1 text-xs font-semibold text-text">
@@ -329,4 +329,4 @@ function RegField({
       {children}
     </div>
   );
-}
+};

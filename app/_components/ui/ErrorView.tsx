@@ -8,7 +8,7 @@ type Props = {
   onRetry: () => void;
 };
 
-export function ErrorView({ message, onRetry }: Props): ReactNode {
+export const ErrorView = ({ message, onRetry }: Props): ReactNode => {
   return (
     <div className="flex flex-col items-center justify-center py-20 px-4">
       <h2 className="text-xl font-bold text-text mb-2">오류가 발생했습니다</h2>
@@ -22,4 +22,4 @@ export function ErrorView({ message, onRetry }: Props): ReactNode {
       </Button>
     </div>
   );
-}
+};

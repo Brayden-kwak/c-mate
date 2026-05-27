@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 
-export default function NotFound(): ReactNode {
+const NotFound = (): ReactNode => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-page">
       <div className="text-center px-4">
@@ -21,4 +21,6 @@ export default function NotFound(): ReactNode {
       </div>
     </div>
   );
-}
+};
+
+export default NotFound;

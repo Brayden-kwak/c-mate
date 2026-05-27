@@ -1,10 +1,27 @@
 import type { InputHTMLAttributes } from "react";
+import type { Size } from "./types";
 
-type Props = Omit<InputHTMLAttributes<HTMLInputElement>, "style" | "type"> & {
-  label: string;
+const radioSizeClass: Record<Size, string> = {
+  sm: "w-3.5 h-3.5",
+  md: "w-4 h-4",
+  lg: "w-5 h-5",
 };
 
-export function Radio({ label, id, className, ...rest }: Props) {
+type Props = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "style" | "type" | "size"
+> & {
+  label: string;
+  size?: Size;
+};
+
+export const Radio = ({
+  label,
+  id,
+  className,
+  size = "md",
+  ...rest
+}: Props) => {
   const inputId = id ?? label;
   return (
     <label
@@ -20,10 +37,12 @@ export function Radio({ label, id, className, ...rest }: Props) {
       <input
         type="radio"
         id={inputId}
-        className="accent-primary w-4 h-4 cursor-pointer"
+        className={["accent-primary cursor-pointer", radioSizeClass[size]].join(
+          " ",
+        )}
         {...rest}
       />
       <span className="text-sm text-text">{label}</span>
     </label>
   );
-}
+};

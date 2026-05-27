@@ -372,7 +372,6 @@ export const EducationSection = ({
               onChange={(e) => setWorkplace(e.target.value)}
               onBlur={onSave}
               aria-label="직장명"
-              layout="fill"
               placeholder="직장명을 입력해 주세요"
             />
           </Row>

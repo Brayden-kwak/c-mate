@@ -10,3 +10,10 @@ export type ButtonVariant =
 export type FieldState = "default" | "error" | "disabled";
 
 export type SkeletonVariant = "line" | "rect" | "circle";
+
+export type FieldWidth =
+  | "height"
+  | "heightCompact"
+  | "major"
+  | "photobook"
+  | "salary";
