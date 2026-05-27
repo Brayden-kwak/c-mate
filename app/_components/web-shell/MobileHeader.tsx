@@ -28,6 +28,8 @@ type Props = {
 
 export const MobileHeader = ({ currentStep = 1 }: Props) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const currentStepLabel =
+    STEPS.find((step) => step.num === currentStep)?.label ?? STEPS[0].label;
 
   useEffect(() => {
     const onResize = () => {
@@ -62,7 +64,7 @@ export const MobileHeader = ({ currentStep = 1 }: Props) => {
             aria-hidden
           />
         </button>
-        <span className="text-mobile-title font-bold">기본정보</span>
+        <span className="text-mobile-title font-bold">{currentStepLabel}</span>
         <button
           type="button"
           aria-label={drawerOpen ? "전체 메뉴 닫기" : "전체 메뉴 열기"}

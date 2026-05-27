@@ -39,7 +39,7 @@ export const Row = ({
       ? "flex flex-col gap-1.5 xl:justify-center"
       : "flex flex-col gap-1.5";
   const rowClass = [
-    "grid xl:gap-10 xl:items-center gap-3",
+    "grid xl:gap-10 gap-3",
     labelWidthClass[labelWidth],
     resolvedLabelAlign !== "center" ? "" : "xl:items-center",
   ]
