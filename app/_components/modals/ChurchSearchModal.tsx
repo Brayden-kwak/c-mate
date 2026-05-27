@@ -57,6 +57,7 @@ export const ChurchSearchModal = ({
   const [regReason, setRegReason] = useState(DEFAULT_REG_REASON);
   const dialogRef = useRef<HTMLDivElement>(null);
   const handleCloseRef = useRef<(() => void) | null>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     handleCloseRef.current = () => {
@@ -73,11 +74,22 @@ export const ChurchSearchModal = ({
   });
 
   useEffect(() => {
+    if (open) {
+      if (!previousFocusRef.current) {
+        previousFocusRef.current = document.activeElement as HTMLElement | null;
+      }
+      return;
+    }
+
+    previousFocusRef.current?.focus();
+    previousFocusRef.current = null;
+  }, [open]);
+
+  useEffect(() => {
     if (!open || step === "submitted") return;
     const dialog = dialogRef.current;
     if (!dialog) return;
 
-    const previousFocus = document.activeElement as HTMLElement | null;
     const focusableSelector =
       'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
     const getFocusable = () =>
@@ -109,7 +121,6 @@ export const ChurchSearchModal = ({
     return () => {
       clearTimeout(timerId);
       dialog.removeEventListener("keydown", onKeyDown);
-      previousFocus?.focus();
     };
   }, [open, step]);
 
@@ -214,7 +225,6 @@ export const ChurchSearchModal = ({
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="교회/교단명 검색 ('온누리 교회' 입력 시 임시 검색됩니다)"
                 aria-label="교회 또는 교단명 검색"
-                autoFocus
               />
               {hasQuery && hasMatches && (
                 <ul className="flex flex-col gap-2 m-0 p-0 list-none">

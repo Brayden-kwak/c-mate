@@ -7,7 +7,9 @@ import { ChevronLeft, ChevronRight, XIcon } from "@/app/_components/ui/icons";
 const isAllowedImageUrl = (url: string | undefined): url is string => {
   if (!url) return false;
   return (
-    url.startsWith("blob:") || url.startsWith("https://") || url.startsWith("/")
+    url.startsWith("blob:") ||
+    url.startsWith("https://") ||
+    (url.startsWith("/") && !url.startsWith("//"))
   );
 };
 

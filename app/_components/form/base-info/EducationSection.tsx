@@ -212,7 +212,7 @@ export const EducationSection = ({
     <div className="flex flex-col gap-2">
       {eduRows.map((row) => (
         <div key={row.id} className="flex items-center gap-2.5">
-          <span className="shrink-0 bg-surface border border-border rounded-[6px] px-2 py-1 text-[11px] font-bold tracking-[0.04em]">
+          <span className="shrink-0 bg-surface border border-border rounded-sm px-2 py-1 text-[11px] font-bold tracking-[0.04em]">
             {row.degree}
           </span>
           <Input
@@ -243,7 +243,7 @@ export const EducationSection = ({
               type="button"
               onClick={() => removeEduRow(row.id)}
               aria-label={`${row.degree} 학력 삭제`}
-              className="w-9 h-9 border border-border rounded-[6px] bg-surface flex items-center justify-center hover:bg-subtle shrink-0 transition-colors duration-fast ease-standard"
+              className="w-9 h-9 border border-border rounded-sm bg-surface flex items-center justify-center hover:bg-subtle shrink-0 transition-colors duration-fast ease-standard"
             >
               <Image
                 src="/images/button/button-trash.svg"
@@ -271,7 +271,7 @@ export const EducationSection = ({
           className="bg-subtle rounded-md px-3 py-edu-card-y flex flex-col gap-2"
         >
           <div className="flex items-center gap-2">
-            <span className="bg-surface border border-border rounded-[6px] px-2 py-1 text-[11px] font-bold tracking-[0.04em]">
+            <span className="bg-surface border border-border rounded-sm px-2 py-1 text-[11px] font-bold tracking-[0.04em]">
               {row.degree}
             </span>
             <span className="flex-1" />
@@ -280,7 +280,7 @@ export const EducationSection = ({
                 type="button"
                 onClick={() => removeEduRow(row.id)}
                 aria-label={`${row.degree} 학력 삭제`}
-                className="w-9 h-9 border border-border rounded-[6px] bg-surface flex items-center justify-center hover:bg-subtle shrink-0 transition-colors duration-fast ease-standard"
+                className="w-9 h-9 border border-border rounded-sm bg-surface flex items-center justify-center hover:bg-subtle shrink-0 transition-colors duration-fast ease-standard"
               >
                 <Image
                   src="/images/button/button-trash.svg"
