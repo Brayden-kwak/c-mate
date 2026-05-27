@@ -35,6 +35,14 @@ import type { EduRow, EducationSectionData } from "@/app/_lib/base-info";
 
 const SECTION_EDUCATION = BASE_INFO_SECTION_ANCHOR_ID.education;
 
+const particleEuro = (word: string): string => {
+  if (!word) return "으로";
+  const last = word.charCodeAt(word.length - 1);
+  if (last < 0xac00 || last > 0xd7a3) return "으로";
+  const jongseong = (last - 0xac00) % 28;
+  return jongseong === 0 || jongseong === 8 ? "로" : "으로";
+};
+
 type Props = {
   onSave: () => void;
   onProgressChange: (section: ProgressSection) => void;
@@ -204,7 +212,7 @@ export const EducationSection = ({
     <div className="flex flex-col gap-2">
       {eduRows.map((row) => (
         <div key={row.id} className="flex items-center gap-2.5">
-          <span className="shrink-0 bg-surface border border-border rounded-[6px] px-2 py-1 text-[11px] font-bold tracking-[0.04em]">
+          <span className="shrink-0 bg-surface border border-border rounded-sm px-2 py-1 text-badge font-bold tracking-badge">
             {row.degree}
           </span>
           <Input
@@ -235,7 +243,7 @@ export const EducationSection = ({
               type="button"
               onClick={() => removeEduRow(row.id)}
               aria-label={`${row.degree} 학력 삭제`}
-              className="w-9 h-9 border border-border rounded-[6px] bg-surface flex items-center justify-center hover:bg-subtle shrink-0 transition-colors duration-fast ease-standard"
+              className="w-9 h-9 border border-border rounded-sm bg-surface flex items-center justify-center hover:bg-subtle shrink-0 transition-colors duration-fast ease-standard"
             >
               <Image
                 src="/images/button/button-trash.svg"
@@ -263,7 +271,7 @@ export const EducationSection = ({
           className="bg-subtle rounded-md px-3 py-edu-card-y flex flex-col gap-2"
         >
           <div className="flex items-center gap-2">
-            <span className="bg-surface border border-border rounded-[6px] px-2 py-1 text-[11px] font-bold tracking-[0.04em]">
+            <span className="bg-surface border border-border rounded-sm px-2 py-1 text-badge font-bold tracking-badge">
               {row.degree}
             </span>
             <span className="flex-1" />
@@ -272,20 +280,15 @@ export const EducationSection = ({
                 type="button"
                 onClick={() => removeEduRow(row.id)}
                 aria-label={`${row.degree} 학력 삭제`}
-                className="w-9 h-9 border border-border rounded-[6px] bg-surface flex items-center justify-center shrink-0"
+                className="w-9 h-9 border border-border rounded-sm bg-surface flex items-center justify-center hover:bg-subtle shrink-0 transition-colors duration-fast ease-standard"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-4 h-4 text-danger"
-                  aria-hidden="true"
-                >
-                  <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                </svg>
+                <Image
+                  src="/images/button/button-trash.svg"
+                  alt=""
+                  width={16}
+                  height={16}
+                  aria-hidden
+                />
               </button>
             )}
           </div>
@@ -501,7 +504,8 @@ export const EducationSection = ({
           <span className="text-warning text-lg font-bold shrink-0">⚠</span>
           <div>
             <div className="text-md font-semibold text-text">
-              {education} → {pendingEduChange?.newDegree}으로 변경
+              {education} → {pendingEduChange?.newDegree}
+              {particleEuro(pendingEduChange?.newDegree ?? "")} 변경
             </div>
             <div className="text-[13px] text-text-secondary mt-1">
               입력하신 학력 정보가 모두 삭제됩니다

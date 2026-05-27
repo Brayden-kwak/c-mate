@@ -1,5 +1,49 @@
+import type { ReactNode } from "react";
 import { CmLogo } from "@/app/_components/web-shell/CmLogo";
 import { FooterCompanyToggle } from "@/app/_components/web-shell/FooterCompanyToggle";
+
+type SocialIcon = { label: string; paths: ReactNode };
+
+const SOCIAL_ICONS: SocialIcon[] = [
+  {
+    label: "YouTube",
+    paths: (
+      <>
+        <path d="M6 9.5h12v8H6z" />
+        <path d="m10 9.5 2-3 2 3" />
+      </>
+    ),
+  },
+  {
+    label: "Instagram",
+    paths: (
+      <>
+        <rect x="5" y="5" width="14" height="14" rx="4" />
+        <circle cx="12" cy="12" r="3" />
+        <path d="M16.5 7.5h.01" />
+      </>
+    ),
+  },
+  {
+    label: "Email",
+    paths: (
+      <>
+        <path d="M5 7h14v10H5z" />
+        <path d="m5 8 7 5 7-5" />
+      </>
+    ),
+  },
+  {
+    label: "Blog",
+    paths: (
+      <>
+        <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 1 1 8.7-10.2" />
+        <path d="M9 10h6" />
+        <path d="M9 14h4" />
+      </>
+    ),
+  },
+];
 
 const FOOTER_LINKS = [
   "크리스천메이트",
@@ -56,9 +100,9 @@ export const Footer = () => {
             점심 12:30 - 13:30 · 주말/공휴일 휴무
           </p>
           <div className="mt-6 flex justify-end gap-2.5">
-            {[0, 1, 2, 3].map((i) => (
+            {SOCIAL_ICONS.map((icon) => (
               <span
-                key={i}
+                key={icon.label}
                 className="w-7-5 h-7-5 border border-border rounded-full inline-flex items-center justify-center text-text-brand-muted bg-surface"
               >
                 <svg
@@ -71,32 +115,7 @@ export const Footer = () => {
                   className="w-4 h-4"
                   aria-hidden="true"
                 >
-                  {i === 0 && (
-                    <>
-                      <path d="M6 9.5h12v8H6z" />
-                      <path d="m10 9.5 2-3 2 3" />
-                    </>
-                  )}
-                  {i === 1 && (
-                    <>
-                      <rect x="5" y="5" width="14" height="14" rx="4" />
-                      <circle cx="12" cy="12" r="3" />
-                      <path d="M16.5 7.5h.01" />
-                    </>
-                  )}
-                  {i === 2 && (
-                    <>
-                      <path d="M5 7h14v10H5z" />
-                      <path d="m5 8 7 5 7-5" />
-                    </>
-                  )}
-                  {i === 3 && (
-                    <>
-                      <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 1 1 8.7-10.2" />
-                      <path d="M9 10h6" />
-                      <path d="M9 14h4" />
-                    </>
-                  )}
+                  {icon.paths}
                 </svg>
               </span>
             ))}

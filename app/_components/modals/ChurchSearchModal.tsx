@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { Input } from "@/app/_components/ui/Input";
 import { Button } from "@/app/_components/ui/Button";
@@ -55,6 +55,74 @@ export const ChurchSearchModal = ({
   const [regAddr, setRegAddr] = useState("");
   const [regContact, setRegContact] = useState("");
   const [regReason, setRegReason] = useState(DEFAULT_REG_REASON);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const handleCloseRef = useRef<(() => void) | null>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    handleCloseRef.current = () => {
+      setStep("search");
+      setQuery("");
+      setRegName("");
+      setRegDenom("");
+      setRegPastor("");
+      setRegAddr("");
+      setRegContact("");
+      setRegReason(DEFAULT_REG_REASON);
+      onClose();
+    };
+  });
+
+  useEffect(() => {
+    if (open) {
+      if (!previousFocusRef.current) {
+        previousFocusRef.current = document.activeElement as HTMLElement | null;
+      }
+      return;
+    }
+
+    previousFocusRef.current?.focus();
+    previousFocusRef.current = null;
+  }, [open]);
+
+  useEffect(() => {
+    if (!open || step === "submitted") return;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const focusableSelector =
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    const getFocusable = () =>
+      Array.from(dialog.querySelectorAll<HTMLElement>(focusableSelector));
+
+    const timerId = setTimeout(() => getFocusable()[0]?.focus(), 0);
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        handleCloseRef.current?.();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const elements = getFocusable();
+      if (elements.length === 0) return;
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last?.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first?.focus();
+      }
+    };
+
+    dialog.addEventListener("keydown", onKeyDown);
+    return () => {
+      clearTimeout(timerId);
+      dialog.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open, step]);
 
   if (!open) return null;
 
@@ -132,6 +200,7 @@ export const ChurchSearchModal = ({
       onClick={(e) => e.target === e.currentTarget && handleClose()}
     >
       <div
+        ref={dialogRef}
         className="bg-surface rounded-xl border border-border w-full max-w-(--spacing-modal-lg) overflow-hidden shadow-modal"
         role="dialog"
         aria-modal="true"
@@ -156,7 +225,6 @@ export const ChurchSearchModal = ({
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="교회/교단명 검색 ('온누리 교회' 입력 시 임시 검색됩니다)"
                 aria-label="교회 또는 교단명 검색"
-                autoFocus
               />
               {hasQuery && hasMatches && (
                 <ul className="flex flex-col gap-2 m-0 p-0 list-none">

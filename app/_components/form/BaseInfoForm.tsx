@@ -56,7 +56,11 @@ const SECTION_FAITH = BASE_INFO_SECTION_ANCHOR_ID.faith;
 const SECTION_APPEARANCE = BASE_INFO_SECTION_ANCHOR_ID.appearance;
 const SECTION_LIFESTYLE = BASE_INFO_SECTION_ANCHOR_ID.lifestyle;
 const SECTION_PHOTO = BASE_INFO_SECTION_ANCHOR_ID.photo;
+let photoItemSeq = 0;
+const nextPhotoItemId = (): string => `pi-${++photoItemSeq}`;
+
 type PhotoItem = {
+  id: string;
   filled: boolean;
   previewUrl?: string;
   key?: string;
@@ -65,6 +69,7 @@ type PhotoItem = {
 const REQUIRED_PROFILE_PHOTOS = 2;
 const PHOTO_SECTION_PROGRESS_TOTAL = 2;
 const MAX_PHOTOBOOK_SLOTS = 8;
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 const MISSING_FIELD_LABEL_OVERRIDE: Record<string, string> = {
   "프로필 사진": "프로필 사진 (2장 이상)",
@@ -927,26 +932,32 @@ const PhotoSection = ({
   const [photos, setPhotos] = useState<PhotoItem[]>(() => {
     const saved =
       initialData?.photos.map((photo) => ({
+        id: nextPhotoItemId(),
         filled: true,
         key: photo.key,
         previewUrl: photo.url,
         description: photo.description,
       })) ?? [];
-    return [...saved, ...Array<PhotoItem>(4).fill({ filled: false })].slice(
-      0,
-      4,
+    const empty = Array.from(
+      { length: 4 - saved.length },
+      (): PhotoItem => ({ id: nextPhotoItemId(), filled: false }),
     );
+    return [...saved, ...empty].slice(0, 4);
   });
   const [pbPhotos, setPbPhotos] = useState<PhotoItem[]>(() => {
     const saved =
       initialData?.pbPhotos.map((photo) => ({
+        id: nextPhotoItemId(),
         filled: true,
         key: photo.key,
         previewUrl: photo.url,
         description: photo.description,
       })) ?? [];
-    return saved.length > 0 ? saved : [{ filled: false }];
+    return saved.length > 0
+      ? saved
+      : [{ id: nextPhotoItemId(), filled: false }];
   });
+  const { showToast } = useToast();
   const blobUrlsRef = useRef<Set<string>>(new Set());
   const photoUploadSeqRef = useRef<number[]>([0, 0, 0, 0]);
   const pbUploadSeqRef = useRef<Record<number, number>>({});
@@ -1047,7 +1058,9 @@ const PhotoSection = ({
     revokeBlobUrl(photos[deleteModal.index]?.previewUrl);
     setPhotos((prev) => {
       const next = prev.map((photo, i) =>
-        i === deleteModal.index ? { filled: false } : photo,
+        i === deleteModal.index
+          ? { id: nextPhotoItemId(), filled: false }
+          : photo,
       );
       const filled = next.filter((photo) => photo.filled);
       const empty = next.filter((photo) => !photo.filled);
@@ -1068,7 +1081,9 @@ const PhotoSection = ({
     revokeBlobUrl(pbPhotos[pbDeleteModal.index]?.previewUrl);
     setPbPhotos((prev) =>
       prev.map((photo, i) =>
-        i === pbDeleteModal.index ? { filled: false } : photo,
+        i === pbDeleteModal.index
+          ? { id: nextPhotoItemId(), filled: false }
+          : photo,
       ),
     );
     setPbDeleteModal(null);
@@ -1076,6 +1091,10 @@ const PhotoSection = ({
   };
 
   const handleUpload = async (index: number, file: File) => {
+    if (file.size > MAX_FILE_SIZE) {
+      showToast("이미지 파일 크기는 10MB 이하로 업로드해주세요.", "danger");
+      return;
+    }
     const requestId = (photoUploadSeqRef.current[index] ?? 0) + 1;
     photoUploadSeqRef.current[index] = requestId;
     const previousPhoto = photos[index] ?? { filled: false };
@@ -1112,6 +1131,10 @@ const PhotoSection = ({
   };
 
   const handlePbUpload = async (index: number, file: File) => {
+    if (file.size > MAX_FILE_SIZE) {
+      showToast("이미지 파일 크기는 10MB 이하로 업로드해주세요.", "danger");
+      return;
+    }
     const requestId = (pbUploadSeqRef.current[index] ?? 0) + 1;
     pbUploadSeqRef.current[index] = requestId;
     const previousPhoto = pbPhotos[index] ?? { filled: false };
@@ -1151,7 +1174,7 @@ const PhotoSection = ({
   const addPhotobookSlot = () => {
     setPbPhotos((prev) => {
       if (prev.length >= MAX_PHOTOBOOK_SLOTS) return prev;
-      return [...prev, { filled: false }];
+      return [...prev, { id: nextPhotoItemId(), filled: false }];
     });
     onSave();
   };
@@ -1204,7 +1227,7 @@ const PhotoSection = ({
     <div className="grid w-max grid-cols-2 gap-3.5">
       {photos.map((photo, i) => (
         <PhotoSlot
-          key={i}
+          key={photo.id}
           variant={i === 0 ? "rep" : "normal"}
           filled={photo.filled}
           loading={uploading[i]}
@@ -1237,7 +1260,7 @@ const PhotoSection = ({
   const mobilePhotoCarousel = (
     <div className="flex w-full snap-x snap-mandatory gap-2.5 overflow-x-auto overscroll-x-contain pb-1 scrollbar-none">
       {photos.map((photo, i) => (
-        <div key={i} className="flex-none snap-start">
+        <div key={photo.id} className="flex-none snap-start">
           <PhotoSlot
             variant={i === 0 ? "rep" : "normal"}
             filled={photo.filled}
@@ -1272,7 +1295,7 @@ const PhotoSection = ({
   const pbGrid = (
     <div className="grid w-full grid-cols-2 gap-2.5">
       {pbPhotos.map((photo, i) => (
-        <div key={i} className="flex min-w-0 flex-col gap-2">
+        <div key={photo.id} className="flex min-w-0 flex-col gap-2">
           <PhotobookThumb
             filled={photo.filled}
             previewUrl={photo.previewUrl}
@@ -1332,7 +1355,7 @@ const PhotoSection = ({
     >
       {pbPhotos.map((photo, i) => (
         <div
-          key={i}
+          key={photo.id}
           className="flex w-photobook-slot-width max-w-full flex-none snap-start flex-col gap-2"
         >
           <PhotobookThumb
@@ -1602,12 +1625,23 @@ const DFooter = ({
       });
     };
 
+    let rafId = 0;
+    const scheduleSync = () => {
+      if (!rafId) {
+        rafId = requestAnimationFrame(() => {
+          syncFooter();
+          rafId = 0;
+        });
+      }
+    };
+
     syncFooter();
-    window.addEventListener("resize", syncFooter);
-    window.addEventListener("scroll", syncFooter, { passive: true });
+    window.addEventListener("resize", scheduleSync);
+    window.addEventListener("scroll", scheduleSync, { passive: true });
     return () => {
-      window.removeEventListener("resize", syncFooter);
-      window.removeEventListener("scroll", syncFooter);
+      window.removeEventListener("resize", scheduleSync);
+      window.removeEventListener("scroll", scheduleSync);
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
 
@@ -1698,6 +1732,7 @@ export const BaseInfoForm = (): ReactNode => {
   const saveQueued = useRef(false);
   const queuedResolvers = useRef<Array<(v: boolean) => void>>([]);
   const loadFailed = useRef(false);
+  const saveFailCount = useRef(0);
   const formDataRef = useRef<BaseInfoPayload>({});
   const [initialData, setInitialData] = useState<BaseInfoPayload | null>(null);
   const progress = Object.values(progressMap).reduce<ProgressSection>(
@@ -1810,26 +1845,23 @@ export const BaseInfoForm = (): ReactNode => {
     setAutoSave("saving");
     if (saveIdleTimer.current) clearTimeout(saveIdleTimer.current);
 
-    // UI Spinner 데모용도입니다.
-    const minDelay = new Promise<void>((r) => setTimeout(r, 2000));
-
     try {
-      const [result] = await Promise.all([
-        apiFetch<{ ok: boolean }>("/api/profile/base-info", {
-          method: "PATCH",
-          body: JSON.stringify(formDataRef.current),
-        }),
-        minDelay,
-      ]);
+      const result = await apiFetch<{ ok: boolean }>("/api/profile/base-info", {
+        method: "PATCH",
+        body: JSON.stringify(formDataRef.current),
+      });
       if (!result.ok) {
+        saveFailCount.current++;
         setAutoSave("error");
         return false;
       }
 
+      saveFailCount.current = 0;
       setAutoSave("saved");
       saveIdleTimer.current = setTimeout(() => setAutoSave("idle"), 2000);
       return true;
     } catch {
+      saveFailCount.current++;
       setAutoSave("error");
       return false;
     } finally {
@@ -1837,8 +1869,12 @@ export const BaseInfoForm = (): ReactNode => {
       if (saveQueued.current) {
         saveQueued.current = false;
         const resolvers = queuedResolvers.current.splice(0);
-        const result = await persistFormData();
-        resolvers.forEach((r) => r(result));
+        if (saveFailCount.current < 3) {
+          const result = await persistFormData();
+          resolvers.forEach((r) => r(result));
+        } else {
+          resolvers.forEach((r) => r(false));
+        }
       }
     }
   };
