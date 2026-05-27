@@ -12,7 +12,7 @@ const STEPS: Step[] = [
   { num: 5, label: "이상형정보", state: "pending" },
 ];
 
-export function Stepper() {
+export const Stepper = () => {
   return (
     <div
       data-desktop-stepper
@@ -58,4 +58,4 @@ export function Stepper() {
       })}
     </div>
   );
-}
+};

@@ -78,3 +78,5 @@ Read **before** writing any file in this repo. These are absolute — if somethi
 16. **네이밍** — 컴포넌트 파일: PascalCase (`FormProgressBar.tsx`), 디렉토리: kebab-case (`base-info/`), 함수: camelCase, 상수: UPPER_SNAKE_CASE.
 17. **Named exports** — default export 지양. 모든 컴포넌트와 유틸리티는 named export로 내보낸다.
 18. **Import 순서** — ① React 및 외부 라이브러리 → ② 내부 컴포넌트 → ③ 유틸리티 / 헬퍼 → ④ 타입 정의. 그룹 사이 빈 줄 하나.
+19. **Arrow functions** — 새 코드를 작성하거나 기존 코드를 수정할 때 함수 선언식(`function foo()`) 대신 화살표 함수(`const foo = () =>`)를 사용한다. React 컴포넌트, 유틸리티, 콜백 모두 동일하게 적용한다. 단, 최상위 Page/Layout Server Component는 Next.js 관례상 예외를 허용한다.
+20. **항상 check 실행** — 새 코드 작성 또는 기존 코드 수정 후에는 반드시 `npm run check`를 실행한다. TS 오류나 lint 경고가 있으면 수정 완료 전까지 턴을 종료하지 않는다.

@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { NotFoundView } from "@/app/_components/ui/NotFoundView";
 
-export default function WebNotFound(): ReactNode {
+const WebNotFound = (): ReactNode => {
   return <NotFoundView />;
-}
+};
+
+export default WebNotFound;

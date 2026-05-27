@@ -66,20 +66,24 @@ const REQUIRED_PROFILE_PHOTOS = 2;
 const PHOTO_SECTION_PROGRESS_TOTAL = 2;
 const MAX_PHOTOBOOK_SLOTS = 8;
 
-function ResponsiveView({
+const MISSING_FIELD_LABEL_OVERRIDE: Record<string, string> = {
+  "프로필 사진": "프로필 사진 (2장 이상)",
+};
+
+const ResponsiveView = ({
   desktop,
   mobile,
 }: {
   desktop: ReactNode;
   mobile: ReactNode;
-}): ReactNode {
+}): ReactNode => {
   return (
     <>
       <div className="hidden xl:block">{desktop}</div>
       <div className="xl:hidden">{mobile}</div>
     </>
   );
-}
+};
 
 /* ===== Style groups ===== */
 const STYLE_SELECTION_MAX = 5;
@@ -1790,7 +1794,7 @@ export const BaseInfoForm = (): ReactNode => {
     };
   }, []);
 
-  async function persistFormData(): Promise<boolean> {
+  const persistFormData = async (): Promise<boolean> => {
     if (loadFailed.current) {
       setAutoSave("error");
       return false;
@@ -1837,7 +1841,7 @@ export const BaseInfoForm = (): ReactNode => {
         resolvers.forEach((r) => r(result));
       }
     }
-  }
+  };
 
   const triggerAutoSave = () => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
@@ -1959,9 +1963,7 @@ export const BaseInfoForm = (): ReactNode => {
         <ul className="m-0 pl-5 flex flex-col gap-1.5 text-sm text-text list-disc">
           {allMissingFields.map((field) => (
             <li key={`${field.id}-${field.label}`}>
-              {field.label === "프로필 사진"
-                ? "프로필 사진 (2장 이상)"
-                : field.label}
+              {MISSING_FIELD_LABEL_OVERRIDE[field.label] ?? field.label}
             </li>
           ))}
         </ul>

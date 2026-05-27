@@ -1,5 +1,5 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
-import type { FieldState, Size } from "./types";
+import type { FieldState, FieldWidth, Size } from "./types";
 
 type Props = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -8,7 +8,10 @@ type Props = Omit<
   size?: Size;
   state?: FieldState;
   layout?: "full" | "fill" | "auto";
-  fieldWidth?: "height" | "heightCompact" | "major" | "photobook";
+  fieldWidth?: Extract<
+    FieldWidth,
+    "height" | "heightCompact" | "major" | "photobook"
+  >;
   suffix?: string;
   prefix?: ReactNode;
   wrapperClassName?: string;
@@ -41,7 +44,7 @@ const fieldWidthClass: Record<NonNullable<Props["fieldWidth"]>, string> = {
   photobook: "w-full",
 };
 
-export function Input({
+export const Input = ({
   size = "md",
   state = "default",
   layout = "full",
@@ -52,7 +55,7 @@ export function Input({
   className,
   disabled,
   ...rest
-}: Props) {
+}: Props) => {
   const resolvedState: FieldState = disabled ? "disabled" : state;
 
   return (
@@ -86,4 +89,4 @@ export function Input({
       )}
     </div>
   );
-}
+};

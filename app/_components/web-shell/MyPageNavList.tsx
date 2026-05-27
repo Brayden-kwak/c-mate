@@ -11,28 +11,7 @@ import { ChevronDown, ChevronUp } from "@/app/_components/ui/icons";
 
 type Variant = "drawer" | "sidebar";
 
-function NavChevron({ open, variant }: { open: boolean; variant: Variant }) {
-  const toneClass =
-    variant === "sidebar" ? "text-current" : "text-text-tertiary";
-
-  return (
-    <span
-      className={[
-        "inline-flex shrink-0 items-center justify-center self-center",
-        variant === "sidebar" ? "w-5 h-5" : "w-4 h-4",
-      ].join(" ")}
-      aria-hidden="true"
-    >
-      {open ? (
-        <ChevronUp className="w-4 h-4 transition-colors duration-fast ease-standard" />
-      ) : (
-        <ChevronDown className="w-4 h-4 transition-colors duration-fast ease-standard" />
-      )}
-    </span>
-  );
-}
-
-export function MyPageNavList({ variant }: { variant: Variant }) {
+export const MyPageNavList = ({ variant }: { variant: Variant }) => {
   const [expandedSections, setExpandedSections] = useState(
     INITIAL_MY_PAGE_EXPANDED,
   );
@@ -66,7 +45,16 @@ export function MyPageNavList({ variant }: { variant: Variant }) {
                   ].join(" ")}
                 >
                   <span className="min-w-0">{entry.label}</span>
-                  <NavChevron open={open} variant={variant} />
+                  <span
+                    className="inline-flex w-5 h-5 shrink-0 items-center justify-center self-center"
+                    aria-hidden="true"
+                  >
+                    {open ? (
+                      <ChevronUp className="w-4 h-4 transition-colors duration-fast ease-standard" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 transition-colors duration-fast ease-standard" />
+                    )}
+                  </span>
                 </button>
                 {open && (
                   <div className="mt-0.5 mb-2 ml-3 flex flex-col gap-0.5">
@@ -102,7 +90,16 @@ export function MyPageNavList({ variant }: { variant: Variant }) {
                 ].join(" ")}
               >
                 <span>{entry.label}</span>
-                <NavChevron open={open} variant={variant} />
+                <span
+                  className="inline-flex w-4 h-4 shrink-0 items-center justify-center self-center"
+                  aria-hidden="true"
+                >
+                  {open ? (
+                    <ChevronUp className="w-4 h-4 transition-colors duration-fast ease-standard" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 transition-colors duration-fast ease-standard" />
+                  )}
+                </span>
               </button>
               {open && (
                 <div className="ml-3 flex flex-col border-b border-border-subtle pb-1">
@@ -150,4 +147,4 @@ export function MyPageNavList({ variant }: { variant: Variant }) {
       })}
     </div>
   );
-}
+};

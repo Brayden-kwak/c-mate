@@ -1,20 +1,37 @@
 import type { ProgressSection } from "@/app/_components/form/base-info/types";
+import type { Size } from "@/app/_components/ui/types";
+
+const trackClass: Record<Size, string> = {
+  sm: "h-[5px]",
+  md: "h-1.5",
+  lg: "h-2",
+};
+
+const countClass: Record<Size, string> = {
+  sm: "text-[11px]",
+  md: "text-[13px]",
+  lg: "text-sm",
+};
+
+const gapClass: Record<Size, string> = {
+  sm: "gap-2",
+  md: "gap-3",
+  lg: "gap-4",
+};
 
 type Props = {
   progress: ProgressSection;
-  size?: "md" | "sm";
+  size?: Size;
 };
 
-export function FormProgressBar({ progress, size = "md" }: Props) {
+export const FormProgressBar = ({ progress, size = "md" }: Props) => {
   const percent =
     progress.total === 0 ? 0 : (progress.done / progress.total) * 100;
-  const trackClass = size === "sm" ? "h-[5px]" : "h-1.5";
-  const countClass = size === "sm" ? "text-[11px]" : "text-[13px]";
 
   return (
-    <div className={`flex items-center gap-3 ${size === "sm" ? "gap-2" : ""}`}>
+    <div className={`flex items-center ${gapClass[size]}`}>
       <div
-        className={`flex-1 ${trackClass} bg-border-subtle rounded-pill overflow-hidden`}
+        className={`flex-1 ${trackClass[size]} bg-border-subtle rounded-pill overflow-hidden`}
         role="progressbar"
         aria-valuemin={0}
         aria-valuemax={progress.total}
@@ -27,10 +44,10 @@ export function FormProgressBar({ progress, size = "md" }: Props) {
         />
       </div>
       <span
-        className={`${countClass} font-semibold text-text-secondary shrink-0`}
+        className={`${countClass[size]} font-semibold text-text-secondary shrink-0`}
       >
         {progress.done} / {progress.total} 항목
       </span>
     </div>
   );
-}
+};

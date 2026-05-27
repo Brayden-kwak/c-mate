@@ -1,20 +1,30 @@
+import type { Size } from "./types";
+
+const sizeClass: Record<Size, string> = {
+  sm: "h-8 px-2.5 text-xs",
+  md: "h-9 xl:h-[38px] px-3 xl:px-3.5 text-[13px]",
+  lg: "h-11 px-4 text-sm",
+};
+
 type Props = {
   name: string;
   options: string[];
   value?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
+  size?: Size;
   "aria-required"?: boolean;
 };
 
-export function RadioGroup({
+export const RadioGroup = ({
   name,
   options,
   value,
   onChange,
   disabled,
+  size = "md",
   "aria-required": ariaRequired,
-}: Props) {
+}: Props) => {
   return (
     <div
       role="radiogroup"
@@ -27,7 +37,8 @@ export function RadioGroup({
           <label
             key={opt}
             className={[
-              "inline-flex items-center justify-center px-3 xl:px-3.5 h-9 xl:h-[38px] rounded-md border text-[13px] select-none transition-all duration-fast ease-standard",
+              "inline-flex items-center justify-center rounded-md border select-none transition-all duration-fast ease-standard",
+              sizeClass[size],
               selected
                 ? "bg-primary border-primary text-white font-semibold hover:bg-primary-hover"
                 : "bg-surface border-border text-text font-medium hover:bg-subtle hover:border-border-strong",
@@ -51,4 +62,4 @@ export function RadioGroup({
       })}
     </div>
   );
-}
+};

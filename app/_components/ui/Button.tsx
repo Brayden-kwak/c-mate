@@ -33,13 +33,19 @@ const variantClass: Record<ButtonVariant, string> = {
     "bg-subtle text-text-secondary hover:bg-disabled hover:text-text disabled:bg-disabled disabled:text-text-tertiary aria-disabled:bg-disabled aria-disabled:text-text-tertiary",
   danger:
     "bg-danger text-white hover:bg-danger-hover disabled:bg-disabled disabled:text-text-tertiary aria-disabled:bg-disabled aria-disabled:text-text-tertiary",
-  icon: "bg-surface border border-border w-9 h-9 p-0 rounded-[6px] hover:bg-subtle hover:border-border-strong",
+  icon: "bg-surface border border-border p-0 rounded-[6px] hover:bg-subtle hover:border-border-strong",
 };
 
 const sizeClass: Record<Size, string> = {
   sm: "text-[13px] h-8 px-3 rounded-md",
   md: "text-sm h-10 px-4 rounded-md",
   lg: "text-[15px] h-11 px-5 rounded-md",
+};
+
+const iconSizeClass: Record<Size, string> = {
+  sm: "w-8 h-8",
+  md: "w-9 h-9",
+  lg: "w-11 h-11",
 };
 
 const layoutClass: Record<NonNullable<Props["layout"]>, string | undefined> = {
@@ -49,7 +55,7 @@ const layoutClass: Record<NonNullable<Props["layout"]>, string | undefined> = {
   responsive: "w-full sm:flex-1",
 };
 
-export function Button({
+export const Button = ({
   variant = "primary",
   size = "md",
   layout = "auto",
@@ -57,14 +63,14 @@ export function Button({
   className,
   children,
   ...rest
-}: Props) {
+}: Props) => {
   const base =
     "inline-flex items-center justify-center font-semibold transition-colors duration-base ease-standard focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 disabled:cursor-not-allowed aria-disabled:cursor-not-allowed";
   const isLight = variant === "primary" || variant === "danger";
   const classNames = [
     base,
     variantClass[variant],
-    sizeClass[size],
+    variant === "icon" ? iconSizeClass[size] : sizeClass[size],
     layoutClass[layout],
     loading ? "gap-2 opacity-85" : "",
     className,
@@ -99,4 +105,4 @@ export function Button({
       {children}
     </button>
   );
-}
+};

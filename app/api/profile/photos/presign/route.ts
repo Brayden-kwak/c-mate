@@ -8,7 +8,7 @@ type PresignBody = {
 const ALLOWED_CONTENT_TYPES = new Set(["image/jpeg", "image/png"]);
 const MAX_UPLOAD_COUNT = 8;
 
-function isPresignBody(value: unknown): value is PresignBody {
+const isPresignBody = (value: unknown): value is PresignBody => {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     return false;
   }
@@ -27,9 +27,9 @@ function isPresignBody(value: unknown): value is PresignBody {
         ALLOWED_CONTENT_TYPES.has(contentType),
     )
   );
-}
+};
 
-export async function POST(request: NextRequest): Promise<Response> {
+export const POST = async (request: NextRequest): Promise<Response> => {
   let raw: unknown;
   try {
     raw = await request.json();
@@ -46,4 +46,4 @@ export async function POST(request: NextRequest): Promise<Response> {
     key: `photos/mock/${Date.now()}-${i}.jpg`,
   }));
   return Response.json({ uploads });
-}
+};

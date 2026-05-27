@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { InfoBoxIcon } from "@/app/_components/ui/InfoBoxIcon";
 
 const PHOTO_GUIDE_TIPS = [
   "얼굴이 잘 보이는 선명한 사진이 좋아요.",
@@ -54,7 +53,12 @@ export const ProfilePhotoGuide = ({ className = "" }: Props) => {
     >
       <div className="flex shrink-0 flex-col gap-2.5 p-3.5 photo-guide-wide:gap-2 photo-guide-wide:p-3">
         <div className="flex items-center gap-1.5">
-          <InfoBoxIcon />
+          <span
+            className="inline-flex size-4 shrink-0 items-center justify-center font-bold leading-none text-info"
+            aria-hidden="true"
+          >
+            ⓘ
+          </span>
           <h3 className="text-sm font-bold text-info">사진 등록 TIP</h3>
         </div>
         <ul className="list-disc space-y-0.5 pl-4 text-xs leading-snug text-text-secondary marker:text-text-tertiary">

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Button } from "@/app/_components/ui/Button";
 
-export function NotFoundView(): ReactNode {
+export const NotFoundView = (): ReactNode => {
   return (
     <div className="flex flex-col items-center justify-center py-20 px-4">
       <h2 className="text-5xl font-bold text-primary mb-4">404</h2>
@@ -16,4 +16,4 @@ export function NotFoundView(): ReactNode {
       </Button>
     </div>
   );
-}
+};

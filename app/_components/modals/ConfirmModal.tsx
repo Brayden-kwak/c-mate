@@ -18,7 +18,7 @@ type Props = {
   width?: "sm" | "md" | "lg";
 };
 
-export function ConfirmModal({
+export const ConfirmModal = ({
   open,
   onClose,
   title,
@@ -30,7 +30,7 @@ export function ConfirmModal({
   confirmDisabled,
   variant = "primary",
   width = "md",
-}: Props): ReactNode {
+}: Props): ReactNode => {
   const uid = useId();
   if (!open) return null;
 
@@ -96,4 +96,4 @@ export function ConfirmModal({
       </div>
     </div>
   );
-}
+};

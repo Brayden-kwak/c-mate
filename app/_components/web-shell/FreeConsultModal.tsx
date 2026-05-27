@@ -14,7 +14,7 @@ type Props = {
   onClose: () => void;
 };
 
-export function FreeConsultModal({ open, onClose }: Props) {
+export const FreeConsultModal = ({ open, onClose }: Props) => {
   const [callMode, setCallMode] = useState(false);
 
   useEffect(() => {
@@ -54,11 +54,10 @@ export function FreeConsultModal({ open, onClose }: Props) {
         </div>
 
         <div
-          className={
-            callMode
-              ? "flex flex-col gap-3 px-7 py-4"
-              : "flex items-center gap-2 px-7 py-4"
-          }
+          className={[
+            "flex px-7 py-4",
+            callMode ? "flex-col gap-3" : "items-center gap-2",
+          ].join(" ")}
         >
           {callMode ? (
             <>
@@ -93,4 +92,4 @@ export function FreeConsultModal({ open, onClose }: Props) {
       </div>
     </div>
   );
-}
+};

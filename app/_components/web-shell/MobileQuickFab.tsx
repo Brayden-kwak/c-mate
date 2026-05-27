@@ -6,7 +6,7 @@ import { QUICK_MENU_ITEMS } from "@/app/_components/web-shell/quickMenuItems";
 
 const XL_BREAKPOINT = 1280;
 
-export function MobileQuickFab() {
+export const MobileQuickFab = () => {
   const [open, setOpen] = useState(false);
   const [consultOpen, setConsultOpen] = useState(false);
   const menuId = useId();
@@ -88,4 +88,4 @@ export function MobileQuickFab() {
       />
     </div>
   );
-}
+};

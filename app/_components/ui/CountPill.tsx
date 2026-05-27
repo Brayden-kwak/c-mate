@@ -4,7 +4,7 @@ type Props = {
   size?: "sm" | "md";
 };
 
-export function CountPill({ done, total, size = "md" }: Props) {
+export const CountPill = ({ done, total, size = "md" }: Props) => {
   const isComplete = done >= total;
   const statusClass = isComplete
     ? "bg-success-light text-success"
@@ -19,4 +19,4 @@ export function CountPill({ done, total, size = "md" }: Props) {
       {done}/{total}
     </span>
   );
-}
+};

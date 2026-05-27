@@ -7,7 +7,7 @@ type Props = {
   children: ReactNode;
 };
 
-export function HighlightBox({ title, optional, note, children }: Props) {
+export const HighlightBox = ({ title, optional, note, children }: Props) => {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2">
@@ -23,4 +23,4 @@ export function HighlightBox({ title, optional, note, children }: Props) {
       )}
     </div>
   );
-}
+};

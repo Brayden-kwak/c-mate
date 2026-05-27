@@ -1,18 +1,36 @@
 import type { InputHTMLAttributes } from "react";
+import type { Size } from "./types";
 
-type Props = Omit<InputHTMLAttributes<HTMLInputElement>, "style" | "type"> & {
-  label: string;
+const boxSizeClass: Record<Size, string> = {
+  sm: "w-4 h-4",
+  md: "w-[18px] h-[18px]",
+  lg: "w-5 h-5",
 };
 
-export function Checkbox({
+const checkSizeClass: Record<Size, string> = {
+  sm: "w-2.5 h-2.5",
+  md: "w-[11px] h-[11px]",
+  lg: "w-3 h-3",
+};
+
+type Props = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "style" | "type" | "size"
+> & {
+  label: string;
+  size?: Size;
+};
+
+export const Checkbox = ({
   label,
   id,
   className,
   checked,
   disabled,
+  size = "md",
   onChange,
   ...rest
-}: Props) {
+}: Props) => {
   const inputId = id ?? label;
   return (
     <label
@@ -36,7 +54,8 @@ export function Checkbox({
       />
       <span
         className={[
-          "w-[18px] h-[18px] shrink-0 inline-flex items-center justify-center border rounded-[4px] transition-colors duration-fast ease-standard",
+          "shrink-0 inline-flex items-center justify-center border rounded-[4px] transition-colors duration-fast ease-standard",
+          boxSizeClass[size],
           checked
             ? "bg-primary border-primary"
             : "bg-surface border-border-strong",
@@ -46,7 +65,7 @@ export function Checkbox({
         {checked && (
           <svg
             viewBox="0 0 24 24"
-            className="w-[11px] h-[11px] text-white"
+            className={checkSizeClass[size] + " text-white"}
             fill="none"
             stroke="currentColor"
             strokeWidth={3}
@@ -60,4 +79,4 @@ export function Checkbox({
       <span className="text-sm text-text">{label}</span>
     </label>
   );
-}
+};

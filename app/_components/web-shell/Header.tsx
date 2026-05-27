@@ -45,18 +45,18 @@ const navLinkBaseClass =
 
 const navLinkActiveClass = "text-primary after:scale-x-100";
 
-export function Header() {
+export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeCol, setActiveCol] = useState<number | null>(null);
 
-  function closeMenu() {
+  const closeMenu = () => {
     setMenuOpen(false);
     setActiveCol(null);
-  }
+  };
 
-  function highlightCol(col: number) {
+  const highlightCol = (col: number) => {
     setActiveCol(col);
-  }
+  };
 
   return (
     <div
@@ -134,4 +134,4 @@ export function Header() {
       </div>
     </div>
   );
-}
+};

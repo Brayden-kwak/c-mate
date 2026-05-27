@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 const QUICK_ICON_SM = "w-4 h-4 shrink-0 object-contain max-w-none";
 const QUICK_ICON_LG = "w-5 h-5 shrink-0 object-contain max-w-none";
 
-function QuickMenuImage({
+const QuickMenuImage = ({
   src,
   size,
   priority = true,
@@ -12,7 +12,7 @@ function QuickMenuImage({
   src: string;
   size: "sm" | "lg";
   priority?: boolean;
-}) {
+}) => {
   const dim = size === "lg" ? 20 : 16;
   return (
     <Image
@@ -25,7 +25,7 @@ function QuickMenuImage({
       aria-hidden
     />
   );
-}
+};
 
 export type QuickMenuItem = {
   label: string;
