@@ -272,20 +272,15 @@ export const EducationSection = ({
                 type="button"
                 onClick={() => removeEduRow(row.id)}
                 aria-label={`${row.degree} 학력 삭제`}
-                className="w-9 h-9 border border-border rounded-[6px] bg-surface flex items-center justify-center shrink-0"
+                className="w-9 h-9 border border-border rounded-[6px] bg-surface flex items-center justify-center hover:bg-subtle shrink-0 transition-colors duration-fast ease-standard"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-4 h-4 text-danger"
-                  aria-hidden="true"
-                >
-                  <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                </svg>
+                <Image
+                  src="/images/button/button-trash.svg"
+                  alt=""
+                  width={16}
+                  height={16}
+                  aria-hidden
+                />
               </button>
             )}
           </div>
