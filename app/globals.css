@@ -205,6 +205,7 @@
   /* Type scale extension */
   --text-2xs: 0.625rem;
   --text-2xs--line-height: 1;
+  --text-badge: 0.6875rem;
   --text-display: 2rem;
   --text-display--line-height: 1;
   --text-md: 1rem;
@@ -213,6 +214,7 @@
   --text-mobile-title--line-height: 1.25;
   --text-mobile-menu: 0.9375rem;
   --text-mobile-menu--line-height: 1.5;
+  --tracking-badge: 0.04em;
 
   /* 프로필 사진 TIP: 1280~1429px 슬롯 상단, 1430px+ 슬롯 옆 */
   --breakpoint-photo-guide-wide: 89.375rem;
@@ -286,6 +288,14 @@ body {
 
 @utility animate-toast-exit {
   animation: toast-exit var(--duration-slow) var(--ease-emphasized) forwards;
+}
+
+@utility text-badge {
+  font-size: var(--text-badge);
+}
+
+@utility tracking-badge {
+  letter-spacing: var(--tracking-badge);
 }
 
 @keyframes chip-spin {
